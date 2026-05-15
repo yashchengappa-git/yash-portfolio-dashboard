@@ -17,7 +17,7 @@ async function getPrice(symbol) {
   return price;
 }
 
-function appendHistory(html, portfolioValue, spyValue, qqqValue) {
+function appendHistory(html, portfolioValue) {
   const today = new Date();
 
   const label = today.toLocaleDateString("en-US", {
@@ -26,12 +26,11 @@ function appendHistory(html, portfolioValue, spyValue, qqqValue) {
   });
 
   const newEntry =
-    `{ d:"${label}", port:${portfolioValue}, spy:${spyValue}, qqq:${qqqValue} }`;
+    `{ d:"${label}", port:${portfolioValue} }`;
 
   return html.replace(
     /(const HIST = \[)([\s\S]*?)(\];)/,
     (match, start, existing, end) => {
-      // Don't add duplicate entry for same day
       if (existing.includes(`d:"${label}"`)) {
         console.log(`History already contains ${label}, skipping append.`);
         return match;
@@ -46,8 +45,6 @@ async function run() {
   let html = fs.readFileSync("index.html", "utf8");
 
   let portfolioValue = 0;
-  let spyPrice = 0;
-  let qqqPrice = 0;
 
   for (const symbol of symbols) {
     const price = await getPrice(symbol);
@@ -56,9 +53,6 @@ async function run() {
     const regex = new RegExp(`(sym:"${symbol}".*?price:)\\s*[0-9.]+`, "g");
     html = html.replace(regex, `$1 ${price}`);
 
-    // Track SPY and QQQ benchmark prices
-    if (symbol === "SPY") spyPrice = price;
-    if (symbol === "QQQ") qqqPrice = price;
 
     // Find the quantity held and add to portfolio value
     const qtyMatch = html.match(new RegExp(`sym:"${symbol}".*?qty:\\s*([0-9.]+)`));
@@ -72,12 +66,10 @@ async function run() {
   }
 
   // Append today's values to the HIST array
-  html = appendHistory(
-    html,
-    Math.round(portfolioValue),
-    Math.round(spyPrice),
-    Math.round(qqqPrice)
-  );
+html = appendHistory(
+  html,
+  portfolioValue.toFixed(2)
+);
 
   fs.writeFileSync("index.html", html);
   console.log("Done! Prices updated and history appended.");
