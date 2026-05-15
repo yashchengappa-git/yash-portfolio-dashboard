@@ -2,7 +2,7 @@ name: Update Portfolio Prices
 
 on:
   schedule:
-    - cron: '45 20 * * 1-5'   # 20:45 UTC = 4:15pm ET weekdays
+    - cron: '15 20 * * 1-5'   # 20:15 UTC = 4:15pm ET weekdays
   workflow_dispatch:
   
 permissions:
