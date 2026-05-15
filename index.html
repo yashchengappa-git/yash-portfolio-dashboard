@@ -631,7 +631,7 @@ FINAL.forEach(h=>{
     <td style="padding:4px 2px;font-weight:500;">${h.sym}</td>
     <td style="padding:4px 2px;text-align:right;color:var(--color-text-secondary);font-size:11px;">${h.qty.toFixed(3)}</td>
     <td style="padding:4px 2px;text-align:right;">$${h.price.toFixed(1)}</td>
-    <td style="padding:4px 2px;text-align:right;">$${Math.round(val)}</td>
+    <td style="padding:4px 2px;text-align:right;">$${val.toFixed(1)}</td>
     <td style="padding:4px 2px;text-align:right;color:${col};">${sgn}$${pnl.toFixed(1)} (${sgn}${pnlPct}%)</td>
   </tr>`;
 });
