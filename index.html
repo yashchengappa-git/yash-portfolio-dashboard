@@ -798,9 +798,22 @@ new Chart(document.getElementById('retChart'),{
 });
 
 function setView(v){
+function setView(v){
   currentView=v;
   mainChart.data.datasets=buildMain(v);
-  mainChart.options.scales.y.ticks.callback=val=>v==='return'?val.toFixed(1)+'%':'$'+Math.round(val).toLocaleString();
+  if(v==='return'){
+    const allVals=labels.map((_,i)=>[cumRet(portVals,i),cumRet(spyVals,i),cumRet(qqqVals,i)]).flat();
+    const minV=Math.min(...allVals);
+    const maxV=Math.max(...allVals);
+    const pad=(maxV-minV)*0.15;
+    mainChart.options.scales.y.min=Math.floor(minV-pad);
+    mainChart.options.scales.y.max=Math.ceil(maxV+pad);
+    mainChart.options.scales.y.ticks.callback=v=>v.toFixed(0)+'%';
+  } else {
+    mainChart.options.scales.y.min=undefined;
+    mainChart.options.scales.y.max=undefined;
+    mainChart.options.scales.y.ticks.callback=v=>'$'+Math.round(v).toLocaleString();
+  }
   mainChart.update();
   document.getElementById('btn-value').style.background=v==='value'?'var(--color-background-secondary)':'';
   document.getElementById('btn-return').style.background=v==='return'?'var(--color-background-secondary)':'';
