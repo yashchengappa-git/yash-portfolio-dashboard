@@ -283,6 +283,7 @@ const RAW_DEP=[
   {date:"2026-02-27",amt:108.02},
   {date:"2026-05-04",amt:206.94},
   {date:"2026-05-11",amt:155.89},
+  {date:"2026-05-14",amt:102.78},
 ];
 const TOTAL_DEP=RAW_DEP.reduce((s,d)=>s+d.amt,0); // 2355
 
@@ -299,6 +300,7 @@ const FINAL=[
   {sym:"PENG",qty:3.462235784, price: 49.44,  cost:44.90},
   {sym:"VIAV",qty:3.000000000, price: 53.11,  cost:43.93},
   {sym:"NBIS",qty:0.602579317, price: 221.15, cost:104.24},
+  {sym:"NOW",qty:1.099796115,price:93.72,cost:93.19},
 ];
 const FINAL_TOTAL=FINAL.reduce((s,h)=>s+h.qty*h.price,0); // ~2994
 
@@ -467,6 +469,8 @@ const SK={
   PENG:{
     "2026-05-11":44.90,"2026-05-12":46,"2026-05-13":47.2,"2026-05-14":48.33
   },
+  NOW:{"2026-05-15":93.19,
+},
 };
 
 function getLast(map,date){
@@ -543,6 +547,7 @@ const TRADES=[
   {date:"2026-05-08",sym:"NBIS",side:"sell",qty:0.397420683, price: 221.15},
   {date:"2026-05-08",sym:"GEV", side:"buy", qty:0.067517883, price: 1090.53},
   {date:"2026-05-11",sym:"PENG",side:"buy", qty:3.462235784, price: 49.44},
+  {date:"2026-05-15",sym:"NOW",side:"buy",qty:1.099796115,price:93.19},
 ];
 
 // ── SIMULATION ────────────────────────────────────────────────────────────────
@@ -643,6 +648,7 @@ hBody.innerHTML+=`<tr style="border-top:0.5px solid var(--color-border-secondary
 
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
 const TRADE_LOG=[
+  {date:"2026-05-15",action:"buy", sym:"NOW",amt:102.49},
   {date:"2026-05-11",action:"buy", sym:"PENG",amt:156},
   {date:"2026-05-08",action:"sell",sym:"NBIS",amt:71},
   {date:"2026-05-08",action:"buy", sym:"GEV", amt:71},
