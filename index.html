@@ -750,7 +750,7 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
     }}},
     scales:{
       x:{ticks:{maxTicksLimit:10,maxRotation:0,font:{size:11},color:'#888',
-        callback:(val,idx)=>{const d=labels[idx];return d&&parseInt(d.slice(8))<=7?fmtD(d).split(' ')[0]:'';}},
+        callback:(val,idx)=>{   const d=labels[idx];   if(!d) return '';   const prev=labels[idx-1];   const curMonth=d.slice(0,7);   const prevMonth=prev?prev.slice(0,7):'';   return curMonth!==prevMonth ? fmtD(d).split(' ')[0] : ''; }},
         grid:{color:'rgba(128,128,128,0.1)'}},
       y:{ticks:{font:{size:11},color:'#888',
         callback:v=>currentView==='return'?v.toFixed(1)+'%':'$'+Math.round(v).toLocaleString()},
@@ -771,7 +771,7 @@ new Chart(document.getElementById('pnlChart'),{
     plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw>=0?'+':''}$${Math.round(ctx.raw)}`}}},
     scales:{
       x:{ticks:{maxTicksLimit:6,maxRotation:0,font:{size:10},color:'#888',
-        callback:(val,idx)=>{const d=labels[idx];return d&&parseInt(d.slice(8))<=7?fmtD(d).split(' ')[0]:'';}},
+        callback:(val,idx)=>{   const d=labels[idx];   if(!d) return '';   const prev=labels[idx-1];   const curMonth=d.slice(0,7);   const prevMonth=prev?prev.slice(0,7):'';   return curMonth!==prevMonth ? fmtD(d).split(' ')[0] : ''; }},
         grid:{display:false}},
       y:{ticks:{font:{size:10},color:'#888',callback:v=>'$'+Math.round(v)},grid:{color:'rgba(128,128,128,0.1)'}}
     }
@@ -790,7 +790,7 @@ new Chart(document.getElementById('retChart'),{
     plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.raw>=0?'+':''}${ctx.raw.toFixed(1)}%`}}},
     scales:{
       x:{ticks:{maxTicksLimit:6,maxRotation:0,font:{size:10},color:'#888',
-        callback:(val,idx)=>{const d=labels[idx];return d&&parseInt(d.slice(8))<=7?fmtD(d).split(' ')[0]:'';}},
+        callback:(val,idx)=>{   const d=labels[idx];   if(!d) return '';   const prev=labels[idx-1];   const curMonth=d.slice(0,7);   const prevMonth=prev?prev.slice(0,7):'';   return curMonth!==prevMonth ? fmtD(d).split(' ')[0] : ''; }},
         grid:{display:false}},
       y:{ticks:{font:{size:10},color:'#888',callback:v=>v.toFixed(1)+'%'},grid:{color:'rgba(128,128,128,0.1)'}}
     }
