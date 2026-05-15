@@ -637,7 +637,7 @@ FINAL.forEach(h=>{
 });
 hBody.innerHTML+=`<tr style="border-top:0.5px solid var(--color-border-secondary);">
   <td colspan="3" style="padding:5px 2px;font-weight:500;font-size:11px;color:var(--color-text-secondary);">Total</td>
-  <td style="padding:5px 2px;text-align:right;font-weight:600;">$${Math.round(totalVal)}</td>
+  <td style="padding:5px 2px;text-align:right;font-weight:600;">$${totalVal.toFixed(1)}</td>
   <td style="padding:5px 2px;text-align:right;font-weight:600;color:#1a7f4b;">+$${(totalVal-TOTAL_DEP).toFixed(1)}</td>
 </tr>`;
 
