@@ -19,13 +19,25 @@ async function getPrice(symbol) {
 
 function appendHistory(html, portfolioValue, spyValue, qqqValue) {
   const today = new Date();
-  const label = today.toLocaleString("en-US", { month: "short", day: "numeric" });
-  const newEntry = `{ d:"${label}", port:${portfolioValue}, spy:${spyValue}, qqq:${qqqValue} }`;
+
+  const label = today.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric"
+  });
+
+  const newEntry =
+    `{ d:"${label}", port:${portfolioValue}, spy:${spyValue}, qqq:${qqqValue} }`;
 
   return html.replace(
-    /const HIST = \[(.*?)\]/s,
-    (match, existing) => {
-      return `const HIST = [${existing}, ${newEntry}]`;
+    /(const HIST = \[)([\s\S]*?)(\];)/,
+    (match, start, existing, end) => {
+      // Don't add duplicate entry for same day
+      if (existing.includes(`d:"${label}"`)) {
+        console.log(`History already contains ${label}, skipping append.`);
+        return match;
+      }
+
+      return `${start}${existing},\n  ${newEntry}${end}`;
     }
   );
 }
