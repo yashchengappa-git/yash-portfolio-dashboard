@@ -6,7 +6,7 @@ const API_KEY = process.env.ALPHA_VANTAGE_KEY;
 const symbols = [
   "MSFT", "NVDA", "AMZN", "CRWD", "MU",
   "VRT", "GEV", "NBIS", "VIAV", "PENG",
-  "COHR", "SPY", "QQQ"
+  "COHR", "NOW", "SPY", "QQQ"
 ];
 
 async function getPrice(symbol) {
