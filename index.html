@@ -592,8 +592,8 @@ const lastQQQ=qqqVals[qqqVals.length-1];
 const portRet=((lastPort-TOTAL_DEP)/TOTAL_DEP*100).toFixed(1);
 const spyRet=((lastSPY-TOTAL_DEP)/TOTAL_DEP*100).toFixed(1);
 const qqqRet=((lastQQQ-TOTAL_DEP)/TOTAL_DEP*100).toFixed(1);
-const vsS=(lastPort-lastSPY).toFixed(0);
-const vsQ=(lastPort-lastQQQ).toFixed(0);
+const vsS=(lastPort-lastSPY).toFixed(1);
+const vsQ=(lastPort-lastQQQ).toFixed(1);
 
 // ── DAILY P&L ─────────────────────────────────────────────────────────────────
 // Computed excluding deposit days (a fresh deposit inflates the number artificially)
@@ -630,7 +630,7 @@ FINAL.forEach(h=>{
   hBody.innerHTML+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
     <td style="padding:4px 2px;font-weight:500;">${h.sym}</td>
     <td style="padding:4px 2px;text-align:right;color:var(--color-text-secondary);font-size:11px;">${h.qty.toFixed(3)}</td>
-    <td style="padding:4px 2px;text-align:right;">$${h.price.toFixed(0)}</td>
+    <td style="padding:4px 2px;text-align:right;">$${h.price.toFixed(1)}</td>
     <td style="padding:4px 2px;text-align:right;">$${Math.round(val)}</td>
     <td style="padding:4px 2px;text-align:right;color:${col};">${sgn}$${Math.round(pnl)} (${sgn}${pnlPct}%)</td>
   </tr>`;
@@ -746,7 +746,7 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
         callback:(val,idx)=>{const d=labels[idx];return d&&parseInt(d.slice(8))<=7?fmtD(d).split(' ')[0]:'';}},
         grid:{color:'rgba(128,128,128,0.1)'}},
       y:{ticks:{font:{size:11},color:'#888',
-        callback:v=>currentView==='return'?v.toFixed(0)+'%':'$'+Math.round(v).toLocaleString()},
+        callback:v=>currentView==='return'?v.toFixed(1)+'%':'$'+Math.round(v).toLocaleString()},
         grid:{color:'rgba(128,128,128,0.1)'}}
     }
   }
@@ -785,7 +785,7 @@ new Chart(document.getElementById('retChart'),{
       x:{ticks:{maxTicksLimit:6,maxRotation:0,font:{size:10},color:'#888',
         callback:(val,idx)=>{const d=labels[idx];return d&&parseInt(d.slice(8))<=7?fmtD(d).split(' ')[0]:'';}},
         grid:{display:false}},
-      y:{ticks:{font:{size:10},color:'#888',callback:v=>v.toFixed(0)+'%'},grid:{color:'rgba(128,128,128,0.1)'}}
+      y:{ticks:{font:{size:10},color:'#888',callback:v=>v.toFixed(1)+'%'},grid:{color:'rgba(128,128,128,0.1)'}}
     }
   }
 });
@@ -793,7 +793,7 @@ new Chart(document.getElementById('retChart'),{
 function setView(v){
   currentView=v;
   mainChart.data.datasets=buildMain(v);
-  mainChart.options.scales.y.ticks.callback=val=>v==='return'?val.toFixed(0)+'%':'$'+Math.round(val).toLocaleString();
+  mainChart.options.scales.y.ticks.callback=val=>v==='return'?val.toFixed(1)+'%':'$'+Math.round(val).toLocaleString();
   mainChart.update();
   document.getElementById('btn-value').style.background=v==='value'?'var(--color-background-secondary)':'';
   document.getElementById('btn-return').style.background=v==='return'?'var(--color-background-secondary)':'';
