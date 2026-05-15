@@ -273,7 +273,7 @@
 const HIST = [
   { d:"May 14", port:2994, spy:2305, qqq:2324 },
   { d:"May 15", port:2995, spy:748, qqq:720 }
-];
+, { d:"May 15", port:3030, spy:739, qqq:709 }];
 // ── DEPOSITS ─────────────────────────────────────────────────────────────────
 const RAW_DEP=[
   {date:"2026-01-07",amt:768.35},{date:"2026-01-07",amt:3.01},
@@ -291,18 +291,18 @@ const TOTAL_DEP=RAW_DEP.reduce((s,d)=>s+d.amt,0); // 2355
 
 // ── VERIFIED FINAL HOLDINGS (May 14 from screenshot) ─────────────────────────
 const FINAL=[
-  {sym:"MSFT",qty:0.881413876, price: 409.43, cost:410.57},
-  {sym:"NVDA",qty:1.510827649, price: 235.74, cost:196.61},
-  {sym:"COHR", qty:0.837751919, price: 404.94, cost:338.82},
-  {sym:"GEV", qty:0.253443883, price: 1090.53,cost:1065.36},
-  {sym:"CRWD",qty:0.543026447, price: 579.95, cost:459.02},
-  {sym:"AMZN",qty:1.000000000, price: 267.22, cost:243.00},
-  {sym:"MU",  qty:0.411926045, price: 776.01, cost:510.12},
-  {sym:"VRT", qty:0.788059438, price: 376.23, cost:223.07},
-  {sym:"PENG",qty:3.462235784, price: 49.44,  cost:44.90},
-  {sym:"VIAV",qty:3.000000000, price: 53.11,  cost:43.93},
-  {sym:"NBIS",qty:0.602579317, price: 221.15, cost:104.24},
-  {sym:"NOW",qty:1.099796115,price:93.72,cost:93.19},
+  {sym:"MSFT",qty:0.881413876, price: 421.92, cost:410.57},
+  {sym:"NVDA",qty:1.510827649, price: 225.32, cost:196.61},
+  {sym:"COHR", qty:0.837751919, price: 382.7, cost:338.82},
+  {sym:"GEV", qty:0.253443883, price: 1049.61,cost:1065.36},
+  {sym:"CRWD",qty:0.543026447, price: 594.08, cost:459.02},
+  {sym:"AMZN",qty:1.000000000, price: 264.14, cost:243.00},
+  {sym:"MU",  qty:0.411926045, price: 724.66, cost:510.12},
+  {sym:"VRT", qty:0.788059438, price: 370.95, cost:223.07},
+  {sym:"PENG",qty:3.462235784, price: 46.82,  cost:44.90},
+  {sym:"VIAV",qty:3.000000000, price: 51.43,  cost:43.93},
+  {sym:"NBIS",qty:0.602579317, price: 219.94, cost:104.24},
+  {sym:"NOW",qty:1.099796115,price: 95.1,cost:93.19},
 ];
 const FINAL_TOTAL=FINAL.reduce((s,h)=>s+h.qty*h.price,0); // ~2994
 
@@ -499,9 +499,9 @@ const DAYS=tradingDays("2026-01-07","2026-05-14");
 // All trades from statements + orders PDF, exact quantities
 const TRADES=[
   {date:"2026-01-07",sym:"LMT", side:"buy", qty:1.000000000, price:531.24},
-  {date:"2026-01-07",sym:"NVDA",side:"buy", qty:0.013910906, price: 235.74}, // 0.015797+0.998114 total ~1.013910
+  {date:"2026-01-07",sym:"NVDA",side:"buy", qty:0.013910906, price: 225.32}, // 0.015797+0.998114 total ~1.013910
   // Note: Jan 7 NVDA total = 1.013910906 per Apr statement cost basis
-  {date:"2026-01-07",sym:"NVDA",side:"buy", qty:1.000000000, price: 235.74}, // corrected split
+  {date:"2026-01-07",sym:"NVDA",side:"buy", qty:1.000000000, price: 225.32}, // corrected split
   {date:"2026-01-09",sym:"CVX", side:"buy", qty:1.000210154, price:161.79},
   {date:"2026-01-09",sym:"INTC",side:"buy", qty:2.000667407, price:45.10},
   {date:"2026-01-14",sym:"AAPL",side:"buy", qty:0.003853564, price:259.50},
@@ -514,14 +514,14 @@ const TRADES=[
   {date:"2026-01-20",sym:"XOM", side:"buy", qty:0.713904761, price:131.25},
   {date:"2026-01-23",sym:"INTC",side:"sell",qty:2.000667407, price:46.28},
   {date:"2026-01-23",sym:"SNDK",side:"buy", qty:0.190721863, price:482.64},
-  {date:"2026-01-29",sym:"AMZN",side:"buy", qty:1.000000000, price: 267.22},
+  {date:"2026-01-29",sym:"AMZN",side:"buy", qty:1.000000000, price: 264.14},
   {date:"2026-01-29",sym:"KTOS",side:"sell",qty:1.020607290, price:109.48},
-  {date:"2026-01-29",sym:"MU",  side:"buy", qty:0.257933467, price: 776.01},
+  {date:"2026-01-29",sym:"MU",  side:"buy", qty:0.257933467, price: 724.66},
   {date:"2026-01-29",sym:"SPOT",side:"buy", qty:0.238024190, price:502.68},
-  {date:"2026-01-29",sym:"VRT", side:"buy", qty:0.438673977, price: 376.23},
+  {date:"2026-01-29",sym:"VRT", side:"buy", qty:0.438673977, price: 370.95},
   {date:"2026-02-25",sym:"AAPL",side:"buy", qty:0.366756170, price:271.87},
   {date:"2026-02-25",sym:"LMT", side:"buy", qty:0.018125612, price:644.39},
-  {date:"2026-02-25",sym:"NBIS",side:"buy", qty:1.000000000, price: 221.15},
+  {date:"2026-02-25",sym:"NBIS",side:"buy", qty:1.000000000, price: 219.94},
   {date:"2026-02-27",sym:"EWY", side:"buy", qty:0.722266185, price:149.11},
   {date:"2026-03-06",sym:"CVX", side:"sell",qty:0.274572874, price:189.64},
   {date:"2026-03-06",sym:"CVX", side:"buy", qty:0.526263010, price:189.47},
@@ -529,27 +529,27 @@ const TRADES=[
   {date:"2026-03-06",sym:"XOM", side:"buy", qty:0.369963466, price:151.10},
   {date:"2026-03-11",sym:"XOM", side:"buy", qty:0.012510425, price:151.07},
   {date:"2026-03-26",sym:"EWY", side:"sell",qty:0.722266185, price:120.67},
-  {date:"2026-03-27",sym:"VRT", side:"buy", qty:0.349385461, price: 376.23},
+  {date:"2026-03-27",sym:"VRT", side:"buy", qty:0.349385461, price: 370.95},
   {date:"2026-04-21",sym:"LMT", side:"sell",qty:1.040238582, price:573.32},
-  {date:"2026-04-21",sym:"VIAV",side:"buy", qty:3.000000000, price: 53.11},
+  {date:"2026-04-21",sym:"VIAV",side:"buy", qty:3.000000000, price: 51.43},
   {date:"2026-04-21",sym:"VLO", side:"buy", qty:1.998344643, price:230.77},
   {date:"2026-05-04",sym:"XOM", side:"sell",qty:1.096378652, price:151.85},
   {date:"2026-05-04",sym:"CVX", side:"sell",qty:1.251900290, price:190.83},
   {date:"2026-05-04",sym:"VLO", side:"sell",qty:1.998344643, price:249.38},
   {date:"2026-05-04",sym:"AAPL",side:"sell",qty:0.370609734, price:279.70},
-  {date:"2026-05-04",sym:"GEV", side:"buy", qty:0.185926000, price: 1090.53},
-  {date:"2026-05-04",sym:"CRWD",side:"buy", qty:0.543026447, price: 579.95},
-  {date:"2026-05-04",sym:"MSFT",side:"buy", qty:0.604680000, price: 409.43},
+  {date:"2026-05-04",sym:"GEV", side:"buy", qty:0.185926000, price: 1049.61},
+  {date:"2026-05-04",sym:"CRWD",side:"buy", qty:0.543026447, price: 594.08},
+  {date:"2026-05-04",sym:"MSFT",side:"buy", qty:0.604680000, price: 421.92},
   {date:"2026-05-06",sym:"SPOT",side:"sell",qty:0.238024190, price:418.54},
-  {date:"2026-05-06",sym:"NVDA",side:"sell",qty:0.500000000, price: 235.74},
-  {date:"2026-05-06",sym:"MSFT",side:"buy", qty:0.276733876, price: 409.43},
-  {date:"2026-05-06",sym:"NVDA",side:"buy", qty:0.997916743, price: 235.74},
-  {date:"2026-05-06",sym:"MU",  side:"buy", qty:0.153992578, price: 776.01},
-  {date:"2026-05-06",sym:"COHR", side:"buy", qty:0.837751919, price: 404.94},
-  {date:"2026-05-08",sym:"NBIS",side:"sell",qty:0.397420683, price: 221.15},
-  {date:"2026-05-08",sym:"GEV", side:"buy", qty:0.067517883, price: 1090.53},
-  {date:"2026-05-11",sym:"PENG",side:"buy", qty:3.462235784, price: 49.44},
-  {date:"2026-05-15",sym:"NOW",side:"buy",qty:1.099796115,price:93.19},
+  {date:"2026-05-06",sym:"NVDA",side:"sell",qty:0.500000000, price: 225.32},
+  {date:"2026-05-06",sym:"MSFT",side:"buy", qty:0.276733876, price: 421.92},
+  {date:"2026-05-06",sym:"NVDA",side:"buy", qty:0.997916743, price: 225.32},
+  {date:"2026-05-06",sym:"MU",  side:"buy", qty:0.153992578, price: 724.66},
+  {date:"2026-05-06",sym:"COHR", side:"buy", qty:0.837751919, price: 382.7},
+  {date:"2026-05-08",sym:"NBIS",side:"sell",qty:0.397420683, price: 219.94},
+  {date:"2026-05-08",sym:"GEV", side:"buy", qty:0.067517883, price: 1049.61},
+  {date:"2026-05-11",sym:"PENG",side:"buy", qty:3.462235784, price: 46.82},
+  {date:"2026-05-15",sym:"NOW",side:"buy",qty:1.099796115,price: 95.1},
 ];
 
 // ── SIMULATION ────────────────────────────────────────────────────────────────
