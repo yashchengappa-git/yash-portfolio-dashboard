@@ -205,12 +205,13 @@
 <div style="padding:1rem 0 0.5rem;">
 
 <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1.25rem;" id="metric-cards"></div>
-
+//LEGENDS
 <div style="display:flex;align-items:center;gap:16px;margin-bottom:1rem;flex-wrap:wrap;">
   <div style="display:flex;gap:12px;font-size:13px;color:var(--color-text-secondary);">
     <span style="display:flex;align-items:center;gap:5px;"><span style="width:18px;height:2px;background:#1a7f4b;display:inline-block;"></span><span style="width:6px;height:6px;border-radius:50%;background:#1a7f4b;display:inline-block;"></span> Portfolio</span>
     <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:0;border-bottom:2px dashed #2563eb;display:inline-block;"></span> SPY equiv</span>
     <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:0;border-bottom:2px dashed #d97706;display:inline-block;"></span> QQQ equiv</span>
+    <span style="display:flex;align-items:center;gap:5px;"><span style="font-weight:700;color:#fbbf24;">D</span> = deposit day</span>
   </div>
   <div style="margin-left:auto;display:flex;gap:8px;">
     <button onclick="setView('value')" id="btn-value" style="font-size:12px;padding:4px 10px;cursor:pointer;">$ value</button>
@@ -714,6 +715,7 @@ function buildMain(view){
     {label:'Portfolio',data:pD,borderColor:'#1a7f4b',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.3,fill:false},
     {label:'SPY',data:sD,borderColor:'#2563eb',borderWidth:1.5,borderDash:[6,3],pointRadius:0,pointHoverRadius:4,tension:0.3,fill:false},
     {label:'QQQ',data:qD,borderColor:'#d97706',borderWidth:1.5,borderDash:[3,3],pointRadius:0,pointHoverRadius:4,tension:0.3,fill:false},
+    {label:'Deposit',data: labels.map((d,i) => depMap[d] ? portVals[i] : null),borderColor:'#fbbf24',backgroundColor:'#fbbf24',pointRadius: labels.map(d => depMap[d] ? 6 : 0),pointStyle: 'rectRot',showLine: false,pointHoverRadius: 8,},
   ];
 }
 
