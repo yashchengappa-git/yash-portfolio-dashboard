@@ -2987,6 +2987,22 @@ new Chart(document.getElementById('pnlChart'),{
     }
   }
 });
+const BRAND_COLORS = {
+  MSFT: "#00A4EF",
+  NVDA: "#76B900",
+  AMZN: "#FF9900",
+  CRWD: "#E01F26",
+  MU: "#0077C8",
+  VRT: "#F36F21",
+  GEV: "#00AEEF",
+  NBIS: "#8B5CF6",
+  VIAV: "#00A3E0",
+  PENG: "#22C55E",
+  COHR: "#005DAA",
+  NOW: "#00C4B3",
+  AVGO: "#CC092F"
+};
+
 const concentrationData = FINAL
   .map(h => ({
     sym: h.sym,
@@ -3008,8 +3024,8 @@ new Chart(document.getElementById("concentrationChart"), {
       data: concentrationData.map(x =>
         +(x.value / lastPort * 100).toFixed(1)
       ),
-      backgroundColor: concentrationData.map((_, i) =>
-  concentrationColors[i % concentrationColors.length]
+backgroundColor: concentrationData.map((x, i) =>
+  BRAND_COLORS[x.sym] || concentrationColors[i % concentrationColors.length]
 ),
       borderColor: "#0b1020",
       borderWidth: 2,
