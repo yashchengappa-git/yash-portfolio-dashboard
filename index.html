@@ -2792,7 +2792,13 @@ document.getElementById('metric-cards').innerHTML=cards.map(c=>`
     <div style="font-size:19px;font-weight:500;color:${c.color};">${c.value}</div>
     <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:2px;">${c.sub}</div>
   </div>`).join('');
-
+  
+  const TICKER_STYLE = `
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.03em;
+`;
 // ── HOLDINGS TABLE ────────────────────────────────────────────────────────────
 const hBody=document.getElementById('holdings-body');
 let totalVal=0;
@@ -2960,12 +2966,7 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
     }
   }
 });
-  const TICKER_STYLE = `
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  font-weight:600;
-  letter-spacing:.03em;
-`;
+
   const PORTFOLIO_THESIS = [
   {
     theme: "Energy & Power Infrastructure",
