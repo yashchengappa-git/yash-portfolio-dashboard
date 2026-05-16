@@ -63,12 +63,13 @@ function appendBenchmarkPrice(html, symbol, date, price) {
   );
 }
 async function getDailyClose(symbol) {
- const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&apikey=${API_KEY}&outputsize=compact`;
+ const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${API_KEY}&outputsize=compact`;
   const res = await axios.get(url);
 
   const series = res.data["Time Series (Daily)"];
 
   if (!series) {
+    console.log(JSON.stringify(res.data, null, 2));
     throw new Error(`No daily series returned for ${symbol}`);
   }
 
