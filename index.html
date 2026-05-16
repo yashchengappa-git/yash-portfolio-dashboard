@@ -3010,7 +3010,7 @@ if (fundamentalsGrid) {
               <td style="padding:4px 2px;text-align:right;">${f.pe ?? "n/a"}</td>
               <td style="padding:4px 2px;text-align:right;">${f.fpe ?? "n/a"}</td>
               <td style="padding:4px 2px;text-align:right;">${f.rev ?? "n/a"}</td>
-    <td style="padding:4px 2px;text-align:right;color:${riskColor[f.risk]};font-weight:600;">
+   <td style="padding:4px 2px;text-align:right;color:${riskColor[f.risk] || '#9fb0d1'};font-weight:600;">
   ${f.risk ?? "-"}
 </td>
             </tr>
