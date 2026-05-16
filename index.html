@@ -270,10 +270,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-const HIST = [
-  { d:"May 14", port:2994, spy:2305, qqq:2324 }
-,
-  { d:"May 15", port:3030.02 }];
+
 // ── DEPOSITS ─────────────────────────────────────────────────────────────────
 const RAW_DEP=[
   {date:"2026-01-07",amt:768.35},{date:"2026-01-07",amt:3.01},
@@ -494,8 +491,19 @@ function tradingDays(s,e){
   }
   return days;
 }
-const DAYS=tradingDays("2026-01-07","2026-05-14");
+function latestSharedBenchmarkDate(){
+  const spyDates = Object.keys(SPY).sort();
+  const qqqDates = Object.keys(QQQ).sort();
 
+  const latestSpy = spyDates[spyDates.length - 1];
+  const latestQqq = qqqDates[qqqDates.length - 1];
+
+  return latestSpy < latestQqq ? latestSpy : latestQqq;
+}
+
+const AUTO_END_DATE = latestSharedBenchmarkDate();
+
+const DAYS = tradingDays("2026-01-07", AUTO_END_DATE);
 // All trades from statements + orders PDF, exact quantities
 const TRADES=[
   {date:"2026-01-07",sym:"LMT", side:"buy", qty:1.000000000, price:531.24},
