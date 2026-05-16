@@ -85,9 +85,10 @@ async function getDailyClose(symbol) {
   const close = Number(series[latestDate]["4. close"]);
 
   return {
-    date: latestDate,
-    close
-  };
+  date: latestDate,
+  close,
+  series
+};
 }
 function updateBenchmarkSeries(html, symbol, series) {
   const objectRegex = new RegExp(`const ${symbol}=\\{([\\s\\S]*?)\\n\\};`);
@@ -123,6 +124,29 @@ function updateBenchmarkSeries(html, symbol, series) {
     `const ${symbol}={${body.trim()},\n${newLines.join(",\n")}\n};`
   );
 }
+function replaceBenchmarkObject(html, symbol, series, startDate) {
+  const objectRegex = new RegExp(
+    `(const\\s+${symbol}\\s*=\\s*\\{)([\\s\\S]*?)(\\n\\s*\\};)`
+  );
+
+  const dates = Object.keys(series)
+    .sort()
+    .filter(date => date >= startDate);
+
+  const lines = dates.map(date => {
+    const close = Number(series[date]["4. close"]);
+    return `  "${date}":${close.toFixed(2)}`;
+  });
+
+  if (!lines.length) {
+    throw new Error(`No ${symbol} benchmark prices found from ${startDate}`);
+  }
+
+  return html.replace(
+    objectRegex,
+    `$1\n${lines.join(",\n")}\n$3`
+  );
+}
 async function run() {
   let html = fs.readFileSync("index.html", "utf8");
 
@@ -153,21 +177,8 @@ await new Promise(r => setTimeout(r, 15000));
 const qqqData = await getDailyClose("QQQ");
 await new Promise(r => setTimeout(r, 15000));
 
-html = appendBenchmarkPrice(
-  html,
-  "SPY",
-  spyData.date,
-  spyData.close
-);
-
-html = appendBenchmarkPrice(
-  html,
-  "QQQ",
-  qqqData.date,
-  qqqData.close
-);
-
-
+html = replaceBenchmarkObject(html, "SPY", spyData.series, "2026-01-07");
+html = replaceBenchmarkObject(html, "QQQ", qqqData.series, "2026-01-07");
 
   fs.writeFileSync("index.html", html);
   console.log("Done! Prices updated.");
