@@ -747,15 +747,23 @@ function buildMain(view){
     {label:'Deposit',data:labels.map((d,i)=>depMap[d]?portVals[i]:null),borderColor:'#fbbf24',backgroundColor:'#fbbf24',pointRadius:labels.map(d=>depMap[d]?6:0),pointStyle:'rectRot',showLine:false,pointHoverRadius:8},
   ];
 }
+const monthMarkers = {};
+
+labels.forEach((d, i) => {
+  const month = d.slice(0, 7);
+
+  if (!(month in monthMarkers)) {
+    monthMarkers[month] = i;
+  }
+});
+
 const xTickCb = (val, idx) => {
   const d = labels[idx];
   if (!d) return "";
 
-  const day = Number(d.slice(8, 10));
-  const isNearMonthStart = day <= 7;
-  const isLastPoint = idx === labels.length - 1;
+  const month = d.slice(0, 7);
 
-  if (isNearMonthStart || isLastPoint) {
+  if (monthMarkers[month] === idx) {
     return fmtD(d).split(" ")[0];
   }
 
@@ -795,7 +803,7 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
     },
     scales:{
       x:{
-        ticks:{maxTicksLimit:10,maxRotation:0,font:{size:11},color:'#888',callback:xTickCb},
+        ticks:{autoSkip:false,maxRotation:0,font:{size:11},color:'#888',callback:xTickCb},
         grid:{color:'rgba(128,128,128,0.1)'}
       },
       y:{
@@ -824,7 +832,7 @@ new Chart(document.getElementById('pnlChart'),{
     },
     scales:{
       x:{
-        ticks:{maxTicksLimit:6,maxRotation:0,font:{size:10},color:'#888',callback:xTickCb},
+        ticks:{autoSkip:false,maxRotation:0,font:{size:10},color:'#888',callback:xTickCb},
         grid:{display:false}
       },
       y:{
@@ -851,7 +859,7 @@ new Chart(document.getElementById('retChart'),{
     },
     scales:{
       x:{
-        ticks:{maxTicksLimit:6,maxRotation:0,font:{size:10},color:'#888',callback:xTickCb},
+        ticks:{autoSkip:false,maxRotation:0,font:{size:10},color:'#888',callback:xTickCb},
         grid:{display:false}
       },
       y:{
