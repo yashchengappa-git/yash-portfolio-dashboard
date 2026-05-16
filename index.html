@@ -237,7 +237,9 @@
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:1.25rem;">
   <div>
-    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Current holdings (May 14)</div>
+    <div id="holdings-title" style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">
+  Current Holdings
+</div>
     <table style="width:100%;font-size:12px;border-collapse:collapse;table-layout:fixed;">
       <colgroup><col style="width:15%"><col style="width:15%"><col style="width:16%"><col style="width:16%"><col style="width:38%"></colgroup>
       <thead><tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
@@ -623,6 +625,8 @@ const dailyPnl=portVals.map((v,i)=>{
 // ── METRIC CARDS ─────────────────────────────────────────────────────────────
   const latestLabel = new Date(labels[labels.length - 1] + "T12:00:00Z")
   .toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  document.getElementById("holdings-title").textContent =
+  `CURRENT HOLDINGS (${latestLabel.toUpperCase()})`;
 const cards=[
   {label:`Portfolio (${latestLabel})`, value:`$${Math.round(lastPort).toLocaleString()}`,sub:`+${portRet}% return on capital`,color:"#1a7f4b"},
   {label:"Total deposited",    value:`$${Math.round(TOTAL_DEP).toLocaleString()}`,sub:"capital invested",color:"var(--color-text-primary)"},
@@ -737,7 +741,6 @@ function buildMain(view){
     {label:'Deposit',data:labels.map((d,i)=>depMap[d]?portVals[i]:null),borderColor:'#fbbf24',backgroundColor:'#fbbf24',pointRadius:labels.map(d=>depMap[d]?6:0),pointStyle:'rectRot',showLine:false,pointHoverRadius:8},
   ];
 }
-
 const xTickCb = (val, idx) => {
   const d = labels[idx];
   if (!d) return "";
@@ -754,7 +757,6 @@ const xTickCb = (val, idx) => {
 
   return "";
 };
-
 const mainChart=new Chart(document.getElementById('mainChart'),{
   type:'line',
   data:{labels:tickLabels,datasets:buildMain('value')},
