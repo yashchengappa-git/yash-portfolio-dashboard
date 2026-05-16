@@ -60,12 +60,14 @@ function appendBenchmarkPrice(html, symbol, date, price) {
     return html;
   }
 
-  const newLine = `  "${date}":${Number(price).toFixed(2)},`;
+  const newLine = `  "${date}":${Number(price).toFixed(2)}`;
 
-  return html.replace(
-    objectRegex,
-    `${start}${body.trimEnd()},\n${newLine}${end}`
-  );
+const cleanBody = body.trimEnd().replace(/,\s*$/, "");
+
+return html.replace(
+  objectRegex,
+  `${start}${cleanBody},\n${newLine}${end}`
+);
 }
 async function getDailyClose(symbol) {
  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${API_KEY}&outputsize=compact`;
