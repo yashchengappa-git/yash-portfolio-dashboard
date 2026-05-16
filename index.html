@@ -227,9 +227,9 @@
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:1.25rem;">
 <div>
   <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">
-    Fundamentals Snapshot
+    Portfolio Thesis
   </div>
-  <div id="fundamentals-grid" style="max-height:150px;overflow:auto;"></div>
+  <div id="portfolio-thesis" style="font-size:11px;line-height:1.55;color:var(--color-text-secondary);max-height:150px;overflow:auto;padding-right:8px;"></div>
 </div>
   <div>
   <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">
@@ -2960,65 +2960,44 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
     }
   }
 });
-const FUNDAMENTALS = {
-  MSFT:{pe:32.4, fpe:28.1, rev:"13.3%", risk:2},
-  NVDA:{pe:51.8, fpe:35.6, rev:"93.6%", risk:4},
-  COHR:{pe:null, fpe:24.2, rev:"8.7%", risk:4},
-  GEV:{pe:78.5, fpe:46.2, rev:"6.4%", risk:5},
-  CRWD:{pe:null, fpe:74.1, rev:"29.7%", risk:5},
-  AMZN:{pe:38.9, fpe:32.4, rev:"10.9%", risk:2},
-  MU:{pe:null, fpe:13.8, rev:"61.6%", risk:3},
-  VRT:{pe:76.2, fpe:42.5, rev:"17.9%", risk:4},
-  PENG:{pe:null, fpe:null, rev:"n/a", risk:5},
-  VIAV:{pe:null, fpe:18.6, rev:"-3.2%", risk:4},
-  NBIS:{pe:null, fpe:null, rev:"n/a", risk:5},
-  NOW:{pe:112.3, fpe:54.7, rev:"22.5%", risk:4}
-};
-  
-const riskColor = {
-  5:"#ef4444",
-  4:"#f97316",
-  3:"#fbbf24",
-  2:"#22c55e",
-  1:"#3b82f6"
-};
+  const PORTFOLIO_THESIS = [
+  {
+    theme: "AI infrastructure",
+    tickers: "NVDA, VRT, GEV, COHR",
+    text: "Core exposure to the buildout of AI compute, power infrastructure, cooling, grid equipment, and optical/data-center hardware."
+  },
+  {
+    theme: "Enterprise software compounders",
+    tickers: "MSFT, CRWD, NOW",
+    text: "High-quality software businesses with strong recurring revenue, security demand, cloud adoption, and workflow automation tailwinds."
+  },
+  {
+    theme: "Semiconductor cycle",
+    tickers: "MU",
+    text: "Cyclical memory exposure tied to AI server demand, HBM growth, and improving semiconductor pricing conditions."
+  },
+  {
+    theme: "Selective platform exposure",
+    tickers: "AMZN",
+    text: "Cloud, logistics, advertising, and marketplace scale provide durable long-term optionality."
+  },
+  {
+    theme: "Opportunistic / smaller positions",
+    tickers: "PENG, VIAV, NBIS",
+    text: "Smaller positions used for asymmetric upside, special situations, or emerging infrastructure-adjacent themes."
+  }
+];
 
-const fundamentalsGrid = document.getElementById("fundamentals-grid");
+const thesisBox = document.getElementById("portfolio-thesis");
 
-if (fundamentalsGrid) {
-  fundamentalsGrid.innerHTML = `
-    <table style="width:100%;font-size:11px;border-collapse:collapse;">
-      <thead>
-        <tr>
-          <th style="text-align:left;padding:4px 2px;">SYM</th>
-          <th style="text-align:right;padding:4px 2px;">P/E</th>
-          <th style="text-align:right;padding:4px 2px;">FWD P/E</th>
-          <th style="text-align:right;padding:4px 2px;">REV</th>
-          <th style="text-align:right;padding:4px 2px;">RISK</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${[FINAL].sort((a,b)=>{
-  const ra = FUNDAMENTALS[a.sym]?.risk ?? 0;
-  const rb = FUNDAMENTALS[b.sym]?.risk ?? 0;
-  return rb - ra;
-})map(h => {
-          const f = FUNDAMENTALS[h.sym] || {};
-          return `
-            <tr>
-              <td style="padding:4px 2px;font-weight:600;">${h.sym}</td>
-              <td style="padding:4px 2px;text-align:right;">${f.pe ?? "n/a"}</td>
-              <td style="padding:4px 2px;text-align:right;">${f.fpe ?? "n/a"}</td>
-              <td style="padding:4px 2px;text-align:right;">${f.rev ?? "n/a"}</td>
-   <td style="padding:4px 2px;text-align:right;color:${riskColor[f.risk] || '#9fb0d1'};font-weight:600;">
-  ${f.risk ?? "-"}
-</td>
-            </tr>
-          `;
-        }).join("")}
-      </tbody>
-    </table>
-  `;
+if (thesisBox) {
+  thesisBox.innerHTML = PORTFOLIO_THESIS.map(item => `
+    <div style="margin-bottom:8px;">
+      <span style="color:var(--color-text-primary);font-weight:600;">${item.theme}</span>
+      <span style="color:var(--color-text-tertiary);"> — ${item.tickers}</span>
+      <div>${item.text}</div>
+    </div>
+  `).join("");
 }
 const BRAND_COLORS = {
   MSFT: "#00A4EF",
