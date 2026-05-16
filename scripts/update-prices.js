@@ -139,14 +139,25 @@ async function run() {
 await new Promise(r => setTimeout(r, 15000));
 }
 
-const spyData = await getLatestDailySeries("SPY");
+const spyData = await getDailyClose("SPY");
 await new Promise(r => setTimeout(r, 15000));
 
-const qqqData = await getLatestDailySeries("QQQ");
+const qqqData = await getDailyClose("QQQ");
 await new Promise(r => setTimeout(r, 15000));
 
-html = updateBenchmarkSeries(html, "SPY", spyData.series);
-html = updateBenchmarkSeries(html, "QQQ", qqqData.series);
+html = appendBenchmarkPrice(
+  html,
+  "SPY",
+  spyData.date,
+  spyData.close
+);
+
+html = appendBenchmarkPrice(
+  html,
+  "QQQ",
+  qqqData.date,
+  qqqData.close
+);
 
 
 
