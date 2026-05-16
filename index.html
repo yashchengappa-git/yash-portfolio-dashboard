@@ -205,7 +205,7 @@
 <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1.25rem;" id="metric-cards"></div>
 <div style="display:flex;align-items:center;gap:16px;margin-bottom:1rem;flex-wrap:wrap;">
   <div style="display:flex;gap:12px;font-size:13px;color:var(--color-text-secondary);">
-    <span style="display:flex;align-items:center;gap:5px;"><span style="width:18px;height:2px;background:#1a7f4b;display:inline-block;"></span><span style="width:6px;height:6px;border-radius:50%;background:#1a7f4b;display:inline-block;"></span> Portfolio</span>
+    <span style="display:flex;align-items:center;gap:5px;"><span style="width:18px;height:2px;background:#aee0e0;display:inline-block;"></span><span style="width:6px;height:6px;border-radius:50%;background:#aee0e0;display:inline-block;"></span> Portfolio</span>
     <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:0;border-bottom:2px dashed #2563eb;display:inline-block;"></span> SPY equiv</span>
     <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:0;border-bottom:2px dashed #d97706;display:inline-block;"></span> QQQ equiv</span>
     <span style="display:flex;align-items:center;gap:5px;"><span style="font-weight:700;color:#fbbf24;">D</span> = deposit day</span>
@@ -2784,12 +2784,12 @@ const cards=[
   label:`Portfolio (${latestLabel})`,
   value:`
     <span>$${lastPort.toFixed(1)}</span>
-    <span style="font-size:60%;margin-left:10px;color:${totalGainLoss >= 0 ? "#1a7f4b" : "#c0392b"};vertical-align:baseline;">
+    <span style="font-size:60%;margin-left:10px;color:${totalGainLoss >= 0 ? "#aee0e0" : "#c0392b"};vertical-align:baseline;">
       ${totalGainLossText}
     </span>
   `,
   sub:`+${portRet}% return on capital`,
-  color:"#1a7f4b"
+  color:"#aee0e0"
 },
   {
   label:"Total deposited",
@@ -2797,8 +2797,8 @@ const cards=[
   sub:"capital invested",
   color:"var(--color-text-primary)"
 },
-  {label:"vs SPY equiv",       value:`${vsS>0?'+':''}$${vsS}`,sub:`SPY = $${Math.round(lastSPY).toLocaleString()} (${spyRet}%)`,color:vsS>0?"#1a7f4b":"#c0392b"},
-  {label:"vs QQQ equiv",       value:`${vsQ>0?'+':''}$${vsQ}`,sub:`QQQ = $${Math.round(lastQQQ).toLocaleString()} (${qqqRet}%)`,color:vsQ>0?"#1a7f4b":"#c0392b"},
+  {label:"vs SPY equiv",       value:`${vsS>0?'+':''}$${vsS}`,sub:`SPY = $${Math.round(lastSPY).toLocaleString()} (${spyRet}%)`,color:vsS>0?"#aee0e0":"#c0392b"},
+  {label:"vs QQQ equiv",       value:`${vsQ>0?'+':''}$${vsQ}`,sub:`QQQ = $${Math.round(lastQQQ).toLocaleString()} (${qqqRet}%)`,color:vsQ>0?"#aee0e0":"#c0392b"},
 ];
 document.getElementById('metric-cards').innerHTML=cards.map(c=>`
   <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;min-width:120px;flex:1;">
@@ -2821,7 +2821,7 @@ FINAL.forEach(h=>{
   const pnl=+(val-h.qty*h.cost).toFixed(2);
   const pnlPct=(pnl/(h.qty*h.cost)*100).toFixed(1);
   totalVal+=val;
-  const col=pnl>=0?'#1a7f4b':'#c0392b';
+  const col=pnl>=0?'#5aaa7a':'#c0392b';
   const sgn=pnl>=0?'+':'';
   hBody.innerHTML+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
     <td style="padding:4px 2px;font-weight:500;${TICKER_STYLE}">${h.sym}</td>
@@ -2834,7 +2834,7 @@ FINAL.forEach(h=>{
 hBody.innerHTML+=`<tr style="border-top:0.5px solid var(--color-border-secondary);">
   <td colspan="3" style="padding:5px 2px;font-weight:500;font-size:11px;color:var(--color-text-secondary);">Total</td>
   <td style="padding:5px 2px;text-align:right;font-weight:600;">$${totalVal.toFixed(1)}</td>
-  <td style="padding:5px 2px;text-align:right;font-weight:600;color:#1a7f4b;">+$${(totalVal-TOTAL_DEP).toFixed(1)}</td>
+  <td style="padding:5px 2px;text-align:right;font-weight:600;color:#5aaa7a;">+$${(totalVal-TOTAL_DEP).toFixed(1)}</td>
 </tr>`;
 
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
@@ -2885,7 +2885,7 @@ const TRADE_LOG=[
 const fmtD=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric'});
 const tBody=document.getElementById('trades-body');
 TRADE_LOG.forEach(t=>{
-  const col=t.action==='sell'?'#c0392b':'#1a7f4b';
+  const col=t.action==='sell'?'#c0392b':'#5aaa7a';
   tBody.innerHTML+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
     <td style="padding:4px 2px;color:var(--color-text-secondary);">${fmtD(t.date)}</td>
     <td style="padding:4px 2px;color:${col};font-weight:500;">${t.action}</td>
@@ -2908,9 +2908,9 @@ function buildMain(view){
   const sD=view==='return'?labels.map((_,i)=>cumRet(spyVals,i)):spyVals;
   const qD=view==='return'?labels.map((_,i)=>cumRet(qqqVals,i)):qqqVals;
   return [
-    {label:'Portfolio',data:pD,borderColor:'#1a7f4b',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.3,fill:false},
-    {label:'SPY',data:sD,borderColor:'#2563eb',borderWidth:1.5,borderDash:[6,3],pointRadius:0,pointHoverRadius:4,tension:0.3,fill:false},
-    {label:'QQQ',data:qD,borderColor:'#d97706',borderWidth:1.5,borderDash:[3,3],pointRadius:0,pointHoverRadius:4,tension:0.3,fill:false},
+    {label:'Portfolio',data:pD,borderColor:'#aee0e0',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.3,fill:false},
+    {label:'SPY',data:sD,borderColor:'#6a8fc8',borderWidth:1.5,borderDash:[6,3],pointRadius:0,pointHoverRadius:4,tension:0.3,fill:false},
+    {label:'QQQ',data:qD,borderColor:'#b8883a',borderWidth:1.5,borderDash:[3,3],pointRadius:0,pointHoverRadius:4,tension:0.3,fill:false},
     {label:'Deposit',data:labels.map((d,i)=>depMap[d]?portVals[i]:null),borderColor:'#fbbf24',backgroundColor:'#fbbf24',pointRadius:labels.map(d=>depMap[d]?6:0),pointStyle:'rectRot',showLine:false,pointHoverRadius:8},
   ];
 }
@@ -2967,9 +2967,9 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
   `).join('');
           document.getElementById('tooltip-box').innerHTML=`
             <span style="font-weight:500;">${fmtD(date)}</span>&nbsp;&nbsp;
-            <span style="color:#1a7f4b;">Portfolio $${Math.round(pv).toLocaleString()} (${pr>0?'+':''}${pr}%)</span>&nbsp;&nbsp;
-            <span style="color:#2563eb;">SPY $${Math.round(sv).toLocaleString()} (${sr>0?'+':''}${sr}%)</span>&nbsp;&nbsp;
-            <span style="color:#d97706;">QQQ $${Math.round(qv).toLocaleString()} (${qr>0?'+':''}${qr}%)</span>
+            <span style="color:#aee0e0;">Portfolio $${Math.round(pv).toLocaleString()} (${pr>0?'+':''}${pr}%)</span>&nbsp;&nbsp;
+            <span style="color:#6a8fc8;">SPY $${Math.round(sv).toLocaleString()} (${sr>0?'+':''}${sr}%)</span>&nbsp;&nbsp;
+            <span style="color:#b8883a;">QQQ $${Math.round(qv).toLocaleString()} (${qr>0?'+':''}${qr}%)</span>
             <br>
 <span style="font-size:11px;color:var(--color-text-tertiary);display:flex;flex-wrap:wrap;gap:3px 0;margin-top:2px;">
   ${hs}
