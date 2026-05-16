@@ -198,7 +198,7 @@
       display:none;
     }
     /* Mobile Optimisation */
-    @media (max-width: 768px) {
+@media (max-width: 768px) {
   body {
     padding: 10px;
   }
@@ -232,11 +232,12 @@
   }
 
   table {
-    min-width: 520px;
+    min-width: 0 !important;
+    width: 100% !important;
   }
 
   div[style*="overflow-y:auto"] {
-    overflow-x: auto !important;
+    overflow-x: hidden !important;
   }
 
   th, td {
@@ -245,7 +246,59 @@
 
   #tooltip-box {
     font-size: 10px !important;
-    overflow-x: auto;
+    overflow-x: hidden;
+  }
+
+  table:has(#holdings-body) thead,
+  table:has(#trades-body) thead {
+    display: none;
+  }
+
+  #holdings-body tr,
+  #trades-body tr {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 4px 12px;
+    padding: 10px 0;
+  }
+
+  #holdings-body td,
+  #trades-body td {
+    display: block;
+    padding: 2px 0 !important;
+    text-align: left !important;
+    border: 0 !important;
+  }
+
+  #holdings-body td:nth-child(1),
+  #trades-body td:nth-child(3) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  #holdings-body td:nth-child(2),
+  #trades-body td:nth-child(1) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  #holdings-body td:nth-child(3),
+  #trades-body td:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right !important;
+  }
+
+  #holdings-body td:nth-child(4),
+  #trades-body td:nth-child(4) {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: right !important;
+  }
+
+  #holdings-body td:nth-child(5) {
+    grid-column: 1 / -1;
+    text-align: right !important;
   }
 }
 
@@ -263,7 +316,7 @@
   }
 
   table {
-    min-width: 600px;
+    min-width: 0 !important;
   }
 }
   </style>
