@@ -6,7 +6,7 @@ const API_KEY = process.env.ALPHA_VANTAGE_KEY;
 const symbols = [
   "MSFT", "NVDA", "AMZN", "CRWD", "MU",
   "VRT", "GEV", "NBIS", "VIAV", "PENG",
-  "COHR", "NOW", "SPY", "QQQ"
+  "COHR", "NOW"
 ];
 
 async function getPrice(symbol) {
@@ -40,6 +40,47 @@ function appendHistory(html, portfolioValue) {
     }
   );
 }
+function appendBenchmarkPrice(html, symbol, date, price) {
+  const objectRegex = new RegExp(`const ${symbol}=\\\\{([\\\\s\\\\S]*?)\\\\n\\\\};`);
+  const match = html.match(objectRegex);
+
+  if (!match) {
+    throw new Error(`Could not find const ${symbol} object in index.html`);
+  }
+
+  const objectBody = match[1];
+
+  if (objectBody.includes(`"${date}"`)) {
+    console.log(`${symbol} already has ${date}, skipping.`);
+    return html;
+  }
+
+  const newLine = `  "${date}":${Number(price).toFixed(2)},`;
+
+  return html.replace(
+    objectRegex,
+    `const ${symbol}={${objectBody}\\n${newLine}\\n};`
+  );
+}
+async function getDailyClose(symbol) {
+  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&apikey=${API_KEY}`;
+  const res = await axios.get(url);
+
+  const series = res.data["Time Series (Daily)"];
+
+  if (!series) {
+    throw new Error(`No daily series returned for ${symbol}`);
+  }
+
+  const dates = Object.keys(series).sort();
+  const latestDate = dates[dates.length - 1];
+  const close = Number(series[latestDate]["4. close"]);
+
+  return {
+    date: latestDate,
+    close
+  };
+}
 
 async function run() {
   let html = fs.readFileSync("index.html", "utf8");
@@ -62,10 +103,19 @@ async function run() {
     }
 
     // Alpha Vantage free tier allows ~5 calls/min, so wait 15s between calls
-    await new Promise(r => setTimeout(r, 15000));
-  }
+await new Promise(r => setTimeout(r, 15000));
+}
 
-  // Append today's values to the HIST array
+const spyData = await getLatestDailySeries("SPY");
+await new Promise(r => setTimeout(r, 15000));
+
+const qqqData = await getLatestDailySeries("QQQ");
+await new Promise(r => setTimeout(r, 15000));
+
+html = updateBenchmarkSeries(html, "SPY", spyData.series);
+html = updateBenchmarkSeries(html, "QQQ", qqqData.series);
+
+// Append today's values to the HIST array
 html = appendHistory(
   html,
   portfolioValue.toFixed(2)
