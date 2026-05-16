@@ -621,8 +621,10 @@ const dailyPnl=portVals.map((v,i)=>{
 });
 
 // ── METRIC CARDS ─────────────────────────────────────────────────────────────
+  const latestLabel = new Date(labels[labels.length - 1] + "T12:00:00Z")
+  .toLocaleDateString("en-US", { month: "short", day: "numeric" });
 const cards=[
-  {label:"Portfolio (May 14)", value:`$${Math.round(lastPort).toLocaleString()}`,sub:`+${portRet}% return on capital`,color:"#1a7f4b"},
+  {label:`Portfolio (${latestLabel})`, value:`$${Math.round(lastPort).toLocaleString()}`,sub:`+${portRet}% return on capital`,color:"#1a7f4b"},
   {label:"Total deposited",    value:`$${Math.round(TOTAL_DEP).toLocaleString()}`,sub:"capital invested",color:"var(--color-text-primary)"},
   {label:"vs SPY equiv",       value:`${vsS>0?'+':''}$${vsS}`,sub:`SPY = $${Math.round(lastSPY).toLocaleString()} (${spyRet}%)`,color:vsS>0?"#1a7f4b":"#c0392b"},
   {label:"vs QQQ equiv",       value:`${vsQ>0?'+':''}$${vsQ}`,sub:`QQQ = $${Math.round(lastQQQ).toLocaleString()} (${qqqRet}%)`,color:vsQ>0?"#1a7f4b":"#c0392b"},
@@ -736,9 +738,21 @@ function buildMain(view){
   ];
 }
 
-const xTickCb=(val,idx)=>{
-  const d=labels[idx];
-  return d&&parseInt(d.slice(8))<=7?fmtD(d).split(' ')[0]:'';
+const xTickCb = (val, idx) => {
+  const d = labels[idx];
+  if (!d) return "";
+
+  const prev = labels[idx - 1];
+  const monthChanged = !prev || d.slice(0, 7) !== prev.slice(0, 7);
+  const isLastPoint = idx === labels.length - 1;
+
+  if (monthChanged || isLastPoint) {
+    return new Date(d + "T12:00:00Z").toLocaleDateString("en-US", {
+      month: "short"
+    });
+  }
+
+  return "";
 };
 
 const mainChart=new Chart(document.getElementById('mainChart'),{
