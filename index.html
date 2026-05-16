@@ -262,10 +262,10 @@
         <colgroup><col style="width:22%"><col style="width:14%"><col style="width:28%"><col style="width:36%"></colgroup>
         <thead>
   <tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
-    <th style="text-align:left;padding:5px 2px;font-weight:600;color:var(--color-text-secondary);font-size:10px;position:sticky;top:0;background:#111827;backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.06);z-index:2;">DATE</th>
-    <th style="text-align:left;padding:5px 2px;font-weight:600;color:var(--color-text-secondary);font-size:10px;position:sticky;top:0;background:#111827;backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.06);z-index:2;">ACT</th>
-    <th style="text-align:left;padding:5px 2px;font-weight:600;color:var(--color-text-secondary);font-size:10px;position:sticky;top:0;background:#111827;backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.06);z-index:2;">SYMBOL</th>
-    <th style="text-align:right;padding:5px 2px;font-weight:600;color:var(--color-text-secondary);font-size:10px;position:sticky;top:0;background:#111827;backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.06);z-index:2;">AMT</th>
+    <th style="text-align:left;padding:6px 2px;font-weight:600;color:var(--color-text-secondary);font-size:10px;background:rgba(18,25,43,0.98);">DATE</th>
+<th style="text-align:left;padding:6px 2px;font-weight:600;color:var(--color-text-secondary);font-size:10px;background:rgba(18,25,43,0.98);">ACT</th>
+<th style="text-align:left;padding:6px 2px;font-weight:600;color:var(--color-text-secondary);font-size:10px;background:rgba(18,25,43,0.98);">SYMBOL</th>
+<th style="text-align:right;padding:6px 2px;font-weight:600;color:var(--color-text-secondary);font-size:10px;background:rgba(18,25,43,0.98);">AMT</th>
   </tr>
 </thead>
         <tbody id="trades-body"></tbody>
@@ -2913,7 +2913,7 @@ const fmtD=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'short'
 const tBody=document.getElementById('trades-body');
 TRADE_LOG.forEach(t=>{
   const col=t.action==='sell'?'#c0392b':'#5aaa7a';
-  tBody.innerHTML+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
+  tBody.innerHTML+=`<tr style="position:sticky;top:0;z-index:5;background:rgba(18,25,43,0.98);box-shadow:0 1px 0 rgba(255,255,255,0.08);">
     <td style="padding:4px 2px;color:var(--color-text-secondary);">${fmtD(t.date)}</td>
     <td style="padding:4px 2px;color:${col};font-weight:500;">${t.action}</td>
     <td style="padding:4px 2px 4px 8px;font-weight:500;">   ${renderTickerWithLogo(t.sym)} </td>
