@@ -27,7 +27,7 @@ jobs:
       - name: Update prices
         env:
           ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
-        run: node scripts/update-prices.js
+        run: node scripts/backfill-stock-history.js
 
       - name: Commit updated dashboard
         run: |
