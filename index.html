@@ -197,6 +197,75 @@
     .sr-only{
       display:none;
     }
+    /* Mobile Optimisation */
+    @media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  body > div {
+    padding: 14px !important;
+    border-radius: 16px;
+  }
+
+  #metric-cards {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+
+  #metric-cards > div {
+    min-width: 0 !important;
+    padding: 10px !important;
+  }
+
+  #metric-cards div[style*="font-size:19px"] {
+    font-size: 16px !important;
+  }
+
+  canvas#mainChart {
+    max-height: 260px;
+  }
+
+  div[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  table {
+    min-width: 520px;
+  }
+
+  div[style*="overflow-y:auto"] {
+    overflow-x: auto !important;
+  }
+
+  th, td {
+    font-size: 10px !important;
+  }
+
+  #tooltip-box {
+    font-size: 10px !important;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  #metric-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  div[style*="height:280px"] {
+    height: 230px !important;
+  }
+
+  div[style*="height:130px"] {
+    height: 180px !important;
+  }
+
+  table {
+    min-width: 600px;
+  }
+}
   </style>
 </head>
 <h2 class="sr-only">Portfolio dashboard with daily P&L, cumulative return chart, current holdings, and trade history</h2>
