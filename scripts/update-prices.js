@@ -63,7 +63,7 @@ function appendBenchmarkPrice(html, symbol, date, price) {
   );
 }
 async function getDailyClose(symbol) {
-  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&apikey=${API_KEY}`;
+ const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${symbol}&apikey=${API_KEY}&outputsize=compact`;
   const res = await axios.get(url);
 
   const series = res.data["Time Series (Daily)"];
@@ -81,7 +81,40 @@ async function getDailyClose(symbol) {
     close
   };
 }
+function updateBenchmarkSeries(html, symbol, series) {
+  const objectRegex = new RegExp(`const ${symbol}=\\{([\\s\\S]*?)\\n\\};`);
+  const match = html.match(objectRegex);
 
+  if (!match) {
+    throw new Error(`Could not find const ${symbol} object in index.html`);
+  }
+
+  const body = match[1];
+
+  const existingDates = [...body.matchAll(/"(\d{4}-\d{2}-\d{2})":/g)]
+    .map(m => m[1])
+    .sort();
+
+  const lastExistingDate = existingDates[existingDates.length - 1];
+
+  const newLines = Object.keys(series)
+    .sort()
+    .filter(date => date > lastExistingDate)
+    .map(date => {
+      const close = Number(series[date]["4. close"]);
+      return `  "${date}":${close.toFixed(2)}`;
+    });
+
+  if (newLines.length === 0) {
+    console.log(`${symbol} already up to date.`);
+    return html;
+  }
+
+  return html.replace(
+    objectRegex,
+    `const ${symbol}={${body.trim()},\n${newLines.join(",\n")}\n};`
+  );
+}
 async function run() {
   let html = fs.readFileSync("index.html", "utf8");
 
@@ -115,14 +148,9 @@ await new Promise(r => setTimeout(r, 15000));
 html = updateBenchmarkSeries(html, "SPY", spyData.series);
 html = updateBenchmarkSeries(html, "QQQ", qqqData.series);
 
-// Append today's values to the HIST array
-html = appendHistory(
-  html,
-  portfolioValue.toFixed(2)
-);
+
 
   fs.writeFileSync("index.html", html);
-  console.log("Done! Prices updated and history appended.");
+  console.log("Done! Prices updated.");
 }
-
 run();
