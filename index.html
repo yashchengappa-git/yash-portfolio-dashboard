@@ -2961,19 +2961,28 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
   }
 });
 const FUNDAMENTALS = {
-  MSFT:{pe:32.4, fpe:28.1, rev:"13.3%"},
-  NVDA:{pe:51.8, fpe:35.6, rev:"93.6%"},
-  COHR:{pe:null, fpe:24.2, rev:"8.7%"},
-  GEV:{pe:78.5, fpe:46.2, rev:"6.4%"},
-  CRWD:{pe:null, fpe:74.1, rev:"29.7%"},
-  AMZN:{pe:38.9, fpe:32.4, rev:"10.9%"},
-  MU:{pe:null, fpe:13.8, rev:"61.6%"},
-  VRT:{pe:76.2, fpe:42.5, rev:"17.9%"},
-  PENG:{pe:null, fpe:null, rev:"n/a"},
-  VIAV:{pe:null, fpe:18.6, rev:"-3.2%"},
-  NBIS:{pe:null, fpe:null, rev:"n/a"},
-  NOW:{pe:112.3, fpe:54.7, rev:"22.5%"}
+  MSFT:{pe:32.4, fpe:28.1, rev:"13.3%", risk:2},
+  NVDA:{pe:51.8, fpe:35.6, rev:"93.6%", risk:4},
+  COHR:{pe:null, fpe:24.2, rev:"8.7%", risk:4},
+  GEV:{pe:78.5, fpe:46.2, rev:"6.4%", risk:5},
+  CRWD:{pe:null, fpe:74.1, rev:"29.7%", risk:5},
+  AMZN:{pe:38.9, fpe:32.4, rev:"10.9%", risk:2},
+  MU:{pe:null, fpe:13.8, rev:"61.6%", risk:3},
+  VRT:{pe:76.2, fpe:42.5, rev:"17.9%", risk:4},
+  PENG:{pe:null, fpe:null, rev:"n/a", risk:5},
+  VIAV:{pe:null, fpe:18.6, rev:"-3.2%", risk:4},
+  NBIS:{pe:null, fpe:null, rev:"n/a", risk:5},
+  NOW:{pe:112.3, fpe:54.7, rev:"22.5%", risk:4}
 };
+  
+const riskColor = {
+  5:"#ef4444",
+  4:"#f97316",
+  3:"#fbbf24",
+  2:"#22c55e",
+  1:"#3b82f6"
+};
+
 const fundamentalsGrid = document.getElementById("fundamentals-grid");
 
 if (fundamentalsGrid) {
@@ -2985,10 +2994,15 @@ if (fundamentalsGrid) {
           <th style="text-align:right;padding:4px 2px;">P/E</th>
           <th style="text-align:right;padding:4px 2px;">FWD P/E</th>
           <th style="text-align:right;padding:4px 2px;">REV</th>
+          <th style="text-align:right;padding:4px 2px;">RISK</th>
         </tr>
       </thead>
       <tbody>
-        ${FINAL.map(h => {
+        ${[FINAL].sort((a,b)=>{
+  const ra = FUNDAMENTALS[a.sym]?.risk ?? 0;
+  const rb = FUNDAMENTALS[b.sym]?.risk ?? 0;
+  return rb - ra;
+})map(h => {
           const f = FUNDAMENTALS[h.sym] || {};
           return `
             <tr>
@@ -2996,6 +3010,9 @@ if (fundamentalsGrid) {
               <td style="padding:4px 2px;text-align:right;">${f.pe ?? "n/a"}</td>
               <td style="padding:4px 2px;text-align:right;">${f.fpe ?? "n/a"}</td>
               <td style="padding:4px 2px;text-align:right;">${f.rev ?? "n/a"}</td>
+    <td style="padding:4px 2px;text-align:right;color:${riskColor[f.risk]};font-weight:600;">
+  ${f.risk ?? "-"}
+</td>
             </tr>
           `;
         }).join("")}
