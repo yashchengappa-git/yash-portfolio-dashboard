@@ -41,16 +41,21 @@ function appendHistory(html, portfolioValue) {
   );
 }
 function appendBenchmarkPrice(html, symbol, date, price) {
-  const objectRegex = new RegExp(`const ${symbol}=\\\\{([\\\\s\\\\S]*?)\\\\n\\\\};`);
+  const objectRegex = new RegExp(
+    `(const\\s+${symbol}\\s*=\\s*\\{)([\\s\\S]*?)(\\n\\s*\\};)`
+  );
+
   const match = html.match(objectRegex);
 
   if (!match) {
     throw new Error(`Could not find const ${symbol} object in index.html`);
   }
 
-  const objectBody = match[1];
+  const start = match[1];
+  const body = match[2];
+  const end = match[3];
 
-  if (objectBody.includes(`"${date}"`)) {
+  if (body.includes(`"${date}"`)) {
     console.log(`${symbol} already has ${date}, skipping.`);
     return html;
   }
@@ -59,7 +64,7 @@ function appendBenchmarkPrice(html, symbol, date, price) {
 
   return html.replace(
     objectRegex,
-    `const ${symbol}={${objectBody}\\n${newLine}\\n};`
+    `${start}${body.trimEnd()},\n${newLine}${end}`
   );
 }
 async function getDailyClose(symbol) {
