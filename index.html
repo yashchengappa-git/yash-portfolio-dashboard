@@ -238,7 +238,7 @@
 
   th,
   td {
-    font-size: 10px !important;
+    font-size: 9px !important;
   }
 
   #tooltip-box {
@@ -248,24 +248,26 @@
 
   table {
     width: 100% !important;
+    min-width: 0 !important;
+    table-layout: fixed !important;
   }
 
   table:has(#holdings-body),
   table:has(#trades-body) {
-    min-width: 640px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  table:has(#holdings-body) colgroup,
+  table:has(#trades-body) colgroup {
+    display: none;
   }
 
   div:has(> table > tbody#holdings-body),
   div:has(> table > tbody#trades-body) {
     max-width: 100%;
-    overflow-x: auto !important;
+    overflow-x: hidden !important;
     overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  table:has(#holdings-body) thead,
-  table:has(#trades-body) thead {
-    display: table-header-group;
   }
 
   #holdings-body tr,
@@ -274,9 +276,64 @@
   }
 
   #holdings-body td,
-  #trades-body td {
+  #trades-body td,
+  table:has(#holdings-body) th,
+  table:has(#trades-body) th {
     display: table-cell;
+    padding: 5px 3px !important;
     white-space: nowrap;
+  }
+
+  table:has(#holdings-body) th:nth-child(1),
+  table:has(#holdings-body) td:nth-child(1) {
+    width: 25% !important;
+  }
+
+  table:has(#holdings-body) th:nth-child(2),
+  table:has(#holdings-body) td:nth-child(2) {
+    width: 13% !important;
+  }
+
+  table:has(#holdings-body) th:nth-child(3),
+  table:has(#holdings-body) td:nth-child(3) {
+    width: 18% !important;
+  }
+
+  table:has(#holdings-body) th:nth-child(4),
+  table:has(#holdings-body) td:nth-child(4) {
+    width: 18% !important;
+  }
+
+  table:has(#holdings-body) th:nth-child(5),
+  table:has(#holdings-body) td:nth-child(5) {
+    width: 26% !important;
+  }
+
+  table:has(#trades-body) th:nth-child(1),
+  table:has(#trades-body) td:nth-child(1) {
+    width: 22% !important;
+  }
+
+  table:has(#trades-body) th:nth-child(2),
+  table:has(#trades-body) td:nth-child(2) {
+    width: 16% !important;
+  }
+
+  table:has(#trades-body) th:nth-child(3),
+  table:has(#trades-body) td:nth-child(3) {
+    width: 36% !important;
+  }
+
+  table:has(#trades-body) th:nth-child(4),
+  table:has(#trades-body) td:nth-child(4) {
+    width: 26% !important;
+  }
+
+  table:has(#holdings-body) img,
+  table:has(#trades-body) img {
+    width: 12px !important;
+    height: 12px !important;
+    border-radius: 3px !important;
   }
 }
 
@@ -298,9 +355,9 @@
     height: 180px !important;
   }
 
-  table:has(#holdings-body),
-  table:has(#trades-body) {
-    min-width: 680px !important;
+  th,
+  td {
+    font-size: 8.5px !important;
   }
 }
   </style>
