@@ -2804,7 +2804,7 @@ FINAL.forEach(h=>{
   const col=pnl>=0?'#1a7f4b':'#c0392b';
   const sgn=pnl>=0?'+':'';
   hBody.innerHTML+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
-    <td style="padding:4px 2px;font-weight:500;">${h.sym}</td>
+    <td style="padding:4px 2px;font-weight:500;${TICKER_STYLE}">${h.sym}</td>
     <td style="padding:4px 2px;text-align:right;color:var(--color-text-secondary);font-size:11px;">${h.qty.toFixed(3)}</td>
     <td style="padding:4px 2px;text-align:right;">$${h.price.toFixed(1)}</td>
     <td style="padding:4px 2px;text-align:right;">$${val.toFixed(1)}</td>
@@ -2869,7 +2869,7 @@ TRADE_LOG.forEach(t=>{
   tBody.innerHTML+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
     <td style="padding:4px 2px;color:var(--color-text-secondary);">${fmtD(t.date)}</td>
     <td style="padding:4px 2px;color:${col};font-weight:500;">${t.action}</td>
-    <td style="padding:4px 2px;font-weight:500;">${t.sym}</td>
+    <td style="padding:4px 2px;font-weight:500;${TICKER_STYLE}">${t.sym}</td>
     <td style="padding:4px 2px;text-align:right;">$${t.amt}</td>
   </tr>`;
 });
@@ -2938,7 +2938,7 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
           const qr=deps>0?((qv-deps)/deps*100).toFixed(1):'0';
           const snap=snaps[i];
           const hs=Object.entries(snap).sort((a,b)=>b[1].value-a[1].value).slice(0,8)
-            .map(([sym,d])=>`<span style="color:var(--color-text-secondary);margin-right:2px;">${sym}</span><span style="font-weight:500;">$${Math.round(d.value)}</span>`).join('  ');
+            .map(([sym,d])=>`<span style="color:var(--color-text-secondary);margin-right:2px;${TICKER_STYLE}">${sym}</span><span style="font-weight:500;">$${Math.round(d.value)}</span>`).join('  ');
           document.getElementById('tooltip-box').innerHTML=`
             <span style="font-weight:500;">${fmtD(date)}</span>&nbsp;&nbsp;
             <span style="color:#1a7f4b;">Portfolio $${Math.round(pv).toLocaleString()} (${pr>0?'+':''}${pr}%)</span>&nbsp;&nbsp;
@@ -2960,6 +2960,12 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
     }
   }
 });
+  const TICKER_STYLE = `
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.03em;
+`;
   const PORTFOLIO_THESIS = [
   {
     theme: "Energy & Power Infrastructure",
@@ -2994,7 +3000,7 @@ if (thesisBox) {
   thesisBox.innerHTML = PORTFOLIO_THESIS.map(item => `
     <div style="margin-bottom:8px;">
       <span style="color:var(--color-text-primary);font-weight:600;">${item.theme}</span>
-      <span style="color:var(--color-text-tertiary);"> — ${item.tickers}</span>
+      <span style="color:var(--color-text-tertiary);${TICKER_STYLE}"> — ${item.tickers}</span>
       <div>${item.text}</div>
     </div>
   `).join("");
@@ -3056,7 +3062,9 @@ backgroundColor: concentrationData.map((x, i) =>
           boxWidth: 10,
           boxHeight: 10,
           font: {
-            size: 10
+            family: "JetBrains Mono",
+  size: 10,
+  weight: "600"
           }
         }
       },
