@@ -2779,17 +2779,34 @@ if (holdingsTitle) {
   holdingsTitle.textContent =
     `CURRENT HOLDINGS (${latestLabel.toUpperCase()})`;
 }
-
+const totalGainLoss = lastPort - TOTAL_DEP;
+const totalGainLossText =
+  `${totalGainLoss >= 0 ? "+" : "-"}$${Math.abs(totalGainLoss).toFixed(1)}`;
 const cards=[
-  {label:`Portfolio (${latestLabel})`, value:`$${Math.round(lastPort).toLocaleString()}`,sub:`+${portRet}% return on capital`,color:"#1a7f4b"},
-  {label:"Total deposited",    value:`$${Math.round(TOTAL_DEP).toLocaleString()}`,sub:"capital invested",color:"var(--color-text-primary)"},
+  {
+  label:`Portfolio (${latestLabel})`,
+  value:`
+    <span>$${lastPort.toFixed(1)}</span>
+    <span style="font-size:60%;margin-left:10px;color:${totalGainLoss >= 0 ? "#1a7f4b" : "#c0392b"};vertical-align:baseline;">
+      ${totalGainLossText}
+    </span>
+  `,
+  sub:`+${portRet}% return on capital`,
+  color:"#1a7f4b"
+},
+  {
+  label:"Total deposited",
+  value:`$${TOTAL_DEP.toFixed(1)}`,
+  sub:"capital invested",
+  color:"var(--color-text-primary)"
+},
   {label:"vs SPY equiv",       value:`${vsS>0?'+':''}$${vsS}`,sub:`SPY = $${Math.round(lastSPY).toLocaleString()} (${spyRet}%)`,color:vsS>0?"#1a7f4b":"#c0392b"},
   {label:"vs QQQ equiv",       value:`${vsQ>0?'+':''}$${vsQ}`,sub:`QQQ = $${Math.round(lastQQQ).toLocaleString()} (${qqqRet}%)`,color:vsQ>0?"#1a7f4b":"#c0392b"},
 ];
 document.getElementById('metric-cards').innerHTML=cards.map(c=>`
   <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;min-width:120px;flex:1;">
     <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:4px;">${c.label}</div>
-    <div style="font-size:19px;font-weight:500;color:${c.color};">${c.value}</div>
+    <div style="font-size:19px;font-weight:500;color:${c.color};display:flex;align-items:baseline;">   ${c.value} </div>
     <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:2px;">${c.sub}</div>
   </div>`).join('');
   
