@@ -2987,7 +2987,61 @@ new Chart(document.getElementById('pnlChart'),{
     }
   }
 });
+const concentrationData = FINAL
+  .map(h => ({
+    sym: h.sym,
+    value: h.qty * h.price
+  }))
+  .sort((a, b) => b.value - a.value);
 
+const concentrationColors = [
+  "#32d583", "#60a5fa", "#fbbf24", "#f97316",
+  "#a78bfa", "#22c55e", "#06b6d4", "#ef4444",
+  "#e879f9", "#94a3b8", "#14b8a6", "#f43f5e"
+];
+
+new Chart(document.getElementById("concentrationChart"), {
+  type: "doughnut",
+  data: {
+    labels: concentrationData.map(x => x.sym),
+    datasets: [{
+      data: concentrationData.map(x =>
+        +(x.value / lastPort * 100).toFixed(1)
+      ),
+      backgroundColor: concentrationColors,
+      borderColor: "#0b1020",
+      borderWidth: 2,
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: "62%",
+    plugins: {
+      legend: {
+        position: "right",
+        labels: {
+          color: "#9fb0d1",
+          boxWidth: 10,
+          boxHeight: 10,
+          font: {
+            size: 10
+          }
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const pct = ctx.raw;
+            const dollarValue = concentrationData[ctx.dataIndex].value;
+            return `${ctx.label}: ${pct}% ($${Math.round(dollarValue).toLocaleString()})`;
+          }
+        }
+      }
+    }
+  }
+});
 
 function setView(v){
   currentView=v;
