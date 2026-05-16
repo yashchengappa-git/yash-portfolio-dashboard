@@ -2960,14 +2960,23 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
           const sr=deps>0?((sv-deps)/deps*100).toFixed(1):'0';
           const qr=deps>0?((qv-deps)/deps*100).toFixed(1):'0';
           const snap=snaps[i];
-          const hs=Object.entries(snap).sort((a,b)=>b[1].value-a[1].value).slice(0,8)
-            .map(([sym,d])=>`<span style="color:var(--color-text-secondary);margin-right:2px;${TICKER_STYLE}">${sym}</span><span style="font-weight:500;">$${Math.round(d.value)}</span>`).join('  ');
+          const hs = Object.entries(snap)
+  .sort((a,b)=>b[1].value-a[1].value)
+  .map(([sym,d])=>`
+    <span style="white-space:nowrap;margin-right:10px;">
+      <span style="color:var(--color-text-secondary);margin-right:2px;${TICKER_STYLE}">${sym}</span>
+      <span style="font-weight:500;">$${Math.round(d.value)}</span>
+    </span>
+  `).join('');
           document.getElementById('tooltip-box').innerHTML=`
             <span style="font-weight:500;">${fmtD(date)}</span>&nbsp;&nbsp;
             <span style="color:#1a7f4b;">Portfolio $${Math.round(pv).toLocaleString()} (${pr>0?'+':''}${pr}%)</span>&nbsp;&nbsp;
             <span style="color:#2563eb;">SPY $${Math.round(sv).toLocaleString()} (${sr>0?'+':''}${sr}%)</span>&nbsp;&nbsp;
             <span style="color:#d97706;">QQQ $${Math.round(qv).toLocaleString()} (${qr>0?'+':''}${qr}%)</span>
-            <br><span style="font-size:11px;color:var(--color-text-tertiary);">${hs}</span>`;
+            <br>
+<span style="font-size:11px;color:var(--color-text-tertiary);display:flex;flex-wrap:wrap;gap:3px 0;margin-top:2px;">
+  ${hs}
+</span>`;
         }
       }
     },
