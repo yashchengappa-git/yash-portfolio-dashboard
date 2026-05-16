@@ -3008,7 +3008,9 @@ new Chart(document.getElementById("concentrationChart"), {
       data: concentrationData.map(x =>
         +(x.value / lastPort * 100).toFixed(1)
       ),
-      backgroundColor: concentrationColors,
+      backgroundColor: concentrationData.map((_, i) =>
+  concentrationColors[i % concentrationColors.length]
+),
       borderColor: "#0b1020",
       borderWidth: 2,
       hoverOffset: 6
