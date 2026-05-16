@@ -2813,6 +2813,31 @@ document.getElementById('metric-cards').innerHTML=cards.map(c=>`
   font-weight:600;
   letter-spacing:.03em;
 `;
+  const LOGO_DEV_TOKEN = "pk_ZMKN3H5STmKy1DQcPo2X5A";
+
+function logoUrl(sym) {
+  return `https://img.logo.dev/ticker/${sym.toLowerCase()}?token=${LOGO_DEV_TOKEN}&size=64&format=png`;
+}
+
+function renderTickerWithLogo(sym) {
+  return `
+    <span style="display:inline-flex;align-items:center;gap:8px;${TICKER_STYLE}">
+      <img
+        src="${logoUrl(sym)}"
+        alt="${sym}"
+        style="
+          width:15px;
+          height:15px;
+          border-radius:4px;
+          object-fit:contain;
+          flex:0 0 auto;
+        "
+        onerror="this.style.display='none'"
+      >
+      <span>${sym}</span>
+    </span>
+  `;
+}
 // ── HOLDINGS TABLE ────────────────────────────────────────────────────────────
 const hBody=document.getElementById('holdings-body');
 let totalVal=0;
@@ -2824,7 +2849,7 @@ FINAL.forEach(h=>{
   const col=pnl>=0?'#5aaa7a':'#c0392b';
   const sgn=pnl>=0?'+':'';
   hBody.innerHTML+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
-    <td style="padding:4px 2px;font-weight:500;${TICKER_STYLE}">${h.sym}</td>
+    <td style="padding:4px 2px 4px 8px;font-weight:500;">   ${renderTickerWithLogo(h.sym)} </td>
     <td style="padding:4px 2px;text-align:right;color:var(--color-text-secondary);font-size:11px;">${h.qty.toFixed(3)}</td>
     <td style="padding:4px 2px;text-align:right;">$${h.price.toFixed(1)}</td>
     <td style="padding:4px 2px;text-align:right;">$${val.toFixed(1)}</td>
@@ -2889,7 +2914,7 @@ TRADE_LOG.forEach(t=>{
   tBody.innerHTML+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
     <td style="padding:4px 2px;color:var(--color-text-secondary);">${fmtD(t.date)}</td>
     <td style="padding:4px 2px;color:${col};font-weight:500;">${t.action}</td>
-    <td style="padding:4px 2px;font-weight:500;${TICKER_STYLE}">${t.sym}</td>
+    <td style="padding:4px 2px 4px 8px;font-weight:500;">   ${renderTickerWithLogo(t.sym)} </td>
     <td style="padding:4px 2px;text-align:right;">$${t.amt}</td>
   </tr>`;
 });
