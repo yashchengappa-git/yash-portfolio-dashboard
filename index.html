@@ -3254,36 +3254,35 @@ const concentrationColors = [
 ];
 
 new Chart(document.getElementById("concentrationChart"), {
-  type: "doughnut",
+  type: "pie",
   data: {
     labels: concentrationData.map(x => x.sym),
     datasets: [{
       data: concentrationData.map(x =>
         +(x.value / lastPort * 100).toFixed(1)
       ),
-backgroundColor: concentrationData.map((x, i) =>
-  BRAND_COLORS[x.sym] || concentrationColors[i % concentrationColors.length]
-),
-      borderColor: "#0b1020",
-      borderWidth: 2,
-      hoverOffset: 6
+      backgroundColor: concentrationData.map((x, i) =>
+        BRAND_COLORS[x.sym] || concentrationColors[i % concentrationColors.length]
+      ),
+      borderColor: "#090909",
+      borderWidth: 3,
+      hoverOffset: 8
     }]
   },
   options: {
     responsive: true,
     maintainAspectRatio: false,
-    cutout: "62%",
     plugins: {
       legend: {
         position: "right",
         labels: {
-          color: "#9fb0d1",
+          color: "#555555",
           boxWidth: 10,
           boxHeight: 10,
-         font:{
-  family:"Plus Jakarta Sans, sans-serif",
-  size:11,
-  weight:"600"
+          font: {
+            family: "Plus Jakarta Sans, sans-serif",
+            size: 10,
+            weight: "600"
           }
         }
       },
