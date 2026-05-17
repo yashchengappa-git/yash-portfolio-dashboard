@@ -3330,7 +3330,7 @@ const concentrationColors = [
 // ── CONCENTRATION DONUT WITH LOGOS ────────────────────────────────────────────
 (function () {
   const canvas = document.getElementById("concentrationChart");
-  const wrap = document.getElementById("concentration-wrap");
+  const wrap   = document.getElementById("concentration-wrap");
 
   const tealRamp = [
     "#1bb690","#0f6e51","#22c4a0","#0a4a35","#2dd4b0",
@@ -3339,20 +3339,21 @@ const concentrationColors = [
   ];
 
   const sliceData = concentrationData.map((x, i) => ({
-    sym: x.sym,
-    pct: +(x.value / lastPort * 100).toFixed(1),
+    sym:   x.sym,
+    pct:   +(x.value / lastPort * 100).toFixed(1),
     value: x.value,
     color: tealRamp[i % tealRamp.length]
   }));
 
   const total = sliceData.reduce((s, x) => s + x.pct, 0);
 
+  // Fetch higher-res logos for crisp canvas rendering
   const logoImgs = {};
   let loaded = 0;
   sliceData.forEach(s => {
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.src = logoUrl(s.sym);
+    img.src = `https://img.logo.dev/ticker/${s.sym.toLowerCase()}?token=${LOGO_DEV_TOKEN}&size=128&format=png`;
     img.onload  = () => { logoImgs[s.sym] = img; loaded++; if (loaded === sliceData.length) draw(); };
     img.onerror = () => {                          loaded++; if (loaded === sliceData.length) draw(); };
   });
@@ -3375,16 +3376,21 @@ const concentrationColors = [
   }
 
   function draw() {
-    const ctx  = canvas.getContext("2d");
-    const W    = canvas.width, H = canvas.height;
+    const ctx = canvas.getContext("2d");
+    const W   = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
 
-    const cx    = W / 2, cy = H / 2;
-    const R     = Math.min(W, H) / 2 - 28; // leave room for outside logos
-    const inner = R * 0.52;
+    const logoSize  = 22;
+    const pctHeight = 13; // space below logo for % label
+    const outerPad  = logoSize + pctHeight + 18; // total clearance from edge
+
+    const cx    = W / 2;
+    const cy    = H / 2;
+    const R     = Math.min(W, H) / 2 - outerPad;
+    const inner = R * 0.50;
     const data  = getAngles();
 
-    // Draw donut slices
+    // Donut slices
     data.forEach(s => {
       ctx.beginPath();
       ctx.arc(cx, cy, R, s.start, s.start + s.sweep);
@@ -3397,75 +3403,88 @@ const concentrationColors = [
       ctx.stroke();
     });
 
-    // Dark centre hole
+    // Centre hole
     ctx.beginPath();
     ctx.arc(cx, cy, inner - 1, 0, Math.PI * 2);
     ctx.fillStyle = "#111111";
     ctx.fill();
 
-    // Centre label — total value, self-updating from lastPort
+    // Centre value
     ctx.textAlign    = "center";
     ctx.textBaseline = "middle";
     ctx.fillStyle    = "#aaaaaa";
     ctx.font         = "500 13px 'JetBrains Mono', monospace";
     ctx.fillText("$" + Math.round(lastPort).toLocaleString(), cx, cy);
 
-    // Logos outside, connector lines — skip slices too small to label
-    const logoSize = Math.max(16, R * 0.18);
-    const logoR    = R + logoSize * 0.6 + 6; // centre of logo
+    // Logos + % labels outside with extended connector lines
+    const logoR = R + 10 + logoSize * 0.5 + 14; // push logos further out
 
     data.forEach(s => {
-      if (s.sweep < 0.18) return; // skip tiny slices
+      if (s.sweep < 0.15) return;
 
       const lx = cx + Math.cos(s.mid) * logoR;
       const ly = cy + Math.sin(s.mid) * logoR;
 
-      // Connector line
-      const lineStart = R + 3;
-      const lineEnd   = R + logoSize * 0.6 - 2;
+      // Extended connector line
+      const lineStart = R + 4;
+      const lineEnd   = R + 10 + logoSize * 0.5 - 2;
       ctx.beginPath();
       ctx.moveTo(cx + Math.cos(s.mid) * lineStart, cy + Math.sin(s.mid) * lineStart);
       ctx.lineTo(cx + Math.cos(s.mid) * lineEnd,   cy + Math.sin(s.mid) * lineEnd);
-      ctx.strokeStyle = "rgba(255,255,255,0.12)";
+      ctx.strokeStyle = "rgba(255,255,255,0.18)";
       ctx.lineWidth   = 1;
       ctx.stroke();
 
-      const img  = logoImgs[s.sym];
       const half = logoSize / 2;
+      const img  = logoImgs[s.sym];
 
       if (img && img.complete && img.naturalWidth > 0) {
         ctx.save();
         ctx.beginPath();
-        ctx.roundRect(lx - half, ly - half, logoSize, logoSize, 4);
+        // Use roundRect for crisp clipping
+        const rx = Math.round(lx - half);
+        const ry = Math.round(ly - half);
+        ctx.roundRect(rx, ry, logoSize, logoSize, 5);
         ctx.clip();
-        ctx.drawImage(img, lx - half, ly - half, logoSize, logoSize);
+        // Draw at exact pixel boundary for sharpest result
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(img, rx, ry, logoSize, logoSize);
         ctx.restore();
       } else {
-        // Fallback ticker text
-        ctx.fillStyle    = "rgba(255,255,255,0.5)";
-        ctx.font         = `bold ${Math.max(8, logoSize * 0.4)}px 'JetBrains Mono', monospace`;
+        ctx.fillStyle    = "rgba(255,255,255,0.4)";
+        ctx.font         = `bold 8px 'JetBrains Mono', monospace`;
         ctx.textAlign    = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(s.sym, lx, ly);
       }
+
+      // % label just below the logo
+      ctx.fillStyle    = "rgba(255,255,255,0.35)";
+      ctx.font         = `500 9px 'JetBrains Mono', monospace`;
+      ctx.textAlign    = "center";
+      ctx.textBaseline = "top";
+      ctx.fillText(s.pct.toFixed(1) + "%", lx, ly + half + 3);
     });
   }
 
-  // Tooltip
+  // Tooltip on donut ring only
   canvas.addEventListener("mousemove", e => {
-    const rect = canvas.getBoundingClientRect();
-    const mx   = e.clientX - rect.left, my = e.clientY - rect.top;
-    const cx   = canvas.width / 2,      cy = canvas.height / 2;
-    const R    = Math.min(canvas.width, canvas.height) / 2 - 28;
-    const inner = R * 0.52;
-    const dx   = mx - cx, dy = my - cy, dist = Math.sqrt(dx*dx + dy*dy);
+    const rect  = canvas.getBoundingClientRect();
+    const mx    = e.clientX - rect.left, my = e.clientY - rect.top;
+    const cx    = canvas.width / 2,      cy = canvas.height / 2;
+    const logoSize  = 22;
+    const outerPad  = logoSize + 13 + 18;
+    const R     = Math.min(canvas.width, canvas.height) / 2 - outerPad;
+    const inner = R * 0.50;
+    const dx    = mx - cx, dy = my - cy;
+    const dist  = Math.sqrt(dx * dx + dy * dy);
     if (dist > R || dist < inner) { canvas.title = ""; return; }
     let angle = Math.atan2(dy, dx);
     if (angle < -Math.PI / 2) angle += 2 * Math.PI;
     for (const s of getAngles()) {
-      let st = s.start < -Math.PI/2 ? s.start + 2*Math.PI : s.start;
-      let en = st + s.sweep;
-      if (angle >= st && angle <= en) {
+      let st = s.start < -Math.PI / 2 ? s.start + 2 * Math.PI : s.start;
+      if (angle >= st && angle <= st + s.sweep) {
         canvas.title = `${s.sym}: ${s.pct}% ($${Math.round(s.value).toLocaleString()})`;
         return;
       }
