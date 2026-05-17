@@ -447,44 +447,59 @@
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:1.25rem;">
   <div class="table-panel">
     <div id="holdings-title" class="table-panel-title">
-  Current Holdings
-</div>
+      Current Holdings
+    </div>
+
     <div class="table-scroll">
-    <table style="width:100%;font-size:12px;border-collapse:collapse;table-layout:fixed;">
-      <colgroup><col style="width:15%"><col style="width:15%"><col style="width:16%"><col style="width:16%"><col style="width:38%"></colgroup>
-      <thead><tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
-        <th style="text-align:left;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">SYM</th>
-        <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">QTY</th>
-        <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">PRICE</th>
-        <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">VALUE</th>
-        <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">P&L</th>
-      </tr></thead>
-      <tbody id="holdings-body"></tbody>
-    </table>
-      <div id="holdings-total" class="holdings-total-row"></div>
-  </div>
-  <div class="table-panel">
-    <div class="table-panel-title">Trade history</div>
-    <div class="table-scroll">
-    <div style="max-height:270px;overflow-y:auto;">
       <table style="width:100%;font-size:12px;border-collapse:collapse;table-layout:fixed;">
-        <colgroup><col style="width:22%"><col style="width:14%"><col style="width:28%"><col style="width:36%"></colgroup>
+        <colgroup>
+          <col style="width:15%">
+          <col style="width:15%">
+          <col style="width:16%">
+          <col style="width:16%">
+          <col style="width:38%">
+        </colgroup>
         <thead>
-  <tr style="border-bottom:0.5px solid var(--color-border-tertiary);"> 
-    <th style="text-align:left;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;position:sticky;top:0;background:#181818;backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.04);z-index:2;">DATE</th>
+          <tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
+            <th style="text-align:left;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">SYM</th>
+            <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">QTY</th>
+            <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">PRICE</th>
+            <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">VALUE</th>
+            <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">P&L</th>
+          </tr>
+        </thead>
+        <tbody id="holdings-body"></tbody>
+      </table>
+    </div>
 
-<th style="text-align:left;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;position:sticky;top:0;background:#181818;backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.04);z-index:2;">ACT</th>
+    <div id="holdings-total" class="holdings-total-row"></div>
+  </div>
 
-<th style="text-align:left;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;position:sticky;top:0;background:#181818;backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.04);z-index:2;">SYMBOL</th>
+  <div class="table-panel">
+    <div class="table-panel-title">
+      Trade History
+    </div>
 
-<th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;position:sticky;top:0;background:#181818;backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.04);z-index:2;">AMT</th>
-  </tr>
-</thead>
+    <div class="table-scroll">
+      <table style="width:100%;font-size:12px;border-collapse:collapse;table-layout:fixed;">
+        <colgroup>
+          <col style="width:22%">
+          <col style="width:14%">
+          <col style="width:28%">
+          <col style="width:36%">
+        </colgroup>
+        <thead>
+          <tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
+            <th style="text-align:left;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;position:sticky;top:0;background:#181818;z-index:2;">DATE</th>
+            <th style="text-align:left;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;position:sticky;top:0;background:#181818;z-index:2;">ACT</th>
+            <th style="text-align:left;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;position:sticky;top:0;background:#181818;z-index:2;">SYMBOL</th>
+            <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;position:sticky;top:0;background:#181818;z-index:2;">AMT</th>
+          </tr>
+        </thead>
         <tbody id="trades-body"></tbody>
       </table>
     </div>
   </div>
-</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
