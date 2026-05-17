@@ -463,8 +463,9 @@
     </table>
       <div id="holdings-total" class="holdings-total-row"></div>
   </div>
-  <div>
-    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Trade history</div>
+  <div class="table-panel">
+    <div class="table-panel-title">Trade history</div>
+    <div class="table-scroll">
     <div style="max-height:270px;overflow-y:auto;">
       <table style="width:100%;font-size:12px;border-collapse:collapse;table-layout:fixed;">
         <colgroup><col style="width:22%"><col style="width:14%"><col style="width:28%"><col style="width:36%"></colgroup>
@@ -3069,11 +3070,24 @@ FINAL.forEach(h=>{
     <td style="padding:4px 2px;text-align:right;color:${col};">${sgn}$${pnl.toFixed(1)} (${sgn}${pnlPct}%)</td>
   </tr>`;
 });
-hBody.innerHTML+=`<tr style="border-top:0.5px solid var(--color-border-secondary);">
-  <td colspan="3" style="padding:5px 2px;font-weight:500;font-size:11px;color:var(--color-text-secondary);">Total</td>
-  <td style="padding:5px 2px;text-align:right;font-weight:600;">$${totalVal.toFixed(1)}</td>
-  <td style="padding:5px 2px;text-align:right;font-weight:600;color:#5aaa7a;">+$${(totalVal-TOTAL_DEP).toFixed(1)}</td>
-</tr>`;
+document.getElementById("holdings-total").innerHTML = `
+  <table style="width:100%;font-size:12px;border-collapse:collapse;table-layout:fixed;">
+    <colgroup>
+      <col style="width:15%">
+      <col style="width:15%">
+      <col style="width:16%">
+      <col style="width:16%">
+      <col style="width:38%">
+    </colgroup>
+    <tbody>
+      <tr>
+        <td colspan="3" style="padding:5px 2px;font-weight:500;font-size:11px;color:var(--color-text-secondary);">Total</td>
+        <td style="padding:5px 2px;text-align:right;font-weight:600;">$${totalVal.toFixed(1)}</td>
+        <td style="padding:5px 2px;text-align:right;font-weight:600;color:#1a7f4b;">+$${(totalVal-TOTAL_DEP).toFixed(1)}</td>
+      </tr>
+    </tbody>
+  </table>
+`;
 
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
 const TRADE_LOG=[
