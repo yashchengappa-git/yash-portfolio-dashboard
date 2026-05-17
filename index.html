@@ -197,6 +197,49 @@
     .sr-only{
       display:none;
     }
+    /* ===== Fixed bottom table panels ===== */
+.table-panel {
+  height: 330px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.table-panel-title {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  flex: 0 0 auto;
+}
+
+.table-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+.table-scroll table {
+  width: 100%;
+  font-size: 12px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table-scroll thead th {
+  position: sticky;
+  top: 0;
+  background: #111111;
+  z-index: 2;
+}
+
+.holdings-total-row {
+  flex: 0 0 auto;
+  border-top: 0.5px solid var(--color-border-secondary);
+  padding-top: 6px;
+}
     /* Mobile Optimisation */
 @media (max-width: 768px) {
   html,
@@ -402,10 +445,11 @@
 </div>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:1.25rem;">
-  <div>
-    <div id="holdings-title" style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">
+  <div class="table-panel">
+    <div id="holdings-title" class="table-panel-title">
   Current Holdings
 </div>
+    <div class="table-scroll">
     <table style="width:100%;font-size:12px;border-collapse:collapse;table-layout:fixed;">
       <colgroup><col style="width:15%"><col style="width:15%"><col style="width:16%"><col style="width:16%"><col style="width:38%"></colgroup>
       <thead><tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
@@ -417,6 +461,7 @@
       </tr></thead>
       <tbody id="holdings-body"></tbody>
     </table>
+      <div id="holdings-total" class="holdings-total-row"></div>
   </div>
   <div>
     <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;">Trade history</div>
