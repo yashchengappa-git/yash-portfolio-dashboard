@@ -438,7 +438,7 @@
   <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">
     Portfolio Concentration
   </div>
-  <div style="position:relative;height:260px;" id="concentration-wrap">
+  <div style="position:relative;height:300px;" id="concentration-wrap">
   <canvas id="concentrationChart"></canvas>
 </div>
 </div>
@@ -3327,173 +3327,158 @@ const concentrationColors = [
   "#e879f9", "#94a3b8", "#14b8a6", "#f43f5e"
 ];
 
-// ── CONCENTRATION DONUT WITH LOGOS ────────────────────────────────────────────
+// ── CONCENTRATION TREEMAP ─────────────────────────────────────────────────────
 (function () {
-  const canvas = document.getElementById("concentrationChart");
-  const wrap   = document.getElementById("concentration-wrap");
+  const wrap = document.getElementById("concentration-wrap");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  wrap.style.position = "relative";
+  wrap.style.overflow = "hidden";
+
+  const GAP = 3;
 
   const tealRamp = [
-    "#1bb690","#0f6e51","#22c4a0","#0a4a35","#2dd4b0",
-    "#128060","#44e0c0","#0d5c43","#66e8ce","#159270",
-    "#88f0dc","#18a480"
+    "#2dd4b0","#22c4a0","#1bb690","#18a480",
+    "#128060","#0f6e51","#0d5c43","#159270",
+    "#44e0c0","#0a4a35","#66e8ce","#085041"
   ];
 
-  const sliceData = concentrationData.map((x, i) => ({
-    sym:   x.sym,
-    pct:   +(x.value / lastPort * 100).toFixed(1),
-    value: x.value,
-    color: tealRamp[i % tealRamp.length]
-  }));
-
-  const total = sliceData.reduce((s, x) => s + x.pct, 0);
-
-  // Fetch higher-res logos for crisp canvas rendering
-  const logoImgs = {};
-  let loaded = 0;
-  sliceData.forEach(s => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = `https://img.logo.dev/ticker/${s.sym.toLowerCase()}?token=${LOGO_DEV_TOKEN}&size=128&format=png`;
-    img.onload  = () => { logoImgs[s.sym] = img; loaded++; if (loaded === sliceData.length) draw(); };
-    img.onerror = () => {                          loaded++; if (loaded === sliceData.length) draw(); };
-  });
-
-  function resize() {
-    canvas.width  = wrap.clientWidth;
-    canvas.height = wrap.clientHeight;
-    draw();
+  function getSlices() {
+    return concentrationData
+      .slice()
+      .sort((a, b) => b.value - a.value)
+      .map(x => ({ sym: x.sym, val: x.value, pct: +(x.value / lastPort * 100).toFixed(1) }));
   }
 
-  function getAngles() {
-    let a = -Math.PI / 2;
-    return sliceData.map(s => {
-      const sweep = (s.pct / total) * 2 * Math.PI;
-      const mid   = a + sweep / 2;
-      const start = a;
-      a += sweep;
-      return { ...s, start, sweep, mid };
-    });
-  }
-
-  function draw() {
-    const ctx = canvas.getContext("2d");
-    const W   = canvas.width, H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
-
-    const logoSize  = 22;
-    const pctHeight = 13; // space below logo for % label
-    const outerPad  = logoSize + pctHeight + 18; // total clearance from edge
-
-    const cx    = W / 2;
-    const cy    = H / 2;
-    const R     = Math.min(W, H) / 2 - outerPad;
-    const inner = R * 0.50;
-    const data  = getAngles();
-
-    // Donut slices
-    data.forEach(s => {
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, s.start, s.start + s.sweep);
-      ctx.arc(cx, cy, inner, s.start + s.sweep, s.start, true);
-      ctx.closePath();
-      ctx.fillStyle   = s.color;
-      ctx.fill();
-      ctx.strokeStyle = "#090909";
-      ctx.lineWidth   = 2.5;
-      ctx.stroke();
-    });
-
-    // Centre hole
-    ctx.beginPath();
-    ctx.arc(cx, cy, inner - 1, 0, Math.PI * 2);
-    ctx.fillStyle = "#111111";
-    ctx.fill();
-
-    // Centre value
-    ctx.textAlign    = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillStyle    = "#aaaaaa";
-    ctx.font         = "500 13px 'JetBrains Mono', monospace";
-    ctx.fillText("$" + Math.round(lastPort).toLocaleString(), cx, cy);
-
-    // Logos + % labels outside with extended connector lines
-    const logoR = R + 10 + logoSize * 0.5 + 14; // push logos further out
-
-    data.forEach(s => {
-      if (s.sweep < 0.15) return;
-
-      const lx = cx + Math.cos(s.mid) * logoR;
-      const ly = cy + Math.sin(s.mid) * logoR;
-
-      // Extended connector line
-      const lineStart = R + 4;
-      const lineEnd   = R + 10 + logoSize * 0.5 - 2;
-      ctx.beginPath();
-      ctx.moveTo(cx + Math.cos(s.mid) * lineStart, cy + Math.sin(s.mid) * lineStart);
-      ctx.lineTo(cx + Math.cos(s.mid) * lineEnd,   cy + Math.sin(s.mid) * lineEnd);
-      ctx.strokeStyle = "rgba(255,255,255,0.18)";
-      ctx.lineWidth   = 1;
-      ctx.stroke();
-
-      const half = logoSize / 2;
-      const img  = logoImgs[s.sym];
-
-      if (img && img.complete && img.naturalWidth > 0) {
-        ctx.save();
-        ctx.beginPath();
-        // Use roundRect for crisp clipping
-        const rx = Math.round(lx - half);
-        const ry = Math.round(ly - half);
-        ctx.roundRect(rx, ry, logoSize, logoSize, 5);
-        ctx.clip();
-        // Draw at exact pixel boundary for sharpest result
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
-        ctx.drawImage(img, rx, ry, logoSize, logoSize);
-        ctx.restore();
-      } else {
-        ctx.fillStyle    = "rgba(255,255,255,0.4)";
-        ctx.font         = `bold 8px 'JetBrains Mono', monospace`;
-        ctx.textAlign    = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(s.sym, lx, ly);
+  function squarify(items, x, y, w, h) {
+    const rects = [];
+    function layout(items, x, y, w, h) {
+      if (!items.length) return;
+      if (items.length === 1) { rects.push({ ...items[0], x, y, w, h }); return; }
+      const half = items.reduce((s, i) => s + i.val, 0) / 2;
+      let sum = 0, split = 0;
+      for (let i = 0; i < items.length; i++) {
+        sum += items[i].val;
+        if (sum >= half) { split = i + 1; break; }
       }
-
-      // % label just below the logo
-      ctx.fillStyle    = "rgba(255,255,255,0.35)";
-      ctx.font         = `500 9px 'JetBrains Mono', monospace`;
-      ctx.textAlign    = "center";
-      ctx.textBaseline = "top";
-      ctx.fillText(s.pct.toFixed(1) + "%", lx, ly + half + 3);
-    });
-  }
-
-  // Tooltip on donut ring only
-  canvas.addEventListener("mousemove", e => {
-    const rect  = canvas.getBoundingClientRect();
-    const mx    = e.clientX - rect.left, my = e.clientY - rect.top;
-    const cx    = canvas.width / 2,      cy = canvas.height / 2;
-    const logoSize  = 22;
-    const outerPad  = logoSize + 13 + 18;
-    const R     = Math.min(canvas.width, canvas.height) / 2 - outerPad;
-    const inner = R * 0.50;
-    const dx    = mx - cx, dy = my - cy;
-    const dist  = Math.sqrt(dx * dx + dy * dy);
-    if (dist > R || dist < inner) { canvas.title = ""; return; }
-    let angle = Math.atan2(dy, dx);
-    if (angle < -Math.PI / 2) angle += 2 * Math.PI;
-    for (const s of getAngles()) {
-      let st = s.start < -Math.PI / 2 ? s.start + 2 * Math.PI : s.start;
-      if (angle >= st && angle <= st + s.sweep) {
-        canvas.title = `${s.sym}: ${s.pct}% ($${Math.round(s.value).toLocaleString()})`;
-        return;
+      split = Math.max(1, Math.min(split, items.length - 1));
+      const a = items.slice(0, split);
+      const b = items.slice(split);
+      const ratio = a.reduce((s, i) => s + i.val, 0) / items.reduce((s, i) => s + i.val, 0);
+      if (w >= h) {
+        const wa = w * ratio;
+        strip(a, x, y, wa, h);
+        layout(b, x + wa, y, w - wa, h);
+      } else {
+        const ha = h * ratio;
+        strip(a, x, y, w, ha);
+        layout(b, x, y + ha, w, h - ha);
       }
     }
-    canvas.title = "";
-  });
+    function strip(items, x, y, w, h) {
+      const sum = items.reduce((s, i) => s + i.val, 0);
+      let off = 0;
+      items.forEach(item => {
+        const frac = item.val / sum;
+        if (w >= h) { rects.push({ ...item, x: x + off, y, w: w * frac, h }); off += w * frac; }
+        else        { rects.push({ ...item, x, y: y + off, w, h: h * frac }); off += h * frac; }
+      });
+    }
+    layout(items, x, y, w, h);
+    return rects;
+  }
 
-  window.addEventListener("resize", resize);
-  resize();
+  function build() {
+    wrap.innerHTML = "";
+    const W = wrap.clientWidth;
+    const H = wrap.clientHeight;
+    if (!W || !H) return;
+
+    const slices = getSlices();
+    const rects  = squarify(slices, 0, 0, W, H);
+
+    rects.forEach((r, i) => {
+      const gx = r.x + GAP / 2;
+      const gy = r.y + GAP / 2;
+      const gw = r.w - GAP;
+      const gh = r.h - GAP;
+      if (gw < 6 || gh < 6) return;
+
+      const cell = document.createElement("div");
+      cell.title = `${r.sym}: ${r.pct}% ($${Math.round(r.val).toLocaleString()})`;
+      Object.assign(cell.style, {
+        position:       "absolute",
+        left:           gx + "px",
+        top:            gy + "px",
+        width:          gw + "px",
+        height:         gh + "px",
+        background:     tealRamp[i % tealRamp.length],
+        borderRadius:   "6px",
+        overflow:       "hidden",
+        display:        "flex",
+        flexDirection:  "column",
+        alignItems:     "center",
+        justifyContent: "center",
+        gap:            "3px",
+        cursor:         "default",
+        transition:     "filter .15s",
+        boxSizing:      "border-box",
+      });
+      cell.addEventListener("mouseenter", () => cell.style.filter = "brightness(1.18)");
+      cell.addEventListener("mouseleave", () => cell.style.filter = "");
+
+      const minDim   = Math.min(gw, gh);
+      const showLogo = minDim > 32;
+      const showPct  = gw > 44 && gh > 44;
+
+      if (showLogo) {
+        const logoSize = Math.round(Math.min(minDim * 0.48, 44));
+        const img = document.createElement("img");
+        img.crossOrigin = "anonymous";
+        img.src = `https://img.logo.dev/ticker/${r.sym.toLowerCase()}?token=${LOGO_DEV_TOKEN}&size=128&format=png`;
+        Object.assign(img.style, {
+          width:        logoSize + "px",
+          height:       logoSize + "px",
+          borderRadius: Math.max(4, logoSize * 0.18) + "px",
+          objectFit:    "contain",
+          display:      "block",
+          flexShrink:   "0",
+          imageRendering: "high-quality",
+        });
+        img.onerror = () => {
+          img.remove();
+          const fb = document.createElement("span");
+          Object.assign(fb.style, {
+            fontSize:   Math.min(Math.max(9, minDim * 0.13), 13) + "px",
+            fontWeight: "600",
+            color:      "rgba(255,255,255,0.85)",
+            fontFamily: "'JetBrains Mono', monospace",
+          });
+          fb.textContent = r.sym;
+          cell.insertBefore(fb, cell.firstChild);
+        };
+        cell.appendChild(img);
+      }
+
+      if (showPct) {
+        const pct = document.createElement("div");
+        Object.assign(pct.style, {
+          fontSize:   Math.min(Math.max(9, minDim * 0.1), 11) + "px",
+          color:      "rgba(255,255,255,0.45)",
+          fontFamily: "'JetBrains Mono', monospace",
+          lineHeight: "1",
+          flexShrink: "0",
+        });
+        pct.textContent = r.pct.toFixed(1) + "%";
+        cell.appendChild(pct);
+      }
+
+      wrap.appendChild(cell);
+    });
+  }
+
+  build();
+  window.addEventListener("resize", build);
 })();
 
 function setView(v){
