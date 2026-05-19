@@ -521,23 +521,6 @@ const RAW_DEP=[
 ];
 const TOTAL_DEP=RAW_DEP.reduce((s,d)=>s+d.amt,0); // 2355
 
-// ── VERIFIED FINAL HOLDINGS (May 14 from screenshot) ─────────────────────────
-const FINAL=[
-  {sym:"MSFT",qty:0.881413876, price: 423.54, cost:410.57},
-  {sym:"NVDA",qty:1.510827649, price: 222.32, cost:196.61},
-  {sym:"COHR", qty:0.837751919, price: 362.83, cost:338.82},
-  {sym:"GEV", qty:0.253443883, price: 1012.25,cost:1065.36},
-  {sym:"CRWD",qty:0.543026447, price: 618.83, cost:459.02},
-  {sym:"AMZN",qty:1.000000000, price: 264.86, cost:243.00},
-  {sym:"MU",  qty:0.411926045, price: 681.54, cost:510.12},
-  {sym:"VRT", qty:0.788059438, price: 339.73, cost:223.07},
-  {sym:"PENG",qty:3.462235784, price: 45.71,  cost:44.90},
-  {sym:"VIAV",qty:3.000000000, price: 49.75,  cost:43.93},
-  {sym:"NBIS",qty:0.602579317, price: 199.86, cost:104.24},
-  {sym:"NOW",qty:1.099796115,price: 103.42,cost:93.19},
-];
-const FINAL_TOTAL=FINAL.reduce((s,h)=>s+h.qty*h.price,0); // ~2994
-
 // ── BENCHMARK PRICES ─────────────────────────────────────────────────────────
 const SPY={
   "2026-01-07":689.58,
@@ -633,7 +616,6 @@ const SPY={
   "2026-05-18":738.65
 
 
-
 };
 const QQQ={
   "2026-01-07":624.02,
@@ -727,7 +709,6 @@ const QQQ={
   "2026-05-14":719.79,
   "2026-05-15":708.93,
   "2026-05-18":705.88
-
 
 
 };
@@ -2942,6 +2923,7 @@ const TRADES=[
   {date:"2026-05-08",sym:"GEV", side:"buy", qty:0.067517883, price: 1012.25},
   {date:"2026-05-11",sym:"PENG",side:"buy", qty:3.462235784, price: 45.71},
   {date:"2026-05-15",sym:"NOW",side:"buy",qty:1.099796115,price: 103.42},
+  {date:"2026-05-18",sym:"AVGO",side:"buy",qty:0.53693533,price: 419.14},
 ];
 
 // ── SIMULATION ────────────────────────────────────────────────────────────────
@@ -2981,8 +2963,48 @@ for(const day of DAYS){
   snaps.push(snap);
 }
 
-// Reconcile: the last simulated value vs real $2994
-// Instead of scaling entire series (would distort), just replace last point
+// ── FINAL HOLDINGS (auto-derived from TRADES + SK prices) ────────────────────
+// Cost basis: weighted average from TRADES
+const _costBasis = {};
+const _costQty   = {};
+for (const t of TRADES) {
+  if (!_costBasis[t.sym]) { _costBasis[t.sym] = 0; _costQty[t.sym] = 0; }
+  if (t.side === 'buy') {
+    _costBasis[t.sym] = (_costBasis[t.sym] * _costQty[t.sym] + t.price * t.qty)
+                        / (_costQty[t.sym] + t.qty);
+    _costQty[t.sym]  += t.qty;
+  } else {
+    _costQty[t.sym]  -= t.qty;
+    if (_costQty[t.sym] < 0.000001) { _costQty[t.sym] = 0; _costBasis[t.sym] = 0; }
+  }
+}
+// Latest price = last entry in SK for each sym
+const _latestPrice = sym => {
+  const series = SK[sym];
+  if (!series) return 0;
+  const keys = Object.keys(series).sort();
+  return series[keys[keys.length - 1]];
+};
+// Current quantities from replaying TRADES
+const _qtyMap = {};
+for (const t of TRADES) {
+  if (!_qtyMap[t.sym]) _qtyMap[t.sym] = 0;
+  _qtyMap[t.sym] += t.side === 'buy' ? t.qty : -t.qty;
+  if (_qtyMap[t.sym] < 0.000001) _qtyMap[t.sym] = 0;
+}
+const FINAL = Object.entries(_qtyMap)
+  .filter(([, qty]) => qty > 0.000001)
+  .map(([sym, qty]) => ({
+    sym, qty,
+    price: _latestPrice(sym),
+    cost:  _costBasis[sym] || 0
+  }))
+  .filter(h => h.price > 0)
+  .sort((a, b) => (b.qty * b.price) - (a.qty * a.price));
+
+const FINAL_TOTAL = FINAL.reduce((s, h) => s + h.qty * h.price, 0);
+
+// Reconcile: replace last chart point with derived FINAL_TOTAL
 portVals[portVals.length-1]=+FINAL_TOTAL.toFixed(2);
 
 const lastPort=portVals[portVals.length-1];
@@ -3113,7 +3135,7 @@ document.getElementById("holdings-total").innerHTML = `
 
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
 const TRADE_LOG=[
-  {date:"2026-05-18",action:"buy", sym:"AVGO",amt:225.05},
+  {date:"2026-05-18",action:"buy", sym:"AVGO",amt:225},
   {date:"2026-05-15",action:"buy", sym:"NOW",amt:102.49},
   {date:"2026-05-11",action:"buy", sym:"PENG",amt:156},
   {date:"2026-05-08",action:"sell",sym:"NBIS",amt:71},
@@ -3321,6 +3343,13 @@ const BRAND_COLORS = {
   NOW: "#00C4B3",
   AVGO: "#CC092F"
 };
+
+// Add AVGO to SK if not already present — initial price at buy date
+if (!SK["AVGO"]) {
+  SK["AVGO"] = {
+    "2026-05-18": 419.14
+  };
+}
 
 const concentrationData = FINAL
   .map(h => ({
