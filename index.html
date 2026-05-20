@@ -3149,12 +3149,11 @@ FINAL.forEach(h=>{
   const col=pnl>=0?'#5aaa7a':'#c0392b';
   const sgn=pnl>=0?'+':'';
   hBody.innerHTML+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
-    <td style="padding:4px 2px 4px 8px;font-weight:500;">   ${renderTickerWithLogo(h.sym)} </td>
-    <td style="padding:4px 2px;text-align:right;color:var(--color-text-secondary);font-size:11px;">${h.qty.toFixed(3)}</td>
-    <td style="padding:4px 2px;text-align:right;">$${h.price.toFixed(1)}</td>
-    <td style="padding:4px 2px;text-align:right;">$${val.toFixed(1)}</td>
-    <td style="padding:4px 2px;text-align:right;color:${col};">${sgn}$${pnl.toFixed(1)} (${sgn}${pnlPct}%)</td>
-  </tr>`;
+  <td style="padding:6px 2px 6px 8px;font-weight:500;">${renderTickerWithLogo(h.sym)}</td>
+  <td style="padding:6px 2px;text-align:right;color:var(--color-text-secondary);font-size:11px;">${h.qty.toFixed(3)}</td>
+  <td style="padding:6px 2px;text-align:right;">$${h.price.toFixed(1)}</td>
+  <td style="padding:6px 2px;text-align:right;color:${col};">${sgn}$${pnl.toFixed(1)}<br><span style="font-size:10px;opacity:0.8;">${sgn}${pnlPct}%</span></td>
+</tr>`;
 });
 document.getElementById("holdings-total").innerHTML = `
   <table style="width:100%;font-size:12px;border-collapse:collapse;table-layout:fixed;">
