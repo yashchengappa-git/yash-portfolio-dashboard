@@ -58,8 +58,8 @@ function deriveHoldings(html) {
   return holdings;
 }
 
-// ── Append a price entry to a stock's SK block ───────────────────────────────
-function appendSkPrice(html, symbol, date, price) {
+// ── Append (or overwrite) a price entry in a stock's SK block ────────────────
+function appendSkPrice(html, symbol, date, price, force = false) {
   const blockRegex = new RegExp(
     `(\\b${symbol}:\\s*\\{)([\\s\\S]*?)(\\s*\\}(?:\\s*,|\\s*\\n\\s*\\}))`
   );
@@ -72,9 +72,19 @@ function appendSkPrice(html, symbol, date, price) {
   }
 
   const body = match[2];
+
   if (body.includes(`"${date}"`)) {
-    console.log(`SK.${symbol} already has ${date}, skipping.`);
-    return html;
+    if (!force) {
+      console.log(`SK.${symbol} already has ${date}, skipping.`);
+      return html;
+    }
+    // Force: overwrite the existing price for this date
+    console.log(`SK.${symbol} overwriting ${date} -> $${price.toFixed(2)}`);
+    const updated = body.replace(
+      new RegExp(`("${date}"\\s*:\\s*)[0-9.]+`),
+      `$1${price.toFixed(2)}`
+    );
+    return html.replace(blockRegex, `$1${updated}$3`);
   }
 
   const trimmed = body.trimEnd().replace(/,\s*$/, "");
@@ -104,6 +114,10 @@ const RATE_LIMIT_MS = 15000; // Alpha Vantage free: 5/min, 15s gap to be safe
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 async function run() {
+  // Pass --force to always overwrite today's prices (useful for manual reruns)
+  const force = process.argv.includes("--force");
+  if (force) console.log("⚡ Force mode: overwriting today's prices.\n");
+
   let html = fs.readFileSync("index.html", "utf8");
 
   const holdings = deriveHoldings(html);
@@ -123,7 +137,7 @@ async function run() {
     try {
       const price = await getPrice(symbol);
       prices[symbol] = price;
-      html = appendSkPrice(html, symbol, today, price);
+      html = appendSkPrice(html, symbol, today, price, force);
     } catch (err) {
       console.error(`  ✗ Failed ${symbol}: ${err.message}`);
     }
