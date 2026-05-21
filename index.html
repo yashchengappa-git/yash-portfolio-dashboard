@@ -2983,6 +2983,11 @@ const TRADES=[
   {date:"2026-05-18",sym:"AVGO",side:"buy",qty:0.53693533,price: 419.14},
   {date:"2026-05-19",sym:"NBIS",side:"sell",qty:0.6022579317, price: 184.98},
   {date:"2026-05-19",sym:"NBIS",side:"buy",qty:0.5507777867, price: 200.93},
+  {date:"2026-05-20",sym:"VIAV",side:"sell",qty:1.5, price: 45.39},
+  {date:"2026-05-20",sym:"NOW",side:"sell",qty:0.3062537, price: 97.96},
+  {date:"2026-05-20",sym:"NOW",side:"buy",qty:0.609189783, price: 97.96},
+  {date:"2026-05-20",sym:"NBIS",side:"buy",qty:0.1925755, price: 196.75},
+  
 ];
 
 // ── SIMULATION ────────────────────────────────────────────────────────────────
@@ -3193,6 +3198,10 @@ document.getElementById("holdings-total").innerHTML = `
 
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
 const TRADE_LOG=[
+  {date:"2026-05-20",action:"buy", sym:"NBIS",amt:37.89},
+  {date:"2026-05-20",action:"buy", sym:"NOW",amt:59.82},
+  {date:"2026-05-20",action:"sell", sym:"NOW",amt:30.00},
+  {date:"2026-05-20",action:"sell", sym:"VIAV",amt:68.09},
   {date:"2026-05-19",action:"buy", sym:"NBIS",amt:110.67},
   {date:"2026-05-19",action:"sell",sym:"NBIS",amt:111.47},
   {date:"2026-05-18",action:"buy", sym:"AVGO",amt:225},
