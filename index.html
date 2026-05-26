@@ -3210,6 +3210,7 @@ FINAL.forEach(h=>{
   <td style="padding:6px 2px 6px 8px;font-weight:500;">${renderTickerWithLogo(h.sym)}</td>
   <td style="padding:6px 2px;text-align:right;color:var(--color-text-secondary);font-size:11px;">${h.qty.toFixed(3)}</td>
   <td style="padding:6px 2px;text-align:right;">$${h.price.toFixed(1)}</td>
+  <td style="padding:6px 2px;text-align:right;">$${val.toFixed(1)}</td>
   <td style="padding:6px 2px;text-align:right;color:${col};">${sgn}$${pnl.toFixed(1)}<br><span style="font-size:10px;opacity:0.8;">${sgn}${pnlPct}%</span></td>
 </tr>`;
 });
@@ -3403,12 +3404,12 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
   {
     theme: "Photonics & Optical Connectivity",
     tickers: "COHR, VIAV, PENG",
-    text: "Three distinct layers of the AI compute stack. NVDA is the foundation — GPU dominance, the CUDA software moat, and datacenter revenue that continues to surprise to the upside. AVGO sits alongside it as the custom silicon play — designing purpose-built AI accelerators for hyperscalers like Google and Meta who want compute optimised for their specific workloads rather than paying the general-purpose GPU premium. AVGO's networking silicon also ties GPU clusters together at scale, giving it a foot in the connectivity layer too. MU is the memory underneath all of it: HBM is a structural requirement for AI GPUs, MU is one of three companies globally that can supply it, and the cyclical recovery provides a floor while HBM adoption is the thesis on top."
+    text: "Data moving between GPUs, between servers, and between datacenters needs to travel at speeds that copper cannot sustain at scale. Optical transceivers and photonic components are the connective tissue of AI infrastructure, and demand is being pulled by the same hyperscaler buildout driving the rest of this portfolio. COHR is the largest and most direct play. VIAV and PENG are smaller, earlier-stage positions where the asymmetry is interesting given where optical networking demand is heading.          "
   },
   {
     theme: "Semiconductors & Compute",
     tickers: " NVDA, AVGO, MU",
-    text: "NVDA is the foundation — GPU dominance, the CUDA software moat, and a datacenter revenue trajectory that continues to surprise to the upside. The hardware that everything else in this portfolio ultimately serves. MU sits alongside it as the memory layer: HBM is a structural requirement for AI GPUs, MU is one of three companies globally that can supply it, and the cyclical memory recovery provides a floor while HBM adoption is the thesis on top."
+    text: "Three distinct layers of the AI compute stack. NVDA is the foundation — GPU dominance, the CUDA software moat, and datacenter revenue that continues to surprise to the upside. AVGO sits alongside it as the custom silicon play — designing purpose-built AI accelerators for hyperscalers like Google and Meta who want compute optimised for their specific workloads rather than paying the general-purpose GPU premium. AVGO's networking silicon also ties GPU clusters together at scale, giving it a foot in the connectivity layer too. MU is the memory underneath all of it: HBM is a structural requirement for AI GPUs, MU is one of three companies globally that can supply it, and the cyclical recovery provides a floor while HBM adoption is the thesis on top."
   },
   {
     theme: " Security & AI Operations",
