@@ -3064,41 +3064,42 @@ for(const day of DAYS){
 }
 
 // ── FINAL HOLDINGS (auto-derived from TRADES + SK prices) ────────────────────
-// Cost basis: weighted average from TRADES
-const _costBasis = {};
-const _costQty   = {};
+// ── COST BASIS: track actual cash in per symbol ───────────────────────────────
+const _cashIn  = {};  // total $ spent buying (gross)
+const _cashOut = {};  // total $ received selling
+const _qtyMap2 = {};  // net qty held
+
 for (const t of TRADES) {
-  if (!_costBasis[t.sym]) { _costBasis[t.sym] = 0; _costQty[t.sym] = 0; }
+  if (!_cashIn[t.sym])  { _cashIn[t.sym] = 0; _cashOut[t.sym] = 0; _qtyMap2[t.sym] = 0; }
   if (t.side === 'buy') {
-    _costBasis[t.sym] = (_costBasis[t.sym] * _costQty[t.sym] + t.price * t.qty)
-                        / (_costQty[t.sym] + t.qty);
-    _costQty[t.sym]  += t.qty;
+    _cashIn[t.sym]   += t.price * t.qty;
+    _qtyMap2[t.sym]  += t.qty;
   } else {
-    _costQty[t.sym]  -= t.qty;
-    if (_costQty[t.sym] < 0.000001) { _costQty[t.sym] = 0; _costBasis[t.sym] = 0; }
+    _cashOut[t.sym]  += t.price * t.qty;
+    _qtyMap2[t.sym]  -= t.qty;
+    if (_qtyMap2[t.sym] < 0.000001) _qtyMap2[t.sym] = 0;
   }
 }
-// Latest price = last entry in SK for each sym
+
 const _latestPrice = sym => {
   const series = SK[sym];
   if (!series) return 0;
   const keys = Object.keys(series).sort();
   return series[keys[keys.length - 1]];
 };
-// Current quantities from replaying TRADES
-const _qtyMap = {};
-for (const t of TRADES) {
-  if (!_qtyMap[t.sym]) _qtyMap[t.sym] = 0;
-  _qtyMap[t.sym] += t.side === 'buy' ? t.qty : -t.qty;
-  if (_qtyMap[t.sym] < 0.000001) _qtyMap[t.sym] = 0;
-}
-const FINAL = Object.entries(_qtyMap)
+
+const FINAL = Object.entries(_qtyMap2)
   .filter(([, qty]) => qty > 0.000001)
-  .map(([sym, qty]) => ({
-    sym, qty,
-    price: _latestPrice(sym),
-    cost:  _costBasis[sym] || 0
-  }))
+  .map(([sym, qty]) => {
+    const price    = _latestPrice(sym);
+    const cashIn   = _cashIn[sym]  || 0;
+    const cashOut  = _cashOut[sym] || 0;
+    const netCost  = cashIn - cashOut;          // actual $ still at risk
+    const curVal   = qty * price;
+    const pnl      = curVal - netCost;          // gain/loss on current holding
+    const pnlPct   = netCost > 0 ? (pnl / netCost * 100) : 0;
+    return { sym, qty, price, netCost, pnl, pnlPct };
+  })
   .filter(h => h.price > 0)
   .sort((a, b) => (b.qty * b.price) - (a.qty * a.price));
 
@@ -3200,12 +3201,12 @@ function renderTickerWithLogo(sym) {
 const hBody=document.getElementById('holdings-body');
 let totalVal=0;
 FINAL.forEach(h=>{
-  const val=+(h.qty*h.price).toFixed(2);
-  const pnl=+(val-h.qty*h.cost).toFixed(2);
-  const pnlPct=(pnl/(h.qty*h.cost)*100).toFixed(1);
-  totalVal+=val;
-  const col=pnl>=0?'#5aaa7a':'#c0392b';
-  const sgn=pnl>=0?'+':'';
+  const val    = +(h.qty * h.price).toFixed(2);
+  const pnl    = +h.pnl.toFixed(2);
+  const pnlPct = +h.pnlPct.toFixed(1);
+  totalVal += val;
+  const col = pnl >= 0 ? '#5aaa7a' : '#c0392b';
+  const sgn = pnl >= 0 ? '+' : '';
   hBody.innerHTML+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
   <td style="padding:6px 2px 6px 8px;font-weight:500;">${renderTickerWithLogo(h.sym)}</td>
   <td style="padding:6px 2px;text-align:right;color:var(--color-text-secondary);font-size:11px;">${h.qty.toFixed(3)}</td>
