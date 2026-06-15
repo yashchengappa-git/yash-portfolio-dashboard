@@ -525,6 +525,16 @@ const TOTAL_DEP=RAW_DEP.reduce((s,d)=>s+d.amt,0); // 2355
 
 // ── BENCHMARK PRICES ─────────────────────────────────────────────────────────
 const SPY={
+  "2026-01-07":584.85,
+  "2026-01-08":585.45,
+  "2026-01-09":578.56,
+  "2026-01-10":578.81,
+  "2026-01-13":580.81,
+  "2026-01-14":586.09,
+  "2026-01-15":594.87,
+  "2026-01-16":601.85,
+  "2026-01-17":601.55,
+  "2026-01-20":676.01,
   "2026-01-21":685.40,
   "2026-01-22":688.98,
   "2026-01-23":689.23,
@@ -660,6 +670,16 @@ const SPY={
 
 };
 const QQQ={
+  "2026-01-07":507.31,
+  "2026-01-08":508.83,
+  "2026-01-09":499.82,
+  "2026-01-10":499.80,
+  "2026-01-13":502.41,
+  "2026-01-14":511.55,
+  "2026-01-15":522.51,
+  "2026-01-16":530.19,
+  "2026-01-17":525.13,
+  "2026-01-20":605.59,
   "2026-01-21":616.28,
   "2026-01-22":620.76,
   "2026-01-23":622.72,
@@ -3236,9 +3256,12 @@ function tradingDays(s,e){
   const days=[];
   let d=new Date(s+'T12:00:00Z');
   const end=new Date(e+'T12:00:00Z');
+  // US market holidays in 2026 to skip
+  const holidays=new Set(["2026-01-01","2026-01-19","2026-02-16","2026-05-25","2026-07-03"]);
   while(d<=end){
     const dow=d.getUTCDay();
-    if(dow&&dow<6){const str=d.toISOString().slice(0,10);if(gS(str))days.push(str);}
+    const str=d.toISOString().slice(0,10);
+    if(dow&&dow<6&&!holidays.has(str))days.push(str);
     d.setUTCDate(d.getUTCDate()+1);
   }
   return days;
@@ -3343,8 +3366,9 @@ const holdings={}, spySh=[], qqqSh=[];
 for(const day of DAYS){
   if(depMap[day]){
     const dep=depMap[day];
-    spySh.push(dep/gS(day));
-    qqqSh.push(dep/gQ(day));
+    const sp=gS(day), qq=gQ(day);
+    if(sp) spySh.push(dep/sp);
+    if(qq) qqqSh.push(dep/qq);
   }
   if(trMap[day]) for(const t of trMap[day]){
     if(!holdings[t.sym])holdings[t.sym]=0;
