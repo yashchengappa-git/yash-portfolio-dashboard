@@ -520,6 +520,8 @@ const RAW_DEP=[
   {date:"2026-05-18",amt:225.71},
   {date:"2026-06-01",amt:330.21},{date:"2026-06-01",amt:-95},
   {date:"2026-06-02",amt:51.46},
+  {date:"2026-06-15",amt:82.32},
+  
 ];
 const TOTAL_DEP=RAW_DEP.reduce((s,d)=>s+d.amt,0); // 2355
 
@@ -3350,6 +3352,7 @@ const TRADES=[
   {date:"2026-06-01",sym:"VIAV",side:"sell",qty:1.5,price:47.4758},
   {date:"2026-06-01",sym:"APLD",side:"buy",qty:1.755353931,price:48.936},
   {date:"2026-06-02",sym:"MRVL",side:"buy",qty:0.193832998,price:264.764},
+  {date:"2026-06-15",sym:"MRVL",side:"buy",qty:0.285480451,price:289.58},
 ];
 
 // ── SIMULATION ────────────────────────────────────────────────────────────────
@@ -3563,6 +3566,7 @@ document.getElementById("holdings-total").innerHTML = `
 
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
 const TRADE_LOG=[
+  {date:"2026-06-15",action:"buy",sym:"MRVL",amt:82.67},
   {date:"2026-06-02",action:"buy",sym:"MRVL",amt:51.32},
   {date:"2026-06-01",action:"buy",sym:"APLD",amt:85.9},
   {date:"2026-06-01",action:"sell",sym:"VIAV",amt:72.21},
