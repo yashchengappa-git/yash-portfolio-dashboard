@@ -27,12 +27,7 @@ jobs:
       - name: Update prices
         env:
           ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            node scripts/update-prices.js --force
-          else
-            node scripts/update-prices.js
-          fi
+        run: node scripts/update-prices.js --force
 
       - name: Commit updated dashboard
         run: |
