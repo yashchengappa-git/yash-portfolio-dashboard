@@ -3889,6 +3889,14 @@ const concentrationData = FINAL
   }))
   .sort((a, b) => b.value - a.value);
 
+const concentrationData = FINAL
+  .map(h => ({
+    sym: h.sym,
+    value: h.qty * h.price,
+    pnl: h.pnl
+  }))
+  .sort((a, b) => b.value - a.value);
+
 const concentrationColors = [
   "#32d583", "#60a5fa", "#fbbf24", "#f97316",
   "#a78bfa", "#22c55e", "#06b6d4", "#ef4444",
@@ -3905,17 +3913,25 @@ const concentrationColors = [
 
   const GAP = 3;
 
-  const tealRamp = [
-    "#2dd4b0","#22c4a0","#1bb690","#18a480",
-    "#128060","#0f6e51","#0d5c43","#159270",
-    "#44e0c0","#0a4a35","#66e8ce","#085041"
+  const greenRamp = [
+    "#1a6b4a","#1d7a54","#20895e","#23966a",
+    "#159255","#0f7a47","#127d4a","#1e8f60",
   ];
+  const redRamp = [
+    "#7a1f2e","#8a2336","#6b1a28","#9b2840",
+    "#7d2233","#6e1c2c","#8f2539","#5e1824",
+  ];
+
+  function getPnlColor(pnl, index) {
+    const ramp = pnl >= 0 ? greenRamp : redRamp;
+    return ramp[index % ramp.length];
+  }
 
   function getSlices() {
     return concentrationData
       .slice()
       .sort((a, b) => b.value - a.value)
-      .map(x => ({ sym: x.sym, val: x.value, pct: +(x.value / lastPort * 100).toFixed(1) }));
+      .map(x => ({ sym: x.sym, val: x.value, pnl: x.pnl, pct: +(x.value / lastPort * 100).toFixed(1) }));
   }
 
   function squarify(items, x, y, w, h) {
@@ -3980,7 +3996,7 @@ const concentrationColors = [
         top:            gy + "px",
         width:          gw + "px",
         height:         gh + "px",
-        background:     tealRamp[i % tealRamp.length],
+        background:     getPnlColor(r.pnl, i),
         borderRadius:   "6px",
         overflow:       "hidden",
         display:        "flex",
@@ -4032,7 +4048,7 @@ const concentrationColors = [
         const pct = document.createElement("div");
         Object.assign(pct.style, {
           fontSize:   Math.min(Math.max(9, minDim * 0.1), 11) + "px",
-          color: "rgba(0,0,0,0.5)",
+          color: "rgba(255,255,255,0.55)",
           fontFamily: "'JetBrains Mono', monospace",
           lineHeight: "1",
           flexShrink: "0",
