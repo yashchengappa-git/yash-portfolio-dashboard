@@ -285,6 +285,11 @@ th[data-key]:hover {
     max-height: 260px;
   }
 
+  #realized-pnl-wrap > div {
+    min-width: 100px !important;
+    padding: 6px 9px !important;
+  }
+
   canvas#drawdownChart {
     max-height: 70px;
   }
@@ -528,6 +533,14 @@ th[data-key]:hover {
       </table>
     </div>
   </div>
+</div>
+
+<div style="margin-top:1.25rem;">
+  <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:8px;">
+    <div class="table-panel-title" style="margin-bottom:0;">Realized Gains &amp; Losses</div>
+    <div id="realized-pnl-total" style="font-size:11px;color:var(--color-text-secondary);"></div>
+  </div>
+  <div id="realized-pnl-wrap" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -3505,22 +3518,63 @@ for(const day of DAYS){
 }
 
 // ── FINAL HOLDINGS (auto-derived from TRADES + SK prices) ────────────────────
-// ── COST BASIS: track actual cash in per symbol ───────────────────────────────
-const _cashIn  = {};  // total $ spent buying (gross)
-const _cashOut = {};  // total $ received selling
-const _qtyMap2 = {};  // net qty held
-
+// ── COST BASIS: lot-cycle aware ──────────────────────────────────────────────
+// If a position is fully exited and later rebought, the rebuy gets a fresh cost
+// basis — profit from the closed round trip is booked as realized P&L instead
+// of quietly lowering the apparent cost of the new position (which would make
+// the open position's unrealized P&L% look better than it actually is).
+const _tradesBySym = {};
 for (const t of TRADES) {
-  if (!_cashIn[t.sym])  { _cashIn[t.sym] = 0; _cashOut[t.sym] = 0; _qtyMap2[t.sym] = 0; }
-  if (t.side === 'buy') {
-    _cashIn[t.sym]   += t.price * t.qty;
-    _qtyMap2[t.sym]  += t.qty;
-  } else {
-    _cashOut[t.sym]  += t.price * t.qty;
-    _qtyMap2[t.sym]  -= t.qty;
-    if (_qtyMap2[t.sym] < 0.000001) _qtyMap2[t.sym] = 0;
-  }
+  if (!_tradesBySym[t.sym]) _tradesBySym[t.sym] = [];
+  _tradesBySym[t.sym].push(t);
 }
+// Defensive: process each symbol's trades in chronological order.
+Object.values(_tradesBySym).forEach(arr => arr.sort((a, b) => a.date.localeCompare(b.date)));
+
+const _qtyMap2          = {}; // current open qty per symbol
+const _openCashIn       = {}; // cost basis of the CURRENT open lot only
+const _openCashOut      = {}; // proceeds received within the current open lot (partial sells before a full close)
+const _realizedPnl      = {}; // total realized $ P&L from fully-closed cycles, per symbol
+const _realizedCostBasis= {}; // total $ invested across those closed cycles, per symbol (for a % figure)
+const _realizedLastDate = {}; // date the most recent closing cycle finished, per symbol
+
+for (const [sym, trades] of Object.entries(_tradesBySym)) {
+  let qty = 0, cashIn = 0, cashOut = 0, realized = 0, costBasis = 0, lastCloseDate = null;
+  for (const t of trades) {
+    if (t.side === 'buy') { cashIn += t.price * t.qty; qty += t.qty; }
+    else                  { cashOut += t.price * t.qty; qty -= t.qty; }
+    if (qty < 0.000001) {
+      // Position fully closed — lock in this cycle's realized P&L, start fresh.
+      realized += (cashOut - cashIn);
+      costBasis += cashIn;
+      lastCloseDate = t.date;
+      qty = 0; cashIn = 0; cashOut = 0;
+    }
+  }
+  _qtyMap2[sym]           = qty;
+  _openCashIn[sym]        = cashIn;
+  _openCashOut[sym]       = cashOut;
+  _realizedPnl[sym]       = +realized.toFixed(2);
+  _realizedCostBasis[sym] = +costBasis.toFixed(2);
+  _realizedLastDate[sym]  = lastCloseDate;
+}
+
+// Total realized gains across every symbol ever traded, including positions
+// that are fully closed out today (e.g. SNDK, VIAV, NOW) and don't appear in
+// FINAL at all.
+const TOTAL_REALIZED_PNL = +Object.values(_realizedPnl).reduce((s, v) => s + v, 0).toFixed(2);
+
+// Flat list for a dedicated "Realized Gains & Losses" panel — one row per
+// symbol that has at least one fully-closed cycle, gains and losses both.
+const REALIZED_LIST = Object.keys(_realizedPnl)
+  .filter(sym => Math.abs(_realizedPnl[sym]) > 0.005)
+  .map(sym => ({
+    sym,
+    pnl: _realizedPnl[sym],
+    pct: _realizedCostBasis[sym] > 0 ? (_realizedPnl[sym] / _realizedCostBasis[sym] * 100) : 0,
+    lastDate: _realizedLastDate[sym],
+  }))
+  .sort((a, b) => b.pnl - a.pnl);
 
 const _latestPrice = sym => {
   const series = SK[sym];
@@ -3532,14 +3586,15 @@ const _latestPrice = sym => {
 const FINAL = Object.entries(_qtyMap2)
   .filter(([, qty]) => qty > 0.000001)
   .map(([sym, qty]) => {
-    const price    = _latestPrice(sym);
-    const cashIn   = _cashIn[sym]  || 0;
-    const cashOut  = _cashOut[sym] || 0;
-    const netCost  = cashIn - cashOut;          // actual $ still at risk
-    const curVal   = qty * price;
-    const pnl      = curVal - netCost;          // gain/loss on current holding
-    const pnlPct   = netCost > 0 ? (pnl / netCost * 100) : 0;
-    return { sym, qty, price, netCost, pnl, pnlPct };
+    const price       = _latestPrice(sym);
+    const cashIn      = _openCashIn[sym]  || 0;
+    const cashOut     = _openCashOut[sym] || 0;
+    const netCost     = cashIn - cashOut;       // cost basis of the CURRENT open lot only
+    const curVal      = qty * price;
+    const pnl         = curVal - netCost;       // unrealized gain/loss on the open position
+    const pnlPct      = netCost > 0 ? (pnl / netCost * 100) : 0;
+    const realizedPnl = _realizedPnl[sym] || 0; // banked profit from a prior closed cycle, if any
+    return { sym, qty, price, netCost, pnl, pnlPct, realizedPnl };
   })
   .filter(h => h.price > 0)
   .sort((a, b) => (b.qty * b.price) - (a.qty * a.price));
@@ -3708,6 +3763,12 @@ function renderHoldingsTable(){
     const col = pnl >= 0 ? '#5aaa7a' : '#c0392b';
     const sgn = pnl >= 0 ? '+' : '-';
 
+    let realizedBadge = '';
+    if (h.realizedPnl) {
+      const rSgn = h.realizedPnl >= 0 ? '+' : '-';
+      realizedBadge = `<br><span style="font-size:9px;color:var(--color-text-tertiary);" title="Banked from a fully closed prior position in ${h.sym}, before this position was reopened">${rSgn}$${Math.abs(h.realizedPnl).toFixed(1)} realized prior</span>`;
+    }
+
     let dayCell;
     if (h.dayPnl === null) {
       dayCell = `<span style="color:var(--color-text-tertiary);">—</span>`;
@@ -3725,7 +3786,7 @@ function renderHoldingsTable(){
   <td style="padding:6px 2px;text-align:right;">$${h.price.toFixed(1)}</td>
   <td style="padding:6px 2px;text-align:right;">$${val.toFixed(1)}</td>
   <td style="padding:6px 2px;text-align:right;font-size:11px;">${dayCell}</td>
-  <td style="padding:6px 2px;text-align:right;color:${col};">${sgn}$${Math.abs(pnl).toFixed(1)}<br><span style="font-size:10px;opacity:0.8;">${sgn}${Math.abs(pnlPct)}%</span></td>
+  <td style="padding:6px 2px;text-align:right;color:${col};">${sgn}$${Math.abs(pnl).toFixed(1)}<br><span style="font-size:10px;opacity:0.8;">${sgn}${Math.abs(pnlPct)}%</span>${realizedBadge}</td>
 </tr>`;
   });
 
@@ -3758,6 +3819,36 @@ function renderHoldingsTable(){
 }
 
 renderHoldingsTable();
+
+// ── REALIZED GAINS & LOSSES ───────────────────────────────────────────────────
+(function renderRealizedPnl(){
+  const wrap = document.getElementById('realized-pnl-wrap');
+  const totalEl = document.getElementById('realized-pnl-total');
+  if (!wrap) return;
+
+  if (totalEl) {
+    const tSgn = TOTAL_REALIZED_PNL >= 0 ? '+' : '-';
+    totalEl.innerHTML = `Net: <span style="color:${TOTAL_REALIZED_PNL>=0?'#5aaa7a':'#c0392b'};font-weight:600;">${tSgn}$${Math.abs(TOTAL_REALIZED_PNL).toFixed(1)}</span> across ${REALIZED_LIST.length} closed position${REALIZED_LIST.length===1?'':'s'}`;
+  }
+
+  if (!REALIZED_LIST.length) {
+    wrap.innerHTML = `<span style="font-size:12px;color:var(--color-text-tertiary);">No fully closed positions yet.</span>`;
+    return;
+  }
+
+  wrap.innerHTML = REALIZED_LIST.map(r => {
+    const sgn = r.pnl >= 0 ? '+' : '-';
+    const col = r.pnl >= 0 ? '#5aaa7a' : '#c0392b';
+    return `
+      <div style="background:var(--color-background-secondary);border:1px solid var(--color-border-secondary);border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:130px;flex:0 0 auto;">
+        ${renderTickerWithLogo(r.sym)}
+        <div style="margin-left:auto;text-align:right;">
+          <div style="color:${col};font-weight:600;font-size:13px;">${sgn}$${Math.abs(r.pnl).toFixed(1)}</div>
+          <div style="font-size:10px;color:${col};opacity:0.8;">${sgn}${Math.abs(r.pct).toFixed(1)}%</div>
+        </div>
+      </div>`;
+  }).join('');
+})();
 
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
 const TRADE_LOG=[
