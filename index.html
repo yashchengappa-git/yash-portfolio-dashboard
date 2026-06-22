@@ -250,6 +250,53 @@
 th[data-key]:hover {
   color: var(--color-text-primary) !important;
 }
+
+/* ===== Realized P&L flip cards ===== */
+.realized-card {
+  perspective: 1000px;
+  cursor: pointer;
+  width: 150px;
+  height: 92px;
+  flex: 0 0 auto;
+}
+.realized-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform .45s cubic-bezier(.4,.2,.2,1);
+  transform-style: preserve-3d;
+}
+.realized-card.flipped .realized-card-inner {
+  transform: rotateY(180deg);
+}
+.realized-card-front,
+.realized-card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  border: 1px solid var(--color-border-secondary);
+  background: var(--color-background-secondary);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.realized-card-front {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+}
+.realized-card-back {
+  transform: rotateY(180deg);
+  padding: 6px 8px;
+  font-size: 9.5px;
+  line-height: 1.45;
+  overflow-y: auto;
+}
+.realized-card:hover .realized-card-front,
+.realized-card:hover .realized-card-back {
+  border-color: rgba(255,255,255,0.18);
+}
     /* Mobile Optimisation */
 @media (max-width: 768px) {
   html,
@@ -3478,6 +3525,7 @@ const TRADES=[
   {date:"2026-06-16",sym:"AAOI",side:"buy",qty:0.32,price:175.37},
   {date:"2026-06-16",sym:"VRT",side:"buy",qty:0.057479471,price:308.11},
 ];
+const fmtD=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric'});
 
 // ── SIMULATION ────────────────────────────────────────────────────────────────
 const depMap={};
@@ -3537,17 +3585,30 @@ const _openCashOut      = {}; // proceeds received within the current open lot (
 const _realizedPnl      = {}; // total realized $ P&L from fully-closed cycles, per symbol
 const _realizedCostBasis= {}; // total $ invested across those closed cycles, per symbol (for a % figure)
 const _realizedLastDate = {}; // date the most recent closing cycle finished, per symbol
+const _realizedEntries  = {}; // every buy that belonged to a closed cycle, per symbol
+const _realizedExits    = {}; // every sell that belonged to a closed cycle, per symbol
 
 for (const [sym, trades] of Object.entries(_tradesBySym)) {
   let qty = 0, cashIn = 0, cashOut = 0, realized = 0, costBasis = 0, lastCloseDate = null;
+  let cycleBuys = [], cycleSells = [];
+  let closedBuys = [], closedSells = [];
   for (const t of trades) {
-    if (t.side === 'buy') { cashIn += t.price * t.qty; qty += t.qty; }
-    else                  { cashOut += t.price * t.qty; qty -= t.qty; }
+    if (t.side === 'buy') {
+      cashIn += t.price * t.qty; qty += t.qty;
+      cycleBuys.push({ date: t.date, qty: t.qty, price: t.price });
+    } else {
+      cashOut += t.price * t.qty; qty -= t.qty;
+      cycleSells.push({ date: t.date, qty: t.qty, price: t.price });
+    }
     if (qty < 0.000001) {
-      // Position fully closed — lock in this cycle's realized P&L, start fresh.
+      // Position fully closed — lock in this cycle's realized P&L, archive the
+      // entries/exits that made it up, start fresh for the next cycle.
       realized += (cashOut - cashIn);
       costBasis += cashIn;
       lastCloseDate = t.date;
+      closedBuys = closedBuys.concat(cycleBuys);
+      closedSells = closedSells.concat(cycleSells);
+      cycleBuys = []; cycleSells = [];
       qty = 0; cashIn = 0; cashOut = 0;
     }
   }
@@ -3557,6 +3618,8 @@ for (const [sym, trades] of Object.entries(_tradesBySym)) {
   _realizedPnl[sym]       = +realized.toFixed(2);
   _realizedCostBasis[sym] = +costBasis.toFixed(2);
   _realizedLastDate[sym]  = lastCloseDate;
+  _realizedEntries[sym]   = closedBuys;
+  _realizedExits[sym]     = closedSells;
 }
 
 // Total realized gains across every symbol ever traded, including positions
@@ -3573,6 +3636,8 @@ const REALIZED_LIST = Object.keys(_realizedPnl)
     pnl: _realizedPnl[sym],
     pct: _realizedCostBasis[sym] > 0 ? (_realizedPnl[sym] / _realizedCostBasis[sym] * 100) : 0,
     lastDate: _realizedLastDate[sym],
+    entries: _realizedEntries[sym] || [],
+    exits: _realizedExits[sym] || [],
   }))
   .sort((a, b) => b.pnl - a.pnl);
 
@@ -3828,7 +3893,7 @@ renderHoldingsTable();
 
   if (totalEl) {
     const tSgn = TOTAL_REALIZED_PNL >= 0 ? '+' : '-';
-    totalEl.innerHTML = `Net: <span style="color:${TOTAL_REALIZED_PNL>=0?'#5aaa7a':'#c0392b'};font-weight:600;">${tSgn}$${Math.abs(TOTAL_REALIZED_PNL).toFixed(1)}</span> across ${REALIZED_LIST.length} closed position${REALIZED_LIST.length===1?'':'s'}`;
+    totalEl.innerHTML = `Net: <span style="color:${TOTAL_REALIZED_PNL>=0?'#5aaa7a':'#c0392b'};font-weight:600;">${tSgn}$${Math.abs(TOTAL_REALIZED_PNL).toFixed(1)}</span> across ${REALIZED_LIST.length} closed position${REALIZED_LIST.length===1?'':'s'} · click a card to see entries/exits`;
   }
 
   if (!REALIZED_LIST.length) {
@@ -3836,18 +3901,43 @@ renderHoldingsTable();
     return;
   }
 
+  const fmtRow = t => `${t.qty.toFixed(3)} @ $${t.price.toFixed(2)} <span style="opacity:0.6;">${fmtD(t.date)}</span>`;
+
   wrap.innerHTML = REALIZED_LIST.map(r => {
     const sgn = r.pnl >= 0 ? '+' : '-';
     const col = r.pnl >= 0 ? '#5aaa7a' : '#c0392b';
+
+    const entriesHtml = r.entries.length
+      ? r.entries.map(t => `<div>${fmtRow(t)}</div>`).join('')
+      : `<div style="opacity:0.6;">—</div>`;
+    const exitsHtml = r.exits.length
+      ? r.exits.map(t => `<div>${fmtRow(t)}</div>`).join('')
+      : `<div style="opacity:0.6;">—</div>`;
+
     return `
-      <div style="background:var(--color-background-secondary);border:1px solid var(--color-border-secondary);border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:10px;min-width:130px;flex:0 0 auto;">
-        ${renderTickerWithLogo(r.sym)}
-        <div style="margin-left:auto;text-align:right;">
-          <div style="color:${col};font-weight:600;font-size:13px;">${sgn}$${Math.abs(r.pnl).toFixed(1)}</div>
-          <div style="font-size:10px;color:${col};opacity:0.8;">${sgn}${Math.abs(r.pct).toFixed(1)}%</div>
+      <div class="realized-card" data-sym="${r.sym}">
+        <div class="realized-card-inner">
+          <div class="realized-card-front">
+            ${renderTickerWithLogo(r.sym)}
+            <div style="margin-left:auto;text-align:right;">
+              <div style="color:${col};font-weight:600;font-size:13px;">${sgn}$${Math.abs(r.pnl).toFixed(1)}</div>
+              <div style="font-size:10px;color:${col};opacity:0.8;">${sgn}${Math.abs(r.pct).toFixed(1)}%</div>
+            </div>
+          </div>
+          <div class="realized-card-back">
+            <div style="font-weight:600;color:var(--color-text-secondary);margin-bottom:2px;">${r.sym} \u2014 ${sgn}$${Math.abs(r.pnl).toFixed(1)}</div>
+            <div style="color:#5aaa7a;font-weight:600;">Entries</div>
+            ${entriesHtml}
+            <div style="color:#c0392b;font-weight:600;margin-top:3px;">Exits</div>
+            ${exitsHtml}
+          </div>
         </div>
       </div>`;
   }).join('');
+
+  wrap.querySelectorAll('.realized-card').forEach(card => {
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+  });
 })();
 
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
@@ -3925,7 +4015,6 @@ const TRADE_LOG=[
   {date:"2026-01-08",action:"buy", sym:"NVDA",amt:192},
   {date:"2026-01-08",action:"buy", sym:"LMT", amt:531},
 ];
-const fmtD=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric'});
 const tBody=document.getElementById('trades-body');
 TRADE_LOG.forEach(t=>{
   const col=t.action==='sell'?'#c0392b':'#5aaa7a';
