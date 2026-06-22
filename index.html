@@ -3944,20 +3944,36 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
     </span>
   `).join('');
 
-          let depositLine = '';
-          if(depMap[date]){
-            const trades = trMap[date] || [];
-            const tradesHtml = trades.map(t=>`
+          let activityLine = '';
+          const dayTrades = trMap[date] || [];
+          const dayDeposit = depMap[date];
+
+          if (dayTrades.length || dayDeposit) {
+            const tradesHtml = dayTrades.map(t=>`
     <span style="white-space:nowrap;margin-right:10px;">
       ${t.side==='buy'?'+':'\u2212'}${t.qty.toFixed(3)}
       <span style="${TICKER_STYLE}">${t.sym}</span>
       @ $${t.price.toFixed(2)}
     </span>`).join('');
-            depositLine = `
+
+            let headerHtml, bodyHtml;
+            if (dayDeposit && dayTrades.length) {
+              headerHtml = `<span style="font-weight:600;margin-right:6px;">Deposit +$${dayDeposit.toFixed(2)} \u2192</span>`;
+              bodyHtml = tradesHtml;
+            } else if (dayDeposit) {
+              headerHtml = `<span style="font-weight:600;margin-right:6px;">Deposit +$${dayDeposit.toFixed(2)} \u2192</span>`;
+              bodyHtml = `<span style="opacity:0.7;">no trades booked this day — cash may be deployed in the days that follow</span>`;
+            } else {
+              headerHtml = `<span style="font-weight:600;margin-right:6px;">Rebalanced \u2192</span>`;
+              bodyHtml = tradesHtml;
+            }
+
+            const activityColor = dayDeposit ? '#fbbf24' : '#7dd3c0';
+            activityLine = `
             <br>
-            <span style="font-size:11px;color:#fbbf24;display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 0;margin-top:2px;">
-              <span style="font-weight:600;margin-right:6px;">Deposit +$${depMap[date].toFixed(2)} \u2192</span>
-              ${tradesHtml || '<span style="opacity:0.7;">no trades booked this day — cash may be deployed in the days that follow</span>'}
+            <span style="font-size:11px;color:${activityColor};display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 0;margin-top:2px;">
+              ${headerHtml}
+              ${bodyHtml}
             </span>`;
           }
 
@@ -3969,7 +3985,7 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
             <br>
 <span style="font-size:11px;color:var(--color-text-tertiary);display:flex;flex-wrap:wrap;gap:3px 0;margin-top:2px;">
   ${hs}
-</span>${depositLine}`;
+</span>${activityLine}`;
         }
       }
     },
