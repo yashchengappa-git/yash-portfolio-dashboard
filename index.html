@@ -240,6 +240,16 @@
   border-top: 0.5px solid var(--color-border-secondary);
   padding-top: 6px;
 }
+.sort-ind {
+  display:inline-block;
+  width:8px;
+  margin-left:2px;
+  font-size:9px;
+  color: var(--color-text-secondary);
+}
+th[data-key]:hover {
+  color: var(--color-text-primary) !important;
+}
     /* Mobile Optimisation */
 @media (max-width: 768px) {
   html,
@@ -273,6 +283,10 @@
 
   canvas#mainChart {
     max-height: 260px;
+  }
+
+  canvas#drawdownChart {
+    max-height: 70px;
   }
 
   div[style*="grid-template-columns:1fr 1fr"] {
@@ -329,27 +343,32 @@
 
   table:has(#holdings-body) th:nth-child(1),
   table:has(#holdings-body) td:nth-child(1) {
-    width: 25% !important;
+    width: 20% !important;
   }
 
   table:has(#holdings-body) th:nth-child(2),
   table:has(#holdings-body) td:nth-child(2) {
-    width: 13% !important;
+    width: 11% !important;
   }
 
   table:has(#holdings-body) th:nth-child(3),
   table:has(#holdings-body) td:nth-child(3) {
-    width: 18% !important;
+    width: 15% !important;
   }
 
   table:has(#holdings-body) th:nth-child(4),
   table:has(#holdings-body) td:nth-child(4) {
-    width: 18% !important;
+    width: 15% !important;
   }
 
   table:has(#holdings-body) th:nth-child(5),
   table:has(#holdings-body) td:nth-child(5) {
-    width: 26% !important;
+    width: 18% !important;
+  }
+
+  table:has(#holdings-body) th:nth-child(6),
+  table:has(#holdings-body) td:nth-child(6) {
+    width: 21% !important;
   }
 
   table:has(#trades-body) th:nth-child(1),
@@ -427,6 +446,13 @@
 </div>
 <div id="tooltip-box" style="font-size:12px;color:var(--color-text-secondary);margin-top:6px;min-height:36px;padding:5px 0;border-top:0.5px solid var(--color-border-tertiary);">Hover the chart to see daily values.</div>
 
+<div style="margin-top:12px;">
+  <div style="font-size:10px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Drawdown</div>
+  <div style="position:relative;width:100%;height:80px;">
+    <canvas id="drawdownChart"></canvas>
+  </div>
+</div>
+
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:1.5rem;">
 <div>
   <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">
@@ -454,18 +480,20 @@
       <table style="width:100%;font-size:12px;border-collapse:collapse;table-layout:fixed;">
         <colgroup>
           <col style="width:15%">
-          <col style="width:15%">
+          <col style="width:11%">
+          <col style="width:13%">
+          <col style="width:13%">
           <col style="width:16%">
-          <col style="width:16%">
-          <col style="width:38%">
+          <col style="width:32%">
         </colgroup>
         <thead>
           <tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
-            <th style="text-align:left;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">SYM</th>
-            <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">QTY</th>
-            <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">PRICE</th>
-            <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">VALUE</th>
-            <th style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;">P&L</th>
+            <th data-key="sym" onclick="setHoldingsSort('sym')" style="text-align:left;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;cursor:pointer;user-select:none;">SYM<span class="sort-ind" data-key-ind="sym"></span></th>
+            <th data-key="qty" onclick="setHoldingsSort('qty')" style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;cursor:pointer;user-select:none;">QTY<span class="sort-ind" data-key-ind="qty"></span></th>
+            <th data-key="price" onclick="setHoldingsSort('price')" style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;cursor:pointer;user-select:none;">PRICE<span class="sort-ind" data-key-ind="price"></span></th>
+            <th data-key="value" onclick="setHoldingsSort('value')" style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;cursor:pointer;user-select:none;">VALUE<span class="sort-ind" data-key-ind="value"></span></th>
+            <th data-key="dayPnl" onclick="setHoldingsSort('dayPnl')" style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;cursor:pointer;user-select:none;">DAY P&amp;L<span class="sort-ind" data-key-ind="dayPnl"></span></th>
+            <th data-key="pnl" onclick="setHoldingsSort('pnl')" style="text-align:right;padding:4px 2px;font-weight:500;color:var(--color-text-secondary);font-size:10px;cursor:pointer;user-select:none;">P&amp;L<span class="sort-ind" data-key-ind="pnl"></span></th>
           </tr>
         </thead>
         <tbody id="holdings-body"></tbody>
@@ -3521,6 +3549,20 @@ const FINAL_TOTAL = FINAL.reduce((s, h) => s + h.qty * h.price, 0);
 // Reconcile: replace last chart point with derived FINAL_TOTAL
 portVals[portVals.length-1]=+FINAL_TOTAL.toFixed(2);
 
+// ── DAY P&L (per holding) ─────────────────────────────────────────────────────
+// Compares today's close to yesterday's close, scaled by today's held quantity.
+const _prevDayLabel = labels[labels.length - 2];
+FINAL.forEach(h => {
+  const prevPrice = _prevDayLabel ? getLast(SK[h.sym] || {}, _prevDayLabel) : null;
+  if (prevPrice && prevPrice > 0) {
+    h.dayPnl = +(h.qty * (h.price - prevPrice)).toFixed(2);
+    h.dayPnlPct = +(((h.price - prevPrice) / prevPrice) * 100).toFixed(2);
+  } else {
+    h.dayPnl = null;
+    h.dayPnlPct = null;
+  }
+});
+
 const lastPort=portVals[portVals.length-1];
 const lastSPY=spyVals[spyVals.length-1];
 const lastQQQ=qqqVals[qqqVals.length-1];
@@ -3610,42 +3652,112 @@ function renderTickerWithLogo(sym) {
     </span>
   `;
 }
-// ── HOLDINGS TABLE ────────────────────────────────────────────────────────────
+// ── HOLDINGS TABLE (sortable) ─────────────────────────────────────────────────
 const hBody=document.getElementById('holdings-body');
-let totalVal=0;
-FINAL.forEach(h=>{
-  const val    = +(h.qty * h.price).toFixed(2);
-  const pnl    = +h.pnl.toFixed(2);
-  const pnlPct = +h.pnlPct.toFixed(1);
-  totalVal += val;
-  const col = pnl >= 0 ? '#5aaa7a' : '#c0392b';
-  const sgn = pnl >= 0 ? '+' : '';
-  hBody.innerHTML+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
+
+const HOLDINGS_SORT_ACCESSORS = {
+  sym:    h => h.sym,
+  qty:    h => h.qty,
+  price:  h => h.price,
+  value:  h => h.qty * h.price,
+  dayPnl: h => h.dayPnl === null ? -Infinity : h.dayPnl,
+  pnl:    h => h.pnl,
+};
+
+let holdingsSortKey = 'value';
+let holdingsSortAsc = false; // false = descending
+
+function setHoldingsSort(key){
+  if(holdingsSortKey === key){
+    holdingsSortAsc = !holdingsSortAsc;
+  } else {
+    holdingsSortKey = key;
+    holdingsSortAsc = key === 'sym'; // alphabetical default ascending, numeric default descending
+  }
+  renderHoldingsTable();
+}
+
+function updateSortIndicators(){
+  document.querySelectorAll('.sort-ind').forEach(el => {
+    const key = el.getAttribute('data-key-ind');
+    el.textContent = key === holdingsSortKey ? (holdingsSortAsc ? '▲' : '▼') : '';
+  });
+}
+
+function renderHoldingsTable(){
+  const accessor = HOLDINGS_SORT_ACCESSORS[holdingsSortKey];
+  const sorted = FINAL.slice().sort((a, b) => {
+    const av = accessor(a), bv = accessor(b);
+    let cmp;
+    if (typeof av === 'string') cmp = av.localeCompare(bv);
+    else cmp = av - bv;
+    return holdingsSortAsc ? cmp : -cmp;
+  });
+
+  let totalVal = 0;
+  let totalDayPnl = 0;
+  let hasDayPnl = false;
+  hBody.innerHTML = '';
+
+  sorted.forEach(h => {
+    const val    = +(h.qty * h.price).toFixed(2);
+    const pnl    = +h.pnl.toFixed(2);
+    const pnlPct = +h.pnlPct.toFixed(1);
+    totalVal += val;
+
+    const col = pnl >= 0 ? '#5aaa7a' : '#c0392b';
+    const sgn = pnl >= 0 ? '+' : '-';
+
+    let dayCell;
+    if (h.dayPnl === null) {
+      dayCell = `<span style="color:var(--color-text-tertiary);">—</span>`;
+    } else {
+      totalDayPnl += h.dayPnl;
+      hasDayPnl = true;
+      const dayCol = h.dayPnl >= 0 ? '#5aaa7a' : '#c0392b';
+      const daySgn = h.dayPnl >= 0 ? '+' : '-';
+      dayCell = `<span style="color:${dayCol};">${daySgn}$${Math.abs(h.dayPnl).toFixed(1)}</span><br><span style="font-size:10px;opacity:0.8;color:${dayCol};">${daySgn}${Math.abs(h.dayPnlPct)}%</span>`;
+    }
+
+    hBody.innerHTML+=`<tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
   <td style="padding:6px 2px 6px 8px;font-weight:500;">${renderTickerWithLogo(h.sym)}</td>
   <td style="padding:6px 2px;text-align:right;color:var(--color-text-secondary);font-size:11px;">${h.qty.toFixed(3)}</td>
   <td style="padding:6px 2px;text-align:right;">$${h.price.toFixed(1)}</td>
   <td style="padding:6px 2px;text-align:right;">$${val.toFixed(1)}</td>
-  <td style="padding:6px 2px;text-align:right;color:${col};">${sgn}$${pnl.toFixed(1)}<br><span style="font-size:10px;opacity:0.8;">${sgn}${pnlPct}%</span></td>
+  <td style="padding:6px 2px;text-align:right;font-size:11px;">${dayCell}</td>
+  <td style="padding:6px 2px;text-align:right;color:${col};">${sgn}$${Math.abs(pnl).toFixed(1)}<br><span style="font-size:10px;opacity:0.8;">${sgn}${Math.abs(pnlPct)}%</span></td>
 </tr>`;
-});
-document.getElementById("holdings-total").innerHTML = `
+  });
+
+  const dayTotalCell = hasDayPnl
+    ? `<td style="padding:5px 2px;text-align:right;font-weight:600;color:${totalDayPnl>=0?'#5aaa7a':'#c0392b'};">${totalDayPnl>=0?'+':'-'}$${Math.abs(totalDayPnl).toFixed(1)}</td>`
+    : `<td style="padding:5px 2px;text-align:right;font-weight:600;color:var(--color-text-tertiary);">—</td>`;
+
+  document.getElementById("holdings-total").innerHTML = `
   <table style="width:100%;font-size:12px;border-collapse:collapse;table-layout:fixed;">
     <colgroup>
       <col style="width:15%">
-      <col style="width:15%">
+      <col style="width:11%">
+      <col style="width:13%">
+      <col style="width:13%">
       <col style="width:16%">
-      <col style="width:16%">
-      <col style="width:38%">
+      <col style="width:32%">
     </colgroup>
     <tbody>
       <tr>
         <td colspan="3" style="padding:5px 2px;font-weight:500;font-size:11px;color:var(--color-text-secondary);">Total</td>
         <td style="padding:5px 2px;text-align:right;font-weight:600;">$${totalVal.toFixed(1)}</td>
+        ${dayTotalCell}
         <td style="padding:5px 2px;text-align:right;font-weight:600;color:#1a7f4b;">+$${(totalVal-TOTAL_DEP).toFixed(1)}</td>
       </tr>
     </tbody>
   </table>
 `;
+
+  updateSortIndicators();
+}
+
+renderHoldingsTable();
 
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
 const TRADE_LOG=[
@@ -3740,20 +3852,47 @@ TRADE_LOG.forEach(t=>{
 const tickLabels=labels.map(fmtD);
 let currentView='value';
 
-function cumRet(vals,i){
-  const deps=RAW_DEP.filter(d=>d.date<=labels[i]).reduce((s,d)=>s+d.amt,0);
-  return deps>0?+((vals[i]-deps)/deps*100).toFixed(2):0;
+// ── RETURN INDEX (chain-linked, deposit-neutral) ─────────────────────────────
+// Standard technique for handling cash flows in a % return series: each day's
+// growth factor compares today's value to (yesterday's value + today's deposit),
+// so a deposit itself never shows up as a fake jump, and every line starts at
+// exactly 0% on day one regardless of when the first deposit landed.
+function buildIndexSeries(vals){
+  const idx=[100];
+  for(let i=1;i<vals.length;i++){
+    const depToday=depMap[labels[i]]||0;
+    const denom=vals[i-1]+depToday;
+    const growth=denom>0?vals[i]/denom:1;
+    idx.push(idx[i-1]*growth);
+  }
+  return idx;
 }
+const portIdx=buildIndexSeries(portVals);
+const spyIdx=buildIndexSeries(spyVals);
+const qqqIdx=buildIndexSeries(qqqVals);
+const portRetSeries=portIdx.map(v=>+(v-100).toFixed(2));
+const spyRetSeries=spyIdx.map(v=>+(v-100).toFixed(2));
+const qqqRetSeries=qqqIdx.map(v=>+(v-100).toFixed(2));
+
+// ── DRAWDOWN (peak-to-trough on the deposit-neutral growth index) ────────────
+const drawdownSeries=(()=>{
+  let peak=-Infinity;
+  return portIdx.map(v=>{
+    peak=Math.max(peak,v);
+    if(peak<=0) return 0; // defensive: avoid divide-by-zero if the index is ever corrupted to 0
+    return +(((v-peak)/peak)*100).toFixed(2);
+  });
+})();
 
 function buildMain(view){
-  const pD=view==='return'?labels.map((_,i)=>cumRet(portVals,i)):portVals;
-  const sD=view==='return'?labels.map((_,i)=>cumRet(spyVals,i)):spyVals;
-  const qD=view==='return'?labels.map((_,i)=>cumRet(qqqVals,i)):qqqVals;
+  const pD=view==='return'?portRetSeries:portVals;
+  const sD=view==='return'?spyRetSeries:spyVals;
+  const qD=view==='return'?qqqRetSeries:qqqVals;
   return [
     {label:'Portfolio',data:pD,borderColor:'#aee0e0',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.3,fill:false},
     {label:'SPY',data:sD,borderColor:'#6a8fc8',borderWidth:1.5,borderDash:[6,3],pointRadius:0,pointHoverRadius:4,tension:0.3,fill:false},
     {label:'QQQ',data:qD,borderColor:'#b8883a',borderWidth:1.5,borderDash:[3,3],pointRadius:0,pointHoverRadius:4,tension:0.3,fill:false},
-    {label:'Deposit',data:labels.map((d,i)=>depMap[d]?portVals[i]:null),borderColor:'#fbbf24',backgroundColor:'#fbbf24',pointRadius:labels.map(d=>depMap[d]?6:0),pointStyle:'rectRot',showLine:false,pointHoverRadius:8},
+    {label:'Deposit',data:labels.map((d,i)=>depMap[d]?(view==='return'?pD[i]:portVals[i]):null),borderColor:'#fbbf24',backgroundColor:'#fbbf24',pointRadius:labels.map(d=>depMap[d]?6:0),pointStyle:'rectRot',showLine:false,pointHoverRadius:8},
   ];
 }
 const monthMarkers = {};
@@ -3794,10 +3933,7 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
           const i=tooltip.dataPoints?.[0]?.dataIndex;
           if(i===undefined)return;
           const date=labels[i],pv=portVals[i],sv=spyVals[i],qv=qqqVals[i];
-          const deps=RAW_DEP.filter(d=>d.date<=date).reduce((s,d)=>s+d.amt,0);
-          const pr=deps>0?((pv-deps)/deps*100).toFixed(1):'0';
-          const sr=deps>0?((sv-deps)/deps*100).toFixed(1):'0';
-          const qr=deps>0?((qv-deps)/deps*100).toFixed(1):'0';
+          const pr=portRetSeries[i],sr=spyRetSeries[i],qr=qqqRetSeries[i];
           const snap=snaps[i];
           const hs = Object.entries(snap)
   .sort((a,b)=>b[1].value-a[1].value)
@@ -3807,6 +3943,24 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
       <span style="font-weight:500;">$${Math.round(d.value)}</span>
     </span>
   `).join('');
+
+          let depositLine = '';
+          if(depMap[date]){
+            const trades = trMap[date] || [];
+            const tradesHtml = trades.map(t=>`
+    <span style="white-space:nowrap;margin-right:10px;">
+      ${t.side==='buy'?'+':'\u2212'}${t.qty.toFixed(3)}
+      <span style="${TICKER_STYLE}">${t.sym}</span>
+      @ $${t.price.toFixed(2)}
+    </span>`).join('');
+            depositLine = `
+            <br>
+            <span style="font-size:11px;color:#fbbf24;display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 0;margin-top:2px;">
+              <span style="font-weight:600;margin-right:6px;">Deposit +$${depMap[date].toFixed(2)} \u2192</span>
+              ${tradesHtml || '<span style="opacity:0.7;">no trades booked this day — cash may be deployed in the days that follow</span>'}
+            </span>`;
+          }
+
           document.getElementById('tooltip-box').innerHTML=`
             <span style="font-weight:500;">${fmtD(date)}</span>&nbsp;&nbsp;
             <span style="color:#aee0e0;">Portfolio $${Math.round(pv).toLocaleString()} (${pr>0?'+':''}${pr}%)</span>&nbsp;&nbsp;
@@ -3815,7 +3969,7 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
             <br>
 <span style="font-size:11px;color:var(--color-text-tertiary);display:flex;flex-wrap:wrap;gap:3px 0;margin-top:2px;">
   ${hs}
-</span>`;
+</span>${depositLine}`;
         }
       }
     },
@@ -3827,6 +3981,45 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
       y:{
         ticks:{font:{size:11},color:'#888',callback:v=>currentView==='return'?v.toFixed(0)+'%':'$'+Math.round(v).toLocaleString()},
         grid:{color:'rgba(128,128,128,0.1)'}
+      }
+    }
+  }
+});
+
+// ── DRAWDOWN CHART ────────────────────────────────────────────────────────────
+const drawdownChart=new Chart(document.getElementById('drawdownChart'),{
+  type:'line',
+  data:{
+    labels:tickLabels,
+    datasets:[{
+      data:drawdownSeries,
+      borderColor:'#dd5555',
+      backgroundColor:'rgba(221,85,85,0.15)',
+      borderWidth:1.3,
+      pointRadius:0,
+      pointHoverRadius:3,
+      fill:true,
+      tension:0.15
+    }]
+  },
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        callbacks:{
+          title:(items)=>fmtD(labels[items[0].dataIndex]),
+          label:(ctx)=>`Drawdown: ${ctx.parsed.y.toFixed(1)}%`
+        }
+      }
+    },
+    scales:{
+      x:{display:false},
+      y:{
+        ticks:{font:{size:9},color:'#888',maxTicksLimit:4,callback:v=>v.toFixed(0)+'%'},
+        grid:{color:'rgba(128,128,128,0.08)'}
       }
     }
   }
@@ -3903,15 +4096,10 @@ const concentrationData = FINAL
   .map(h => ({
     sym: h.sym,
     value: h.qty * h.price,
-    pnl: h.pnl
+    pnl: h.pnl,
+    pnlPct: h.pnlPct
   }))
   .sort((a, b) => b.value - a.value);
-
-const concentrationColors = [
-  "#32d583", "#60a5fa", "#fbbf24", "#f97316",
-  "#a78bfa", "#22c55e", "#06b6d4", "#ef4444",
-  "#e879f9", "#94a3b8", "#14b8a6", "#f43f5e"
-];
 
 // ── CONCENTRATION TREEMAP ─────────────────────────────────────────────────────
 (function () {
@@ -3923,25 +4111,30 @@ const concentrationColors = [
 
   const GAP = 3;
 
-  const greenRamp = [
-    "#1a6b4a","#1d7a54","#20895e","#23966a",
-    "#159255","#0f7a47","#127d4a","#1e8f60",
-  ];
-  const redRamp = [
-    "#7a1f2e","#8a2336","#6b1a28","#9b2840",
-    "#7d2233","#6e1c2c","#8f2539","#5e1824",
-  ];
+  // Colour intensity tracks the magnitude of % gain/loss — deep at large moves,
+  // pale near flat — so performance reads at a glance without the table.
+  const PNL_SATURATION_CAP = 25; // % gain/loss at which color reaches full intensity
 
-  function getPnlColor(pnl, index) {
-    const ramp = pnl >= 0 ? greenRamp : redRamp;
-    return ramp[index % ramp.length];
+  function getPnlColor(pnlPct) {
+    const mag = Math.min(Math.abs(pnlPct), PNL_SATURATION_CAP) / PNL_SATURATION_CAP; // 0..1
+    if (pnlPct >= 0) {
+      // pale green -> deep green
+      const sat = 35 + mag * 30;   // 35% -> 65%
+      const light = 58 - mag * 33; // 58% -> 25%
+      return `hsl(152, ${sat}%, ${light}%)`;
+    } else {
+      // pale red -> deep red
+      const sat = 40 + mag * 30;   // 40% -> 70%
+      const light = 54 - mag * 30; // 54% -> 24%
+      return `hsl(355, ${sat}%, ${light}%)`;
+    }
   }
 
   function getSlices() {
     return concentrationData
       .slice()
       .sort((a, b) => b.value - a.value)
-      .map(x => ({ sym: x.sym, val: x.value, pnl: x.pnl, pct: +(x.value / lastPort * 100).toFixed(1) }));
+      .map(x => ({ sym: x.sym, val: x.value, pnl: x.pnl, pnlPct: x.pnlPct, pct: +(x.value / lastPort * 100).toFixed(1) }));
   }
 
   function squarify(items, x, y, w, h) {
@@ -3999,14 +4192,15 @@ const concentrationColors = [
       if (gw < 6 || gh < 6) return;
 
       const cell = document.createElement("div");
-      cell.title = `${r.sym}: ${r.pct}% ($${Math.round(r.val).toLocaleString()})`;
+      const pnlSign = r.pnl >= 0 ? "+" : "-";
+      cell.title = `${r.sym}: ${r.pct}% of book ($${Math.round(r.val).toLocaleString()}) \u00b7 ${pnlSign}$${Math.abs(Math.round(r.pnl)).toLocaleString()} (${pnlSign}${Math.abs(r.pnlPct).toFixed(1)}%)`;
       Object.assign(cell.style, {
         position:       "absolute",
         left:           gx + "px",
         top:            gy + "px",
         width:          gw + "px",
         height:         gh + "px",
-        background:     getPnlColor(r.pnl, i),
+        background:     getPnlColor(r.pnlPct),
         borderRadius:   "6px",
         overflow:       "hidden",
         display:        "flex",
@@ -4079,7 +4273,7 @@ function setView(v){
   currentView=v;
   mainChart.data.datasets=buildMain(v);
   if(v==='return'){
-    const allVals=labels.map((_,i)=>[cumRet(portVals,i),cumRet(spyVals,i),cumRet(qqqVals,i)]).flat();
+    const allVals=[...portRetSeries,...spyRetSeries,...qqqRetSeries];
     const minV=Math.min(...allVals);
     const maxV=Math.max(...allVals);
     const pad=(maxV-minV)*0.15;
