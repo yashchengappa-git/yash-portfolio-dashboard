@@ -3714,8 +3714,20 @@ portVals[portVals.length-1]=+FINAL_TOTAL.toFixed(2);
 // ── DAY P&L (per holding) ─────────────────────────────────────────────────────
 // Compares today's close to yesterday's close, scaled by today's held quantity.
 const _prevDayLabel = labels[labels.length - 2];
+const _todayLabel = labels[labels.length - 1];
 FINAL.forEach(h => {
-  const prevPrice = _prevDayLabel ? getLast(SK[h.sym] || {}, _prevDayLabel) : null;
+  const series = SK[h.sym] || {};
+  const seriesKeys = Object.keys(series).sort();
+
+  // Find the most recent price strictly before today's label
+  let prevPrice = null;
+  for (let i = seriesKeys.length - 1; i >= 0; i--) {
+    if (seriesKeys[i] < _todayLabel) {
+      prevPrice = series[seriesKeys[i]];
+      break;
+    }
+  }
+
   if (prevPrice && prevPrice > 0) {
     h.dayPnl = +(h.qty * (h.price - prevPrice)).toFixed(2);
     h.dayPnlPct = +(((h.price - prevPrice) / prevPrice) * 100).toFixed(2);
