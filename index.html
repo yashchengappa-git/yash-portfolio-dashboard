@@ -3861,21 +3861,15 @@ const FINAL_TOTAL = FINAL.reduce((s, h) => s + h.qty * h.price, 0);
 portVals[portVals.length-1]=+FINAL_TOTAL.toFixed(2);
 
 // ── DAY P&L (per holding) ─────────────────────────────────────────────────────
-// Compares today's close to yesterday's close, scaled by today's held quantity.
-const _prevDayLabel = labels[labels.length - 2];
-const _todayLabel = labels[labels.length - 1];
+// Compares each symbol's latest stored price to the entry immediately before
+// it in that SAME symbol's own series — not the global labels calendar, which
+// can lag behind if SPY/QQQ are missing a day (e.g. a market holiday) that an
+// individual stock's series still has an entry for.
 FINAL.forEach(h => {
   const series = SK[h.sym] || {};
   const seriesKeys = Object.keys(series).sort();
-
-  // Find the most recent price strictly before today's label
-  let prevPrice = null;
-  for (let i = seriesKeys.length - 1; i >= 0; i--) {
-    if (seriesKeys[i] < _todayLabel) {
-      prevPrice = series[seriesKeys[i]];
-      break;
-    }
-  }
+  const prevKey = seriesKeys[seriesKeys.length - 2];
+  const prevPrice = prevKey ? applySplitAdjustment(h.sym, series[prevKey], prevKey) : null;
 
   if (prevPrice && prevPrice > 0) {
     h.dayPnl = +(h.qty * (h.price - prevPrice)).toFixed(2);
