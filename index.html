@@ -4313,16 +4313,33 @@ const drawdownSeries=(()=>{
     return +(((v-peak)/peak)*100).toFixed(2);
   });
 })();
-
+let currentRangeStart=0;
+function rangeStartIndex(range){
+  if(range==='ALL')return 0;
+  const lastDate=new Date(labels[labels.length-1]+"T12:00:00Z");
+  let cutoff;
+  if(range==='YTD'){
+    cutoff=new Date(labels[labels.length-1].slice(0,4)+"-01-01T12:00:00Z");
+  }else{
+    const days={'1M':30,'3M':91,'1Y':365}[range];
+    cutoff=new Date(lastDate); cutoff.setDate(cutoff.getDate()-days);
+  }
+  const cutoffStr=cutoff.toISOString().slice(0,10);
+  let idx=0;
+  for(let i=0;i<labels.length;i++){ if(labels[i]<=cutoffStr) idx=i; else break; }
+  return idx;
+}
 function buildMain(view){
-  const pD=view==='return'?portRetSeries:portVals;
-  const sD=view==='return'?spyRetSeries:spyVals;
-  const qD=view==='return'?qqqRetSeries:qqqVals;
+  const s=currentRangeStart;
+  const pD=(view==='return'?portRetSeries:portVals).slice(s);
+  const sD=(view==='return'?spyRetSeries:spyVals).slice(s);
+  const qD=(view==='return'?qqqRetSeries:qqqVals).slice(s);
+  const sl=labels.slice(s);
   return [
     {label:'Portfolio',data:pD,borderColor:'#aee0e0',borderWidth:2.5,pointRadius:0,pointHoverRadius:5,tension:0.3,fill:false},
     {label:'SPY',data:sD,borderColor:'#6a8fc8',borderWidth:1.5,borderDash:[6,3],pointRadius:0,pointHoverRadius:4,tension:0.3,fill:false},
     {label:'QQQ',data:qD,borderColor:'#b8883a',borderWidth:1.5,borderDash:[3,3],pointRadius:0,pointHoverRadius:4,tension:0.3,fill:false},
-    {label:'Deposit',data:labels.map((d,i)=>depMap[d]?(view==='return'?pD[i]:portVals[i]):null),borderColor:'#fbbf24',backgroundColor:'#fbbf24',pointRadius:labels.map(d=>depMap[d]?6:0),pointStyle:'rectRot',showLine:false,pointHoverRadius:8},
+    {label:'Deposit',data:sl.map((d,i)=>depMap[d]?pD[i]:null),borderColor:'#fbbf24',backgroundColor:'#fbbf24',pointRadius:sl.map(d=>depMap[d]?6:0),pointStyle:'rectRot',showLine:false,pointHoverRadius:8},
   ];
 }
 const monthMarkers = {};
@@ -4335,18 +4352,14 @@ labels.forEach((d, i) => {
   }
 });
 
-const xTickCb = (val, idx) => {
-  const d = labels[idx];
-  if (!d) return "";
-
-  const month = d.slice(0, 7);
-
-  if (monthMarkers[month] === idx) {
-    return fmtD(d).split(" ")[0];
-  }
-
+const xTickCb=(val,idx)=>{
+  const d=labels[idx+currentRangeStart];
+  if(!d)return "";
+  const month=d.slice(0,7);
+  if(monthMarkers[month]===idx+currentRangeStart) return fmtD(d).split(" ")[0];
   return "";
 };
+  
 const mainChart=new Chart(document.getElementById('mainChart'),{
   type:'line',
   data:{labels:tickLabels,datasets:buildMain('value')},
@@ -4360,11 +4373,12 @@ const mainChart=new Chart(document.getElementById('mainChart'),{
         enabled:false,
         external:({tooltip})=>{
           if(tooltip.opacity===0)return;
-          const i=tooltip.dataPoints?.[0]?.dataIndex;
-          if(i===undefined)return;
-          const date=labels[i],pv=portVals[i],sv=spyVals[i],qv=qqqVals[i];
-          const pr=portRetSeries[i],sr=spyRetSeries[i],qr=qqqRetSeries[i];
-          const snap=snaps[i];
+          const iRel=tooltip.dataPoints?.[0]?.dataIndex;
+if(iRel===undefined)return;
+const i=iRel+currentRangeStart;
+const date=labels[i],pv=portVals[i],sv=spyVals[i],qv=qqqVals[i];
+const pr=portRetSeries[i],sr=spyRetSeries[i],qr=qqqRetSeries[i];
+const snap=snaps[i];
           const hs = Object.entries(snap)
   .sort((a,b)=>b[1].value-a[1].value)
   .map(([sym,d])=>`
@@ -4736,6 +4750,16 @@ function setView(v){
   document.getElementById('btn-return').style.background=v==='return'?'var(--color-background-secondary)':'';
 }
 setView('value');
+  function setRange(r){
+  currentRangeStart=rangeStartIndex(r);
+  mainChart.data.labels=tickLabels.slice(currentRangeStart);
+  mainChart.data.datasets=buildMain(currentView);
+  mainChart.update();
+  document.querySelectorAll('.range-btn').forEach(b=>{
+    b.style.background=b.dataset.range===r?'var(--color-background-secondary)':'';
+  });
+}
+setRange('ALL');
 </script>
 </body>
 </html>
