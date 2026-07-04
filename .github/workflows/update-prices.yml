@@ -4,10 +4,10 @@ on:
   schedule:
     - cron: '00 21 * * 1-5'   # 20:15 UTC = 4:15pm ET weekdays
   workflow_dispatch:
-  
+
 permissions:
   contents: write
-  
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -28,10 +28,12 @@ jobs:
         env:
           ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
         run: node scripts/update-prices.js --force
-- name: Update news & earnings
+
+      - name: Update news & earnings
         env:
           ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
         run: node scripts/update-news.js
+
       - name: Commit updated dashboard
         run: |
           git config --global user.name "github-actions"
