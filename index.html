@@ -4026,11 +4026,7 @@ function renderHoldingsTable(){
     const sgn = pnl >= 0 ? '+' : '-';
 
     let realizedBadge = '';
-    if (h.realizedPnl) {
-      const rSgn = h.realizedPnl >= 0 ? '+' : '-';
-      realizedBadge = `<br><span style="font-size:9px;color:var(--color-text-tertiary);" title="Banked from a fully closed prior position in ${h.sym}, before this position was reopened">${rSgn}$${Math.abs(h.realizedPnl).toFixed(1)} realized prior</span>`;
-    }
-
+ 
     let dayCell;
     if (h.dayPnl === null) {
       dayCell = `<span style="color:var(--color-text-tertiary);">—</span>`;
