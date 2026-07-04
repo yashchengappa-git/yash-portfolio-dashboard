@@ -480,6 +480,7 @@ th[data-key]:hover {
 <div style="padding:1rem 0 0.5rem;">
 
 <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1.25rem;" id="metric-cards"></div>
+  <div id="rolling-returns" style="display:flex;flex-wrap:wrap;margin-bottom:0.75rem;"></div>
 <div style="display:flex;align-items:center;gap:16px;margin-bottom:1rem;flex-wrap:wrap;">
   <div style="display:flex;gap:12px;font-size:13px;color:var(--color-text-secondary);">
     <span style="display:flex;align-items:center;gap:5px;"><span style="width:18px;height:2px;background:#aee0e0;display:inline-block;"></span><span style="width:6px;height:6px;border-radius:50%;background:#aee0e0;display:inline-block;"></span> Portfolio</span>
@@ -487,10 +488,18 @@ th[data-key]:hover {
     <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:0;border-bottom:2px dashed #d97706;display:inline-block;"></span> QQQ equiv</span>
     <span style="display:flex;align-items:center;gap:5px;"><span style="font-weight:700;color:#fbbf24;">D</span> = deposit day</span>
   </div>
-  <div style="margin-left:auto;display:flex;gap:8px;">
-    <button onclick="setView('value')" id="btn-value" style="font-size:12px;padding:4px 10px;cursor:pointer;">$ value</button>
-    <button onclick="setView('return')" id="btn-return" style="font-size:12px;padding:4px 10px;cursor:pointer;">% return</button>
+  
+  <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+  <div style="display:flex;gap:4px;">
+    <button onclick="setRange('1M')" class="range-btn" data-range="1M" style="font-size:11px;padding:3px 8px;cursor:pointer;">1M</button>
+    <button onclick="setRange('3M')" class="range-btn" data-range="3M" style="font-size:11px;padding:3px 8px;cursor:pointer;">3M</button>
+    <button onclick="setRange('YTD')" class="range-btn" data-range="YTD" style="font-size:11px;padding:3px 8px;cursor:pointer;">YTD</button>
+    <button onclick="setRange('1Y')" class="range-btn" data-range="1Y" style="font-size:11px;padding:3px 8px;cursor:pointer;">1Y</button>
+    <button onclick="setRange('ALL')" class="range-btn" data-range="ALL" style="font-size:11px;padding:3px 8px;cursor:pointer;">All</button>
   </div>
+  <button onclick="setView('value')" id="btn-value" style="font-size:12px;padding:4px 10px;cursor:pointer;">$ value</button>
+  <button onclick="setView('return')" id="btn-return" style="font-size:12px;padding:4px 10px;cursor:pointer;">% return</button>
+</div>
 </div>
 
 <div style="position:relative;width:100%;height:280px;">
@@ -3859,28 +3868,7 @@ const FINAL_TOTAL = FINAL.reduce((s, h) => s + h.qty * h.price, 0);
 
 // Reconcile: replace last chart point with derived FINAL_TOTAL
 portVals[portVals.length-1]=+FINAL_TOTAL.toFixed(2);
-// ── XIRR (dollar-weighted return, annualized) ────────────────────────────────
-function xirr(cashflows){
-  const d0=new Date(cashflows[0].date+"T12:00:00Z");
-  const yrs=cf=>(new Date(cf.date+"T12:00:00Z")-d0)/(365*24*3600*1000);
-  const npv=r=>cashflows.reduce((s,cf)=>s+cf.amount/Math.pow(1+r,yrs(cf)),0);
-  const dnpv=r=>cashflows.reduce((s,cf)=>{const t=yrs(cf);return s-t*cf.amount/Math.pow(1+r,t+1);},0);
-  let rate=0.1;
-  for(let i=0;i<100;i++){
-    const f=npv(rate),fp=dnpv(rate);
-    if(Math.abs(fp)<1e-10)break;
-    const next=rate-f/fp;
-    if(Math.abs(next-rate)<1e-7){rate=next;break;}
-    rate=next;
-  }
-  return rate;
-}
-const xirrCashflows=[
-  ...RAW_DEP.map(d=>({date:d.date,amount:-d.amt})),
-  {date:labels[labels.length-1],amount:lastPort}
-];
-let xirrPct=0;
-try{ xirrPct=xirr(xirrCashflows)*100; }catch(e){ console.error("XIRR failed",e); }
+
 // ── DAY P&L (per holding) ─────────────────────────────────────────────────────
 // Compares each symbol's latest stored price to the entry immediately before
 // it in that SAME symbol's own series — not the global labels calendar, which
@@ -3909,7 +3897,28 @@ const spyRet=((lastSPY-TOTAL_DEP)/TOTAL_DEP*100).toFixed(1);
 const qqqRet=((lastQQQ-TOTAL_DEP)/TOTAL_DEP*100).toFixed(1);
 const vsS=(lastPort-lastSPY).toFixed(1);
 const vsQ=(lastPort-lastQQQ).toFixed(1);
-
+// ── XIRR (dollar-weighted return, annualized) ────────────────────────────────
+function xirr(cashflows){
+  const d0=new Date(cashflows[0].date+"T12:00:00Z");
+  const yrs=cf=>(new Date(cf.date+"T12:00:00Z")-d0)/(365*24*3600*1000);
+  const npv=r=>cashflows.reduce((s,cf)=>s+cf.amount/Math.pow(1+r,yrs(cf)),0);
+  const dnpv=r=>cashflows.reduce((s,cf)=>{const t=yrs(cf);return s-t*cf.amount/Math.pow(1+r,t+1);},0);
+  let rate=0.1;
+  for(let i=0;i<100;i++){
+    const f=npv(rate),fp=dnpv(rate);
+    if(Math.abs(fp)<1e-10)break;
+    const next=rate-f/fp;
+    if(Math.abs(next-rate)<1e-7){rate=next;break;}
+    rate=next;
+  }
+  return rate;
+}
+const xirrCashflows=[
+  ...RAW_DEP.map(d=>({date:d.date,amount:-d.amt})),
+  {date:labels[labels.length-1],amount:lastPort}
+];
+let xirrPct=0;
+try{ xirrPct=xirr(xirrCashflows)*100; }catch(e){ console.error("XIRR failed",e); }
 // ── DAILY P&L ─────────────────────────────────────────────────────────────────
 // Computed excluding deposit days (a fresh deposit inflates the number artificially)
 const dailyPnl=portVals.map((v,i)=>{
@@ -4269,6 +4278,31 @@ const qqqIdx=buildIndexSeries(qqqVals);
 const portRetSeries=portIdx.map(v=>+(v-100).toFixed(2));
 const spyRetSeries=spyIdx.map(v=>+(v-100).toFixed(2));
 const qqqRetSeries=qqqIdx.map(v=>+(v-100).toFixed(2));
+// ── ROLLING RETURNS ───────────────────────────────────────────────────────────
+function idxAtDaysBack(days){
+  const cutoff=new Date(labels[labels.length-1]+"T12:00:00Z");
+  cutoff.setDate(cutoff.getDate()-days);
+  const cutoffStr=cutoff.toISOString().slice(0,10);
+  let idx=0;
+  for(let i=0;i<labels.length;i++){ if(labels[i]<=cutoffStr) idx=i; else break; }
+  return idx;
+}
+function ytdIdx(){
+  const year=labels[labels.length-1].slice(0,4);
+  const i=labels.findIndex(d=>d.startsWith(year));
+  return i===-1?0:i;
+}
+const rollingWindows=[
+  {label:"1M", value:(portIdx[labels.length-1]/portIdx[idxAtDaysBack(30)]-1)*100},
+  {label:"3M", value:(portIdx[labels.length-1]/portIdx[idxAtDaysBack(91)]-1)*100},
+  {label:"6M", value:(portIdx[labels.length-1]/portIdx[idxAtDaysBack(182)]-1)*100},
+  {label:"YTD",value:(portIdx[labels.length-1]/portIdx[ytdIdx()]-1)*100},
+];
+document.getElementById('rolling-returns').innerHTML=rollingWindows.map(r=>`
+  <span style="display:inline-flex;gap:4px;align-items:baseline;margin-right:14px;">
+    <span style="color:var(--color-text-secondary);font-size:11px;">${r.label}</span>
+    <span style="color:${r.value>=0?'#aee0e0':'#c0392b'};font-size:13px;font-weight:500;">${r.value>=0?'+':''}${r.value.toFixed(1)}%</span>
+  </span>`).join('');  
 
 // ── DRAWDOWN (peak-to-trough on the deposit-neutral growth index) ────────────
 const drawdownSeries=(()=>{
