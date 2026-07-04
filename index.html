@@ -3859,7 +3859,28 @@ const FINAL_TOTAL = FINAL.reduce((s, h) => s + h.qty * h.price, 0);
 
 // Reconcile: replace last chart point with derived FINAL_TOTAL
 portVals[portVals.length-1]=+FINAL_TOTAL.toFixed(2);
-
+// ── XIRR (dollar-weighted return, annualized) ────────────────────────────────
+function xirr(cashflows){
+  const d0=new Date(cashflows[0].date+"T12:00:00Z");
+  const yrs=cf=>(new Date(cf.date+"T12:00:00Z")-d0)/(365*24*3600*1000);
+  const npv=r=>cashflows.reduce((s,cf)=>s+cf.amount/Math.pow(1+r,yrs(cf)),0);
+  const dnpv=r=>cashflows.reduce((s,cf)=>{const t=yrs(cf);return s-t*cf.amount/Math.pow(1+r,t+1);},0);
+  let rate=0.1;
+  for(let i=0;i<100;i++){
+    const f=npv(rate),fp=dnpv(rate);
+    if(Math.abs(fp)<1e-10)break;
+    const next=rate-f/fp;
+    if(Math.abs(next-rate)<1e-7){rate=next;break;}
+    rate=next;
+  }
+  return rate;
+}
+const xirrCashflows=[
+  ...RAW_DEP.map(d=>({date:d.date,amount:-d.amt})),
+  {date:labels[labels.length-1],amount:lastPort}
+];
+let xirrPct=0;
+try{ xirrPct=xirr(xirrCashflows)*100; }catch(e){ console.error("XIRR failed",e); }
 // ── DAY P&L (per holding) ─────────────────────────────────────────────────────
 // Compares each symbol's latest stored price to the entry immediately before
 // it in that SAME symbol's own series — not the global labels calendar, which
@@ -3919,7 +3940,7 @@ const cards=[
       ${totalGainLossText}
     </span>
   `,
-  sub:`+${portRet}% return on capital`,
+  sub:`+${portRet}% total &middot; ${xirrPct>=0?'+':''}${xirrPct.toFixed(1)}% ann. (XIRR)`,
   color:"#aee0e0"
 },
   {
