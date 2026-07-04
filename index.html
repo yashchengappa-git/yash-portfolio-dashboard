@@ -530,7 +530,16 @@ th[data-key]:hover {
 </div>
 </div>
 </div>
-
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:1.5rem;">
+  <div>
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">Upcoming Earnings</div>
+    <div id="earnings-calendar" style="font-size:12px;line-height:1.6;color:var(--color-text-secondary);max-height:220px;overflow:auto;"></div>
+  </div>
+  <div>
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">News & Sentiment</div>
+    <div id="news-feed" style="font-size:12px;line-height:1.6;color:var(--color-text-secondary);max-height:220px;overflow:auto;"></div>
+  </div>
+</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:1.25rem;">
   <div class="table-panel">
     <div id="holdings-title" class="table-panel-title">
@@ -3644,6 +3653,10 @@ function latestSharedBenchmarkDate(){
 const AUTO_END_DATE = latestSharedBenchmarkDate();
 
 const DAYS = tradingDays("2026-01-07", AUTO_END_DATE);
+  // ── EARNINGS CALENDAR (refreshed via Alpha Vantage) ──────────────────────────
+const EARNINGS=[];
+// ── NEWS & SENTIMENT (refreshed via Alpha Vantage) ───────────────────────────
+const NEWS={};
 // All trades from trade report excel
 const TRADES=[
   {date:"2026-01-08",sym:"LMT",side:"buy",qty:1.000000000,price:531.2400},
@@ -4162,7 +4175,30 @@ renderHoldingsTable();
     card.addEventListener('click', () => card.classList.toggle('flipped'));
   });
 })();
+(function renderEarningsAndNews(){
+  const held=FINAL.map(h=>h.sym);
+  const upcoming=EARNINGS.filter(e=>held.includes(e.symbol)).sort((a,b)=>a.date.localeCompare(b.date));
+  document.getElementById('earnings-calendar').innerHTML = upcoming.length
+    ? upcoming.map(e=>`
+      <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--color-border-tertiary);">
+        <span>${renderTickerWithLogo(e.symbol)}</span>
+        <span style="color:var(--color-text-tertiary);">${fmtD(e.date)}${e.epsEstimate?` &middot; est. EPS $${e.epsEstimate}`:''}</span>
+      </div>`).join('')
+    : `<div style="opacity:0.6;">No earnings in the next 3 months.</div>`;
 
+  const rows=held.filter(s=>NEWS[s]&&NEWS[s].articles.length).map(s=>{
+    const n=NEWS[s];
+    const col=n.sentiment==='positive'?'#5aaa7a':n.sentiment==='negative'?'#c0392b':'#888';
+    return `<div style="padding:6px 0;border-bottom:0.5px solid var(--color-border-tertiary);">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        ${renderTickerWithLogo(s)}
+        <span style="color:${col};font-size:10px;text-transform:uppercase;">${n.sentiment}</span>
+      </div>
+      ${n.articles.map(a=>`<a href="${a.url}" target="_blank" rel="noopener" style="display:block;color:var(--color-text-secondary);text-decoration:none;margin-top:2px;">${a.headline}</a>`).join('')}
+    </div>`;
+  }).join('');
+  document.getElementById('news-feed').innerHTML = rows || `<div style="opacity:0.6;">No recent news.</div>`;
+})();
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
 const TRADE_LOG=[
   {date:"2026-07-01",action:"buy",sym:"NBIS",amt:103.69},
