@@ -35,3 +35,11 @@ jobs:
           git add index.html
           git commit -m "Log trade: ${{ github.event.inputs.side }} ${{ github.event.inputs.sym }}"
           git push
+- name: Notify Discord
+        if: success()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" \
+               -d "{\"content\": \"📈 Logged: ${{ github.event.inputs.side }} ${{ github.event.inputs.sym }} — \$${{ github.event.inputs.amt }} @ \$${{ github.event.inputs.price }}\"}" \
+               "$DISCORD_WEBHOOK_URL"
