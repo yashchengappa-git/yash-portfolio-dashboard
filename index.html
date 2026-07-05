@@ -718,7 +718,6 @@ const RAW_DEP=[
   {date:"2026-06-01",amt:330.21},{date:"2026-06-01",amt:-95},
   {date:"2026-06-02",amt:51.46},
   {date:"2026-06-15",amt:82.32},
-  {date:"2026-07-01",amt:103.74},{date:"2026-07-01",amt:103.74},
 ];
 const TOTAL_DEP=RAW_DEP.reduce((s,d)=>s+d.amt,0); // 2355
 
@@ -3843,8 +3842,6 @@ const TRADES=[
   {date:"2026-06-16",sym:"NBIS",side:"buy",qty:0.26,price:263.62},
   {date:"2026-06-16",sym:"AAOI",side:"buy",qty:0.32,price:175.37},
   {date:"2026-06-16",sym:"VRT",side:"buy",qty:0.057479471,price:308.11},
-  {date:"2026-07-01",sym:"MU",side:"buy",qty:0.09738155,price:1064.80},
-  {date:"2026-07-01",sym:"NBIS",side:"buy",qty:0.433044887,price:239.44},
 ];
 const fmtD=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric'});
 
@@ -4309,8 +4306,6 @@ renderHoldingsTable();
 })();
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
 const TRADE_LOG=[
-  {date:"2026-07-01",action:"buy",sym:"NBIS",amt:103.69},
-  {date:"2026-07-01",action:"buy",sym:"MU",amt:103.69},
   {date:"2026-06-16",action:"buy",sym:"VRT",amt:17.71},
   {date:"2026-06-16",action:"buy",sym:"AAOI",amt:56.12},
   {date:"2026-06-16",action:"buy",sym:"NBIS",amt:68.54},
