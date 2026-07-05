@@ -16,11 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
       - name: Log deposit
         run: node scripts/log-deposit.js "${{ github.event.inputs.date }}" "${{ github.event.inputs.amt }}"
+
       - name: Commit
         run: |
           git config --global user.name "github-actions"
@@ -28,11 +31,12 @@ jobs:
           git add index.html
           git commit -m "Log deposit: \$${{ github.event.inputs.amt }}"
           git push
+
       - name: Notify Discord
         if: success()
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           curl -H "Content-Type: application/json" \
-               -d "{\"content\": \"💰 Logged deposit: \$${{ github.event.inputs.amt }} on ${{ github.event.inputs.date }}\"}" \
+               -d "{\"content\": \"Logged deposit: \$${{ github.event.inputs.amt }} on ${{ github.event.inputs.date }}\"}" \
                "$DISCORD_WEBHOOK_URL"
