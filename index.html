@@ -532,6 +532,7 @@ th[data-key]:hover {
 @media (hover: none) and (pointer: coarse) {
   #refresh-icon { display: inline; }
 }
+    @keyframes ptr-spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
   </style>
     <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a0a0a">
@@ -540,11 +541,14 @@ th[data-key]:hover {
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <h2 class="sr-only">Portfolio dashboard with daily P&L, cumulative return chart, current holdings, and trade history</h2>
-<div style="padding:1rem 0 0.5rem;">
+<div id="ptr-indicator" style="position:fixed;top:0;left:50%;transform:translate(-50%,-60px);width:36px;height:36px;border-radius:50%;background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:center;z-index:200;pointer-events:none;">
+  <span id="ptr-icon" style="font-size:16px;color:#aee0e0;display:inline-block;">⟳</span>
+</div>
+  <div style="padding:1rem 0 0.5rem;">
 
 <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1.25rem;" id="metric-cards"></div>
   <button onclick="document.getElementById('log-modal').style.display='flex'" style="font-size:12px;padding:6px 14px;cursor:pointer;background:var(--color-background-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-tertiary);border-radius:8px;margin-bottom:10px;">+ Log Activity</button>
-<span id="refresh-icon" onclick="forceRefresh()" title="Force refresh" style="cursor:pointer;color:var(--color-text-secondary);font-size:14px;margin-left:10px;opacity:0.6;vertical-align:middle;">⟳</span>
+
 <div id="log-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);align-items:flex-start;justify-content:center;z-index:100;">
   <div style="background:var(--color-background-tertiary);border:1px solid var(--color-border-tertiary);padding:22px;border-radius:14px;width:280px;box-shadow:0 8px 30px rgba(0,0,0,0.5);">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
@@ -4946,10 +4950,54 @@ setRange('ALL');
   document.getElementById('log-side-wrap').style.display = isDeposit ? 'none' : 'block';
   document.getElementById('log-price-wrap').style.display = isDeposit ? 'none' : 'block';
 }
-  function forceRefresh(){
-  if (navigator.vibrate) navigator.vibrate(10);
-  location.href = location.pathname + '?t=' + Date.now();
-}
+(function(){
+  const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  if(!isTouch) return;
+
+  const indicator = document.getElementById('ptr-indicator');
+  const icon = document.getElementById('ptr-icon');
+  const THRESHOLD = 70;
+  let startY = 0, pulling = false, triggered = false;
+
+  document.addEventListener('touchstart', (e) => {
+    if (window.scrollY <= 0) {
+      startY = e.touches[0].clientY;
+      pulling = true;
+      triggered = false;
+    }
+  }, {passive:true});
+
+  document.addEventListener('touchmove', (e) => {
+    if (!pulling) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy <= 0) return;
+    const dist = Math.min(dy * 0.5, 90);
+    indicator.style.transition = 'none';
+    indicator.style.transform = `translate(-50%, ${dist - 60}px)`;
+    icon.style.transform = `rotate(${dist * 4}deg)`;
+    if (dist > THRESHOLD && !triggered) {
+      triggered = true;
+      if (navigator.vibrate) navigator.vibrate(10);
+    } else if (dist <= THRESHOLD && triggered) {
+      triggered = false;
+    }
+  }, {passive:true});
+
+  document.addEventListener('touchend', () => {
+    if (!pulling) return;
+    pulling = false;
+    indicator.style.transition = 'transform 0.2s ease';
+    if (triggered) {
+      indicator.style.transform = 'translate(-50%, 20px)';
+      icon.style.animation = 'ptr-spin 0.6s linear infinite';
+      setTimeout(() => {
+        location.href = location.pathname + '?t=' + Date.now();
+      }, 300);
+    } else {
+      indicator.style.transform = 'translate(-50%, -60px)';
+    }
+  }, {passive:true});
+})();
 </script>
 </body>
 </html>
