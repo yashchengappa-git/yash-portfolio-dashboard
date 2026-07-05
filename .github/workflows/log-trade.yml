@@ -9,9 +9,9 @@ on:
         required: true
       side:
         required: true
-      amt:
+      price:
         required: true
-        price:
+      amt:
         required: true
 
 permissions:
