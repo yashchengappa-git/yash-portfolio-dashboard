@@ -4912,7 +4912,7 @@ setRange('ALL');
     const status=document.getElementById('log-status');
     status.textContent='Submitting...';
     try{
-      const res=await fetch('https://dashboard-logger.<you>.workers.dev', {
+      const res=await fetch('https://dashboard-logger.yashchengappa.workers.dev', {
         method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
       });
       const data=await res.json();
