@@ -534,6 +534,26 @@ th[data-key]:hover {
 <div style="padding:1rem 0 0.5rem;">
 
 <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1.25rem;" id="metric-cards"></div>
+  <button onclick="document.getElementById('log-modal').style.display='flex'" style="font-size:12px;padding:4px 10px;cursor:pointer;">+ Log Activity</button>
+
+<div id="log-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;z-index:100;">
+  <div style="background:var(--color-background-tertiary);padding:20px;border-radius:12px;width:280px;">
+    <select id="log-type" style="width:100%;margin-bottom:8px;">
+      <option value="trade">Trade</option>
+      <option value="deposit">Deposit</option>
+    </select>
+    <input id="log-date" type="date" style="width:100%;margin-bottom:8px;">
+    <input id="log-sym" placeholder="Symbol" style="width:100%;margin-bottom:8px;">
+    <select id="log-side" style="width:100%;margin-bottom:8px;">
+      <option value="buy">Buy</option>
+      <option value="sell">Sell</option>
+    </select>
+    <input id="log-amt" type="number" placeholder="Amount ($)" style="width:100%;margin-bottom:8px;">
+    <input id="log-pass" type="password" placeholder="Password" style="width:100%;margin-bottom:8px;">
+    <button onclick="submitLog()" style="width:100%;padding:6px;cursor:pointer;">Submit</button>
+    <div id="log-status" style="font-size:11px;margin-top:6px;"></div>
+  </div>
+</div>
   <div id="rolling-returns" style="display:flex;flex-wrap:wrap;margin-bottom:0.75rem;"></div>
 <div id="chart-controls" style="display:flex;align-items:center;gap:16px;margin-bottom:1rem;flex-wrap:wrap;">
   <div id="chart-legend" style="display:flex;gap:12px;font-size:13px;color:var(--color-text-secondary);">
@@ -4867,6 +4887,25 @@ setView('value');
   });
 }
 setRange('ALL');
+    async function submitLog(){
+    const type=document.getElementById('log-type').value;
+    const payload={
+      type, password:document.getElementById('log-pass').value,
+      date:document.getElementById('log-date').value,
+      sym:document.getElementById('log-sym').value,
+      side:document.getElementById('log-side').value,
+      amt:document.getElementById('log-amt').value
+    };
+    const status=document.getElementById('log-status');
+    status.textContent='Submitting...';
+    try{
+      const res=await fetch('https://dashboard-logger.<you>.workers.dev', {
+        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+      });
+      const data=await res.json();
+      status.textContent = res.ok ? 'Logged! Refresh in ~1 min.' : `Error: ${data.error}`;
+    }catch(e){ status.textContent='Network error.'; }
+  }
 </script>
 </body>
 </html>
