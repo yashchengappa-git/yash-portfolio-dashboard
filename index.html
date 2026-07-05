@@ -528,6 +528,10 @@ th[data-key]:hover {
     flex: 1;
   }
 }
+    #refresh-icon { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  #refresh-icon { display: inline; }
+}
   </style>
     <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a0a0a">
@@ -573,6 +577,7 @@ th[data-key]:hover {
     <input id="log-pass" type="password" placeholder="Password" style="width:100%;margin-bottom:14px;padding:8px;background:var(--color-background-secondary);color:var(--color-text-primary);border:1px solid var(--color-border-tertiary);border-radius:6px;font-size:12px;box-sizing:border-box;">
 
     <button onclick="submitLog()" style="width:100%;padding:9px;cursor:pointer;background:#aee0e0;color:#0a0a0a;border:none;border-radius:6px;font-size:12px;font-weight:600;">Submit</button>
+    <span id="refresh-icon" onclick="forceRefresh()" title="Force refresh" style="cursor:pointer;color:var(--color-text-secondary);font-size:14px;margin-left:10px;opacity:0.6;vertical-align:middle;">⟳</span>
     <div id="log-status" style="font-size:11px;margin-top:8px;color:var(--color-text-secondary);"></div>
   </div>
 </div>
@@ -4940,6 +4945,10 @@ setRange('ALL');
   document.getElementById('log-sym-wrap').style.display = isDeposit ? 'none' : 'block';
   document.getElementById('log-side-wrap').style.display = isDeposit ? 'none' : 'block';
   document.getElementById('log-price-wrap').style.display = isDeposit ? 'none' : 'block';
+}
+  function forceRefresh(){
+  if (navigator.vibrate) navigator.vibrate(10);
+  location.href = location.pathname + '?t=' + Date.now();
 }
 </script>
 </body>
