@@ -473,6 +473,60 @@ th[data-key]:hover {
   td {
     font-size: 8.5px !important;
   }
+
+  /* Rolling returns row: scroll horizontally instead of overflowing the page */
+  #rolling-returns {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    margin-bottom: 0.5rem !important;
+  }
+
+  #rolling-returns > span {
+    flex-shrink: 0;
+    margin-right: 10px !important;
+  }
+
+  /* Legend + chart controls: stack legend above buttons instead of squeezing side by side */
+  #chart-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  #chart-legend {
+    font-size: 10px !important;
+    gap: 8px !important;
+    flex-wrap: wrap;
+  }
+
+  #chart-buttons {
+    margin-left: 0 !important;
+    width: 100%;
+    justify-content: space-between !important;
+    flex-wrap: wrap;
+    gap: 6px !important;
+  }
+
+  #range-btn-group {
+    flex: 1;
+    justify-content: space-between !important;
+  }
+
+  #range-btn-group .range-btn {
+    padding: 4px 6px !important;
+    font-size: 10px !important;
+    flex: 1;
+    text-align: center;
+  }
+
+  #btn-value,
+  #btn-return {
+    padding: 4px 8px !important;
+    font-size: 10.5px !important;
+    flex: 1;
+  }
 }
   </style>
 </head>
@@ -481,16 +535,16 @@ th[data-key]:hover {
 
 <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1.25rem;" id="metric-cards"></div>
   <div id="rolling-returns" style="display:flex;flex-wrap:wrap;margin-bottom:0.75rem;"></div>
-<div style="display:flex;align-items:center;gap:16px;margin-bottom:1rem;flex-wrap:wrap;">
-  <div style="display:flex;gap:12px;font-size:13px;color:var(--color-text-secondary);">
+<div id="chart-controls" style="display:flex;align-items:center;gap:16px;margin-bottom:1rem;flex-wrap:wrap;">
+  <div id="chart-legend" style="display:flex;gap:12px;font-size:13px;color:var(--color-text-secondary);">
     <span style="display:flex;align-items:center;gap:5px;"><span style="width:18px;height:2px;background:#aee0e0;display:inline-block;"></span><span style="width:6px;height:6px;border-radius:50%;background:#aee0e0;display:inline-block;"></span> Portfolio</span>
     <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:0;border-bottom:2px dashed #2563eb;display:inline-block;"></span> SPY equiv</span>
     <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:0;border-bottom:2px dashed #d97706;display:inline-block;"></span> QQQ equiv</span>
     <span style="display:flex;align-items:center;gap:5px;"><span style="font-weight:700;color:#fbbf24;">D</span> = deposit day</span>
   </div>
   
-  <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-  <div style="display:flex;gap:4px;">
+  <div id="chart-buttons" style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+  <div id="range-btn-group" style="display:flex;gap:4px;">
     <button onclick="setRange('1M')" class="range-btn" data-range="1M" style="font-size:11px;padding:3px 8px;cursor:pointer;">1M</button>
     <button onclick="setRange('3M')" class="range-btn" data-range="3M" style="font-size:11px;padding:3px 8px;cursor:pointer;">3M</button>
     <button onclick="setRange('YTD')" class="range-btn" data-range="YTD" style="font-size:11px;padding:3px 8px;cursor:pointer;">YTD</button>
