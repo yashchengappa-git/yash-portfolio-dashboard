@@ -11,6 +11,8 @@ on:
         required: true
       amt:
         required: true
+        price:
+        required: true
 
 permissions:
   contents: write
