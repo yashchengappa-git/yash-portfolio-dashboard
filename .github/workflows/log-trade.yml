@@ -27,8 +27,6 @@ jobs:
           node-version: 20
       - run: npm install axios
       - name: Log trade
-        env:
-          ALPHA_VANTAGE_KEY: ${{ secrets.ALPHA_VANTAGE_KEY }}
         run: node scripts/log-trade.js "${{ github.event.inputs.date }}" "${{ github.event.inputs.sym }}" "${{ github.event.inputs.side }}" "${{ github.event.inputs.amt }}" "${{ github.event.inputs.price }}"
       - name: Commit
         run: |
