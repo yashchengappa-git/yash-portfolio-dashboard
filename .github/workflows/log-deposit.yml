@@ -1,0 +1,30 @@
+name: Log Deposit
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        required: true
+      amt:
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  log:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Log deposit
+        run: node scripts/log-deposit.js "${{ github.event.inputs.date }}" "${{ github.event.inputs.amt }}"
+      - name: Commit
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          git add index.html
+          git commit -m "Log deposit: \$${{ github.event.inputs.amt }}"
+          git push
