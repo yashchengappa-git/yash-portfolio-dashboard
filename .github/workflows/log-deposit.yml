@@ -28,7 +28,7 @@ jobs:
           git add index.html
           git commit -m "Log deposit: \$${{ github.event.inputs.amt }}"
           git push
-- name: Notify Discord
+      - name: Notify Discord
         if: success()
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
