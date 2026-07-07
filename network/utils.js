@@ -31,21 +31,24 @@ const NetworkUtils = (() => {
   // the line between them so overlapping links never sit exactly on top of
   // each other. `curvature` in px; 0 gives a nearly-straight (but still
   // curved-cap) line.
-  function bezierPath(source, target, curvature = 26) {
+  // Cubic Bezier with two control points that flex in *opposite*
+  // directions — an S-curve rather than a single uniform bow. This is
+  // what makes the link read as "fluid" rather than a slightly-bent
+  // straight line. Curvature scales with link length so short links
+  // (theme -> company) and long ones (portfolio -> theme) both look
+  // proportionate rather than the short ones looking barely curved.
+  function bezierPath(source, target, curvatureRatio = 0.28) {
     const dx = target.x - source.x;
     const dy = target.y - source.y;
     const len = Math.hypot(dx, dy) || 1;
-    // perpendicular unit vector
     const nx = -dy / len;
     const ny = dx / len;
+    const curvature = Math.min(46, len * curvatureRatio);
 
-    // Two control points instead of one — the curve flexes once on the way
-    // out and eases back on the way in, rather than bowing as a single
-    // uniform arc. Reads as noticeably more organic/fluid at this scale.
-    const p1x = source.x + dx * 0.33 + nx * curvature;
-    const p1y = source.y + dy * 0.33 + ny * curvature;
-    const p2x = source.x + dx * 0.66 + nx * curvature * 0.45;
-    const p2y = source.y + dy * 0.66 + ny * curvature * 0.45;
+    const p1x = source.x + dx * 0.32 + nx * curvature;
+    const p1y = source.y + dy * 0.32 + ny * curvature;
+    const p2x = source.x + dx * 0.68 - nx * curvature * 0.7;
+    const p2y = source.y + dy * 0.68 - ny * curvature * 0.7;
 
     return `M${source.x},${source.y} C${p1x},${p1y} ${p2x},${p2y} ${target.x},${target.y}`;
   }
