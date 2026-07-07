@@ -31,18 +31,23 @@ const NetworkUtils = (() => {
   // the line between them so overlapping links never sit exactly on top of
   // each other. `curvature` in px; 0 gives a nearly-straight (but still
   // curved-cap) line.
-  function bezierPath(source, target, curvature = 22) {
+  function bezierPath(source, target, curvature = 26) {
     const dx = target.x - source.x;
     const dy = target.y - source.y;
-    const mx = (source.x + target.x) / 2;
-    const my = (source.y + target.y) / 2;
     const len = Math.hypot(dx, dy) || 1;
     // perpendicular unit vector
     const nx = -dy / len;
     const ny = dx / len;
-    const cx = mx + nx * curvature;
-    const cy = my + ny * curvature;
-    return `M${source.x},${source.y} Q${cx},${cy} ${target.x},${target.y}`;
+
+    // Two control points instead of one — the curve flexes once on the way
+    // out and eases back on the way in, rather than bowing as a single
+    // uniform arc. Reads as noticeably more organic/fluid at this scale.
+    const p1x = source.x + dx * 0.33 + nx * curvature;
+    const p1y = source.y + dy * 0.33 + ny * curvature;
+    const p2x = source.x + dx * 0.66 + nx * curvature * 0.45;
+    const p2y = source.y + dy * 0.66 + ny * curvature * 0.45;
+
+    return `M${source.x},${source.y} C${p1x},${p1y} ${p2x},${p2y} ${target.x},${target.y}`;
   }
 
   // Points evenly around a circle, used for laying out theme nodes around
