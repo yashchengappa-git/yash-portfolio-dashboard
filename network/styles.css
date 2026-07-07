@@ -1,0 +1,242 @@
+/*
+|--------------------------------------------------------------------------
+| Portfolio Network — Visual Styles
+|--------------------------------------------------------------------------
+| Colours, typography, shadows, glass. No layout calculations, no JS.
+| Reuses the dashboard's existing --color-*/--glass/--shadow-glow tokens
+| so the graph matches the rest of the page rather than introducing a
+| second design language.
+*/
+
+.network-panel {
+  background: var(--glass);
+  backdrop-filter: blur(18px);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-glow);
+  padding: 20px;
+  height: 560px;
+  position: relative;
+  overflow: hidden;
+}
+
+.network-panel-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.network-panel-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.network-panel-subtitle {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+#portfolio-network {
+  width: 100%;
+  height: calc(100% - 26px);
+  position: relative;
+}
+
+.network-svg {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+.network-svg:active {
+  cursor: grabbing;
+}
+
+/* ---- Links ------------------------------------------------------------ */
+
+.network-link {
+  stroke: var(--color-text-secondary);
+  stroke-linecap: round;
+}
+
+/* ---- Nodes -------------------------------------------------------------- */
+
+.network-node {
+  cursor: pointer;
+}
+
+.network-node-circle {
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 1px;
+  transition: filter 0.18s ease;
+}
+
+.network-node:hover .network-node-circle {
+  filter: brightness(1.12);
+}
+
+.network-node-halo {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 10px;
+  pointer-events: none;
+}
+
+.network-node--root .network-node-circle {
+  stroke: rgba(255, 255, 255, 0.2);
+}
+
+.network-node-logo {
+  pointer-events: none;
+}
+
+.network-node-label {
+  fill: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  pointer-events: none;
+}
+
+.network-node--root .network-node-label,
+.network-node--theme .network-node-label {
+  fill: var(--color-text-primary);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.network-node.is-expanded .network-node-label {
+  opacity: 0;
+}
+
+/* ---- Expanded card ---------------------------------------------------- */
+
+.network-card-fo {
+  overflow: visible;
+  pointer-events: none;
+}
+
+.network-card-wrap {
+  pointer-events: auto;
+  width: 100%;
+  height: 100%;
+}
+
+.network-card {
+  background: linear-gradient(180deg, rgba(24, 24, 24, 0.92), rgba(14, 14, 14, 0.92));
+  backdrop-filter: blur(22px);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-glow);
+  padding: 16px 18px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--color-text-primary);
+  height: 100%;
+  overflow-y: auto;
+}
+
+.nc-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.nc-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-text-primary);
+  margin-bottom: 12px;
+}
+
+.nc-overview {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+}
+
+.nc-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border-tertiary);
+}
+
+.nc-stat-label {
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 2px;
+}
+
+.nc-stat-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.nc-positive { color: var(--color-green); }
+.nc-negative { color: var(--color-red); }
+
+.nc-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-tertiary);
+  margin: 10px 0 6px;
+}
+
+.nc-thesis {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.nc-risks {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nc-risk {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  padding-left: 12px;
+  position: relative;
+}
+
+.nc-risk::before {
+  content: "\2013";
+  position: absolute;
+  left: 0;
+  color: var(--color-text-tertiary);
+}
+
+.nc-holdings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.nc-holding {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border-tertiary);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 900px) {
+  .network-panel { height: 460px; }
+}
