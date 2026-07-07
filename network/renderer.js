@@ -11,10 +11,10 @@ const NetworkRenderer = (() => {
 
   function init(svg, { onLogoUrl }) {
     const defs = svg.append("defs");
-    defs.append("radialGradient").attr("id", "nodeGloss").attr("cx", "35%").attr("cy", "28%").attr("r", "65%")
-      .html('<stop offset="0%" stop-color="#fff" stop-opacity="0.9"/><stop offset="45%" stop-color="#fff" stop-opacity="0.18"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/>');
-    defs.append("radialGradient").attr("id", "nodeRim").attr("cx", "50%").attr("cy", "50%").attr("r", "50%")
-      .html('<stop offset="55%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity="0.4"/>');
+    defs.append("radialGradient").attr("id", "nodeGloss").attr("cx", "32%").attr("cy", "25%").attr("r", "40%")
+      .html('<stop offset="0%" stop-color="#fff" stop-opacity="0.5"/><stop offset="60%" stop-color="#fff" stop-opacity="0.06"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/>');
+defs.append("radialGradient").attr("id", "nodeRim").attr("cx", "50%").attr("cy", "50%").attr("r", "50%")
+      .html('<stop offset="80%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity="0.2"/>');
     const root = svg.append("g").attr("class", "network-root");
     const linkLayer = root.append("g").attr("class", "network-links");
     const nodeLayer = root.append("g").attr("class", "network-nodes");
@@ -67,12 +67,14 @@ const NetworkRenderer = (() => {
       .attr("class", "network-node-rim")
       .attr("r", d => d.radius)
       .attr("fill", "url(#nodeRim)")
+      .style("mix-blend-mode", "multiply")
       .style("pointer-events", "none");
 
     enter.append("circle")
       .attr("class", "network-node-gloss")
       .attr("r", d => d.radius)
       .attr("fill", "url(#nodeGloss)")
+      .style("mix-blend-mode", "soft-light")
       .style("pointer-events", "none");
 
     // Logos only make sense on company nodes, once there's room for one.
