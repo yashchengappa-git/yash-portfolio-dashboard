@@ -10,6 +10,11 @@
 const NetworkRenderer = (() => {
 
   function init(svg, { onLogoUrl }) {
+    const defs = svg.append("defs");
+    defs.append("radialGradient").attr("id", "nodeGloss").attr("cx", "35%").attr("cy", "28%").attr("r", "65%")
+      .html('<stop offset="0%" stop-color="#fff" stop-opacity="0.9"/><stop offset="45%" stop-color="#fff" stop-opacity="0.18"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/>');
+    defs.append("radialGradient").attr("id", "nodeRim").attr("cx", "50%").attr("cy", "50%").attr("r", "50%")
+      .html('<stop offset="55%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity="0.4"/>');
     const root = svg.append("g").attr("class", "network-root");
     const linkLayer = root.append("g").attr("class", "network-links");
     const nodeLayer = root.append("g").attr("class", "network-nodes");
@@ -58,6 +63,18 @@ const NetworkRenderer = (() => {
       .attr("r", d => d.radius)
       .attr("fill", d => d.color);
 
+    enter.append("circle")
+      .attr("class", "network-node-rim")
+      .attr("r", d => d.radius)
+      .attr("fill", "url(#nodeRim)")
+      .style("pointer-events", "none");
+
+    enter.append("circle")
+      .attr("class", "network-node-gloss")
+      .attr("r", d => d.radius)
+      .attr("fill", "url(#nodeGloss)")
+      .style("pointer-events", "none");
+
     // Logos only make sense on company nodes, once there's room for one.
     enter.filter(d => d.type === "company")
       .append("image")
@@ -80,6 +97,8 @@ const NetworkRenderer = (() => {
 
     merged.select(".network-node-circle").attr("r", d => d.radius).attr("fill", d => d.color);
     merged.select(".network-node-halo").attr("r", d => d.radius + 10);
+    merged.select(".network-node-rim").attr("r", d => d.radius);
+    merged.select(".network-node-gloss").attr("r", d => d.radius);
     merged.select(".network-node-label").attr("y", d => d.radius + 16).text(d => d.label);
 
     return merged;
