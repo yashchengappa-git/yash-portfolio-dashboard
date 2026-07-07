@@ -32,13 +32,24 @@ const NETWORK = {
     themeDistance: 200,   // distance from Portfolio -> theme nodes
     linkDistance: 110,    // distance from theme -> its company nodes
 
-    dragSpringStrength: 0.12,   // how strongly a released node pulls back "home"
-    chargeStrength: -180,
+    // Lower spring + higher damping = a node settles back "home" in one
+    // smooth motion instead of oscillating past it and bouncing back
+    // (that bounce is what reads as a "rubber band" effect).
+    dragSpringStrength: 0.05,
+    chargeStrength: -90,
     collidePadding: 6,
+    velocityDecay: 0.68,   // simulation friction — higher = less bounce
+    alphaDecay: 0.04,      // how fast the sim settles after a release
 
     hoverDuration: 180,
     expandDuration: 450,
     collapseDuration: 350,
+
+    // How far the graph is allowed to zoom in/out, and how much smaller
+    // than a perfect fit the initial view should be (a little breathing
+    // room so nothing touches the panel edge on load).
+    zoomExtent: [0.35, 2.2],
+    initialFitPadding: 0.82,
   },
 
   themes: [
