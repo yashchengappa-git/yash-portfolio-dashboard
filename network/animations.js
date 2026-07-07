@@ -39,13 +39,13 @@ const NetworkAnimations = (() => {
   function expandCard(selection, duration = DURATIONS.expand) {
     return selection.transition("expand").duration(duration).ease(springEase)
       .style("opacity", 1)
-      .attr("transform", "scale(1)");
+      .style("transform", "scale(1)");
   }
 
   function collapseCard(selection, duration = DURATIONS.collapse) {
     return selection.transition("collapse").duration(duration).ease(softEase)
       .style("opacity", 0)
-      .attr("transform", "scale(0.92)");
+      .style("transform", "scale(0.92)");
   }
 
   function strokeTo(selection, opacity, width, duration = DURATIONS.hover) {
