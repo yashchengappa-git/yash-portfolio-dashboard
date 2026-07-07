@@ -133,6 +133,11 @@ const NetworkGraph = (() => {
       .attr("viewBox", `${-width / 2} ${-height / 2} ${width} ${height}`)
       .attr("preserveAspectRatio", "xMidYMid meet");
 
+    // Expanded cards render here as plain positioned HTML, not SVG
+    // foreignObject — foreignObject positioning under an animated SVG
+    // transform is unreliable on mobile Safari in particular.
+    const overlay = container.append("div").attr("class", "network-overlay");
+
     const { nodes, links, settings } = buildData();
     const nodesById = Object.fromEntries(nodes.map(n => [n.id, n]));
 
@@ -159,7 +164,7 @@ const NetworkGraph = (() => {
       });
 
     NetworkInteractions.attach({
-      svg, root, nodeLayer, linkLayer,
+      svg, root, nodeLayer, linkLayer, overlay,
       nodeSelection, linkSelection, simulation, nodesById,
       settings, nodes, width, height,
     });
