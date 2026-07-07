@@ -144,23 +144,20 @@ const NetworkInteractions = (() => {
 
     const drag = d3.drag()
       .on("start", function (event, d) {
-        if (!event.active) simulation.alphaTarget(0.25).restart();
         d.fx = d.x;
         d.fy = d.y;
       })
       .on("drag", function (event, d) {
         d.fx = event.x;
         d.fy = event.y;
+        d.x = event.x;
+        d.y = event.y;
+        NetworkRenderer.updateNodePositions(nodeSelection);
+        NetworkRenderer.updateLinkPositions(linkSelection);
       })
       .on("end", function (event, d) {
-        if (!event.active) simulation.alphaTarget(0);
-        // Adopt the dropped spot as the new preferred position, then
-        // release the hard pin so it can still be nudged slightly by
-        // neighbours settling — but never snaps back across the canvas.
         d.homeX = d.fx;
         d.homeY = d.fy;
-        d.fx = null;
-        d.fy = null;
       });
 
     nodeSelection.call(drag);
