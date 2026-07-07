@@ -9,7 +9,7 @@
 
 const NetworkInteractions = (() => {
 
-  function attach({ svg, root, nodeLayer, linkLayer, nodeSelection, linkSelection, simulation, nodesById, settings }) {
+  function attach({ svg, root, nodeLayer, linkLayer, nodeSelection, linkSelection, simulation, nodesById, settings, nodes, width, height }) {
 
     let expandedId = null;
     let expandedFO = null;
@@ -124,16 +124,61 @@ const NetworkInteractions = (() => {
     nodeSelection.call(drag);
 
     // ---- zoom / pan ---------------------------------------------------------
-
+    //
+    // Plain mouse-wheel and single-finger touch are left alone (so the page
+    // underneath keeps scrolling normally). Zooming requires ctrl/cmd+wheel
+    // or a two-finger touch gesture — same convention as Miro/Figma — and
+    // dragging the background with a mouse still pans.
     const zoom = d3.zoom()
-      .scaleExtent([0.4, 2.2])
+      .scaleExtent(settings.zoomExtent || [0.35, 2.2])
+      .filter(function (event) {
+        if (event.type === "wheel") return event.ctrlKey || event.metaKey;
+        if (event.type === "touchstart" || event.type === "touchmove") {
+          return event.touches && event.touches.length > 1;
+        }
+        return !event.button;
+      })
       .on("zoom", (event) => {
         root.attr("transform", event.transform);
       });
 
     svg.call(zoom);
 
-    return { collapseExpanded };
+    // ---- initial fit-to-view -------------------------------------------------
+    //
+    // Without this the graph loads at 1:1 scale, which on a typical panel
+    // (and especially on mobile) shows only a zoomed-in fragment of it.
+    if (nodes && nodes.length && width && height) {
+      const pad = 40;
+      const xs = nodes.map(n => n.homeX ?? n.x);
+      const ys = nodes.map(n => n.homeY ?? n.y);
+      const radii = nodes.map(n => n.radius || 20);
+      const minX = Math.min(...xs.map((x, i) => x - radii[i])) - pad;
+      const maxX = Math.max(...xs.map((x, i) => x + radii[i])) + pad;
+      const minY = Math.min(...ys.map((y, i) => y - radii[i])) - pad;
+      const maxY = Math.max(...ys.map((y, i) => y + radii[i])) + pad;
+
+      const bboxW = maxX - minX || width;
+      const bboxH = maxY - minY || height;
+      const fitPadding = settings.initialFitPadding ?? 0.82;
+      const [minScale, maxScale] = settings.zoomExtent || [0.35, 2.2];
+      let scale = Math.min(width / bboxW, height / bboxH) * fitPadding;
+      scale = Math.max(minScale, Math.min(maxScale, scale));
+
+      // Note: the svg's viewBox is set to "-width/2 -height/2 width height"
+      // (see graph.js), i.e. (0,0) is already the panel's visual center —
+      // so centering the bounding box just means negating its center,
+      // with no extra width/2 / height/2 offset.
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+      const initialTransform = d3.zoomIdentity
+        .translate(-cx * scale, -cy * scale)
+        .scale(scale);
+
+      svg.call(zoom.transform, initialTransform);
+    }
+
+    return { collapseExpanded, zoom };
   }
 
   return { attach };
