@@ -146,8 +146,28 @@ const NetworkRenderer = (() => {
     `;
   }
 
-  const CARD_W = { theme: 260, company: 280 };
-  const CARD_H = { theme: 230, company: 300 };
+  function rootCardHTML(datum) {
+    const gainClass = datum.totalGain >= 0 ? "nc-positive" : "nc-negative";
+    return `
+      <div class="network-card">
+        <div class="nc-eyebrow" style="color:${datum.color}">PORTFOLIO</div>
+        <div class="nc-title">${datum.dateLabel}</div>
+        <div class="nc-row">
+          <div class="nc-stat">
+            <div class="nc-stat-label">Invested</div>
+            <div class="nc-stat-value">${NetworkUtils.formatMoney(datum.totalDep, 0)}</div>
+          </div>
+          <div class="nc-stat">
+            <div class="nc-stat-label">Total Gain</div>
+            <div class="nc-stat-value ${gainClass}">${NetworkUtils.formatMoney(datum.totalGain, 0)}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  const CARD_W = { theme: 260, company: 280, root: 240 };
+  const CARD_H = { theme: 230, company: 300, root: 170 };
 
   function cardDims(type) {
     return { w: CARD_W[type] || 260, h: CARD_H[type] || 260 };
@@ -164,7 +184,7 @@ const NetworkRenderer = (() => {
       .style("height", `${h}px`)
       .style("opacity", 0)
       .style("transform", "scale(0.92)")
-      .html(datum.type === "theme" ? themeCardHTML(datum) : companyCardHTML(datum));
+      .html(datum.type === "theme" ? themeCardHTML(datum) : datum.type === "root" ? rootCardHTML(datum) : companyCardHTML(datum));
 
     NetworkAnimations.expandCard(div);
     return div;
