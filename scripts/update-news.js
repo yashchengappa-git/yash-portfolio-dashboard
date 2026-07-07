@@ -1,19 +1,13 @@
 const fs = require("fs");
 const axios = require("axios");
 
-const API_KEY = process.env.ALPHA_VANTAGE_KEY;
-const BASE = "https://www.alphavantage.co/query";
+const FINNHUB_KEY = process.env.FINNHUB_API_KEY;
+const FINNHUB_BASE = "https://finnhub.io/api/v1";
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
-const RATE_LIMIT_MS = 15000; // stay well under 5 calls/min
 
-// Alpha Vantage returns HTTP 200 even past the daily cap — it swaps the real
-// payload for a "Note"/"Information" field instead of an HTTP error. Guard
-// against writing that text into index.html as if it were data.
-function checkForLimitMessage(data, label) {
-  if (data && (data.Note || data.Information || data["Error Message"])) {
-    throw new Error(`Alpha Vantage limit/error on ${label}: ${data.Note || data.Information || data["Error Message"]}`);
-  }
-}
+// This script pulls NEWS + EARNINGS from Finnhub only.
+// Stock PRICES are handled by a separate script using ALPHA_VANTAGE_KEY —
+// that key is intentionally not referenced anywhere in this file.
 
 function deriveHoldings(html) {
   const tradesMatch = html.match(/const TRADES\s*=\s*\[([\s\S]*?)\];/);
@@ -28,58 +22,73 @@ function deriveHoldings(html) {
   return Object.entries(qty).filter(([, q]) => q > 0.000001).map(([sym]) => sym);
 }
 
-// ── NEWS + SENTIMENT (one call, all tickers at once) ─────────────────────────
+// ── NEWS + SENTIMENT (Finnhub: genuine per-ticker company news) ─────────────
+// Finnhub's /company-news is a true per-symbol lookup (unlike Alpha Vantage's
+// tickers=A,B,C, which means "mentions A AND B AND C simultaneously" and
+// returns 0 results for a multi-ticker portfolio). Free tier is 60 calls/min,
+// so 15 sequential calls easily fit in one run.
+function simpleSentiment(headline) {
+  const positive = /surge|soar|beat|upgrade|record|rally|jump|gain|outperform/i;
+  const negative = /plunge|miss|downgrade|cut|slump|fall|drop|lawsuit|probe/i;
+  if (positive.test(headline)) return "positive";
+  if (negative.test(headline)) return "negative";
+  return "neutral";
+}
+
 async function getNews(symbols) {
-  const url = `${BASE}?function=NEWS_SENTIMENT&tickers=${symbols.join(",")}&apikey=${API_KEY}`;
-  const res = await axios.get(url);
-  checkForLimitMessage(res.data, "NEWS_SENTIMENT");
+  if (!FINNHUB_KEY) throw new Error("FINNHUB_API_KEY is not set in the environment.");
 
-  const feed = res.data.feed || [];
   const news = {};
-  for (const sym of symbols) news[sym] = { articles: [], sentiment: "neutral" };
-
-  for (const item of feed) {
-    for (const ts of item.ticker_sentiment || []) {
-      if (news[ts.ticker]) {
-        news[ts.ticker].articles.push({ headline: item.title, url: item.url, source: item.source, label: ts.ticker_sentiment_label });
-      }
-    }
-  }
+  const to = new Date();
+  const from = new Date(to.getTime() - 7 * 24 * 60 * 60 * 1000); // last 7 days
+  const fmt = (d) => d.toISOString().slice(0, 10);
 
   for (const sym of symbols) {
-    const arts = news[sym].articles.slice(0, 3);
-    const bullish = arts.filter(a => a.label && a.label.includes("Bullish")).length;
-    const bearish = arts.filter(a => a.label && a.label.includes("Bearish")).length;
-    news[sym].sentiment = bullish > bearish ? "positive" : bearish > bullish ? "negative" : "neutral";
-    news[sym].articles = arts.map(a => ({ headline: a.headline, url: a.url, source: a.source }));
+    const url = `${FINNHUB_BASE}/company-news?symbol=${sym}&from=${fmt(from)}&to=${fmt(to)}&token=${FINNHUB_KEY}`;
+    const res = await axios.get(url);
+    const items = Array.isArray(res.data) ? res.data : [];
+
+    const arts = items.slice(0, 3).map(a => ({ headline: a.headline, url: a.url, source: a.source }));
+    const sentiments = arts.map(a => simpleSentiment(a.headline));
+    const positive = sentiments.filter(s => s === "positive").length;
+    const negative = sentiments.filter(s => s === "negative").length;
+
+    news[sym] = {
+      articles: arts,
+      sentiment: positive > negative ? "positive" : negative > positive ? "negative" : "neutral",
+    };
+
+    await wait(1100); // stay safely under 60 calls/min
   }
+
   return news;
 }
 
-// ── EARNINGS CALENDAR (one call, CSV, filtered locally) ──────────────────────
+// ── EARNINGS CALENDAR (Finnhub: one call, filtered locally) ──────────────────
 async function getEarnings(symbols) {
-  const url = `${BASE}?function=EARNINGS_CALENDAR&horizon=3month&apikey=${API_KEY}`;
-  const res = await axios.get(url);
-  if (typeof res.data === "string" && (res.data.includes("Note") || res.data.includes("Thank you for using Alpha Vantage"))) {
-    throw new Error(`Alpha Vantage limit/error on EARNINGS_CALENDAR: ${res.data.slice(0, 200)}`);
-  }
-  const lines = res.data.trim().split("\n");
-  const header = lines[0].split(",");
-  const symIdx = header.indexOf("symbol");
-  const dateIdx = header.indexOf("reportDate");
-  const estIdx = header.indexOf("estimate");
+  if (!FINNHUB_KEY) throw new Error("FINNHUB_API_KEY is not set in the environment.");
 
-  return lines.slice(1)
-    .map(line => line.split(","))
-    .filter(cols => symbols.includes(cols[symIdx]))
-    .map(cols => ({ symbol: cols[symIdx], date: cols[dateIdx], epsEstimate: cols[estIdx] || null }));
+  const from = new Date();
+  const to = new Date(from.getTime() + 90 * 24 * 60 * 60 * 1000); // next ~3 months
+  const fmt = (d) => d.toISOString().slice(0, 10);
+
+  const url = `${FINNHUB_BASE}/calendar/earnings?from=${fmt(from)}&to=${fmt(to)}&token=${FINNHUB_KEY}`;
+  const res = await axios.get(url);
+  const items = res.data && Array.isArray(res.data.earningsCalendar) ? res.data.earningsCalendar : [];
+
+  return items
+    .filter(item => symbols.includes(item.symbol))
+    .map(item => ({
+      symbol: item.symbol,
+      date: item.date,
+      epsEstimate: item.epsEstimate ?? null,
+    }));
 }
 
 async function run() {
   let html = fs.readFileSync("index.html", "utf8");
   const symbols = deriveHoldings(html);
   console.log(`Fetching news + earnings for: ${symbols.join(", ")}`);
-  console.log("symbols:", JSON.stringify(symbols));
 
   try {
     const news = await getNews(symbols);
@@ -89,8 +98,6 @@ async function run() {
     console.error(`✗ News fetch failed: ${err.message}`);
     console.log("Leaving existing NEWS block untouched.");
   }
-
-  await wait(RATE_LIMIT_MS);
 
   try {
     const earnings = await getEarnings(symbols);
