@@ -149,32 +149,40 @@ const NetworkRenderer = (() => {
   const CARD_W = { theme: 260, company: 280 };
   const CARD_H = { theme: 230, company: 300 };
 
-  function showExpandedCard(nodeGroup, datum) {
-    const w = CARD_W[datum.type] || 260;
-    const h = CARD_H[datum.type] || 260;
-
-    const fo = nodeGroup.append("foreignObject")
-      .attr("class", "network-card-fo")
-      .attr("x", -w / 2)
-      .attr("y", -h / 2)
-      .attr("width", w)
-      .attr("height", h)
-      .style("opacity", 0)
-      .attr("transform", "scale(0.92)");
-
-    const div = fo.append("xhtml:div")
-      .attr("class", "network-card-wrap")
-      .html(datum.type === "theme" ? themeCardHTML(datum) : companyCardHTML(datum));
-
-    NetworkAnimations.expandCard(fo);
-    return fo;
+  function cardDims(type) {
+    return { w: CARD_W[type] || 260, h: CARD_H[type] || 260 };
   }
 
-  function hideExpandedCard(fo) {
-    if (!fo || fo.empty()) return;
-    NetworkAnimations.collapseCard(fo).on("end", function () {
+  function showExpandedCard(overlay, datum, pos) {
+    const { w, h } = cardDims(datum.type);
+
+    const div = overlay.append("div")
+      .attr("class", "network-card-overlay")
+      .style("left", `${pos.x - w / 2}px`)
+      .style("top", `${pos.y - h / 2}px`)
+      .style("width", `${w}px`)
+      .style("height", `${h}px`)
+      .style("opacity", 0)
+      .style("transform", "scale(0.92)")
+      .html(datum.type === "theme" ? themeCardHTML(datum) : companyCardHTML(datum));
+
+    NetworkAnimations.expandCard(div);
+    return div;
+  }
+
+  function hideExpandedCard(div) {
+    if (!div || div.empty()) return;
+    NetworkAnimations.collapseCard(div).on("end", function () {
       d3.select(this).remove();
     });
+  }
+
+  // Keeps an open card glued to its node while the user pans/zooms —
+  // called from interactions.js on every zoom event.
+  function repositionCard(div, pos, type) {
+    if (!div || div.empty()) return;
+    const { w, h } = cardDims(type);
+    div.style("left", `${pos.x - w / 2}px`).style("top", `${pos.y - h / 2}px`);
   }
 
   return {
@@ -185,5 +193,6 @@ const NetworkRenderer = (() => {
     updateNodePositions,
     showExpandedCard,
     hideExpandedCard,
+    repositionCard,
   };
 })();
