@@ -32,9 +32,13 @@ const NETWORK = {
     themeDistance: 200,   // distance from Portfolio -> theme nodes
     linkDistance: 110,    // distance from theme -> its company nodes
 
-    // Lower spring + higher damping = a node settles back "home" in one
-    // smooth motion instead of oscillating past it and bouncing back
-    // (that bounce is what reads as a "rubber band" effect).
+    // A node's "home" position is where the simulation continuously pulls
+    // it back to. Previously that was a single fixed layout slot forever,
+    // which is what caused the rubber-band effect — moving one node would
+    // re-heat the simulation and yank a *different*, already-repositioned
+    // node back to its original slot. Now homeX/Y gets updated to wherever
+    // a node is dropped (see interactions.js drag "end"), so this force
+    // just gives a gentle settle-in-place rather than a permanent spring back.
     dragSpringStrength: 0.05,
     chargeStrength: -90,
     collidePadding: 6,
@@ -48,7 +52,7 @@ const NETWORK = {
     // How far the graph is allowed to zoom in/out, and how much smaller
     // than a perfect fit the initial view should be (a little breathing
     // room so nothing touches the panel edge on load).
-    zoomExtent: [0.35, 2.2],
+    zoomExtent: [0.35, 1.8],
     initialFitPadding: 0.82,
   },
 
