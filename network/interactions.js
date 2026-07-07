@@ -9,10 +9,10 @@
 
 const NetworkInteractions = (() => {
 
-  function attach({ svg, root, nodeLayer, linkLayer, nodeSelection, linkSelection, simulation, nodesById, settings, nodes, width, height }) {
+  function attach({ svg, root, nodeLayer, linkLayer, overlay, nodeSelection, linkSelection, simulation, nodesById, settings, nodes, width, height }) {
 
     let expandedId = null;
-    let expandedFO = null;
+    let expandedCard = null;
 
     // ---- helpers ------------------------------------------------------
 
@@ -23,6 +23,27 @@ const NetworkInteractions = (() => {
         if (l.target.id === id) set.add(l.source.id);
       });
       return set;
+    }
+
+    // Converts a node's data-space (x,y) into pixel coordinates relative to
+    // the panel container's top-left corner — i.e. the coordinate space the
+    // absolutely-positioned overlay card lives in. Cards are plain HTML
+    // elements (not SVG foreignObject) specifically because foreignObject
+    // positioning under an animated SVG transform is unreliable on mobile
+    // Safari, which was the cause of cards appearing pinned to the corner.
+    function nodeScreenPos(d) {
+      const t = d3.zoomTransform(svg.node());
+      return {
+        x: t.x + d.x * t.k + width / 2,
+        y: t.y + d.y * t.k + height / 2,
+      };
+    }
+
+    function repositionExpandedCard() {
+      if (!expandedId || !expandedCard) return;
+      const d = nodesById[expandedId];
+      if (!d) return;
+      NetworkRenderer.repositionCard(expandedCard, nodeScreenPos(d), d.type);
     }
 
     function applyHover(id) {
@@ -48,12 +69,17 @@ const NetworkInteractions = (() => {
 
     function collapseExpanded() {
       if (!expandedId) return;
-      NetworkRenderer.hideExpandedCard(expandedFO);
-      const prevId = expandedId;
-      expandedId = null;
-      expandedFO = null;
-      const g = nodeLayer.select(`g.network-node[data-id="${cssEscape(prevId)}"]`);
+      NetworkRenderer.hideExpandedCard(expandedCard);
+      const prevD = nodesById[expandedId];
+      if (prevD) {
+        // release the pin we applied while the card was open
+        prevD.fx = null;
+        prevD.fy = null;
+      }
+      const g = nodeLayer.select(`g.network-node[data-id="${cssEscape(expandedId)}"]`);
       g.classed("is-expanded", false);
+      expandedId = null;
+      expandedCard = null;
       NetworkAnimations.fadeTo(nodeSelection, 1, settings.collapseDuration);
       NetworkAnimations.strokeTo(linkSelection, 0.35, 1.4, settings.collapseDuration);
     }
@@ -63,9 +89,14 @@ const NetworkInteractions = (() => {
       if (expandedId) collapseExpanded();
       expandedId = d.id;
       g.classed("is-expanded", true);
-      expandedFO = NetworkRenderer.showExpandedCard(g, d);
 
-      // keep everything else visible but calm, so the card reads clearly
+      // Pin the node in place while its card is open — otherwise ongoing
+      // simulation forces can drift it out from under the card.
+      d.fx = d.x;
+      d.fy = d.y;
+
+      expandedCard = NetworkRenderer.showExpandedCard(overlay, d, nodeScreenPos(d));
+
       const related = neighborsOf(d.id);
       nodeSelection.each(function (n) {
         NetworkAnimations.fadeTo(d3.select(this), related.has(n.id) ? 1 : 0.4, settings.expandDuration);
@@ -102,7 +133,14 @@ const NetworkInteractions = (() => {
 
     svg.on("click", () => collapseExpanded());
 
-    // ---- drag: temporary displacement, springs back on release ------------
+    // ---- drag: temporary displacement, settles where you drop it ------------
+    //
+    // Earlier versions kept pulling every node back toward one fixed "home"
+    // position forever, which meant moving a *different* node re-heated the
+    // simulation and yanked an already-repositioned node back into the
+    // cluster — the "rubber band" effect. Fix: once you drop a node, its
+    // dropped position *becomes* its new home, so nothing pulls it back.
+    // Neighbours still react naturally via the link/collision forces.
 
     const drag = d3.drag()
       .on("start", function (event, d) {
@@ -116,7 +154,11 @@ const NetworkInteractions = (() => {
       })
       .on("end", function (event, d) {
         if (!event.active) simulation.alphaTarget(0);
-        // release the pin — forceX/forceY in graph.js will spring it home
+        // Adopt the dropped spot as the new preferred position, then
+        // release the hard pin so it can still be nudged slightly by
+        // neighbours settling — but never snaps back across the canvas.
+        d.homeX = d.fx;
+        d.homeY = d.fy;
         d.fx = null;
         d.fy = null;
       });
@@ -125,14 +167,16 @@ const NetworkInteractions = (() => {
 
     // ---- zoom / pan ---------------------------------------------------------
     //
-    // Plain mouse-wheel and single-finger touch are left alone (so the page
-    // underneath keeps scrolling normally). Zooming requires ctrl/cmd+wheel
-    // or a two-finger touch gesture — same convention as Miro/Figma — and
-    // dragging the background with a mouse still pans.
+    // Plain wheel zooms, with a fixed gentle sensitivity. (d3's default
+    // wheelDelta amplifies ctrl/cmd+wheel by 10x — meant for trackpad pinch
+    // gestures — which is why requiring ctrl+wheel felt like it "went too
+    // far" per scroll tick. A flat, modest multiplier fixes that.)
+    // Single-finger touch is left alone so mobile page-scroll still works;
+    // two-finger touch pans/zooms the graph.
     const zoom = d3.zoom()
-      .scaleExtent(settings.zoomExtent || [0.35, 2.2])
+      .scaleExtent(settings.zoomExtent || [0.35, 1.8])
+      .wheelDelta((event) => -event.deltaY * (event.deltaMode ? 0.05 : 0.0015))
       .filter(function (event) {
-        if (event.type === "wheel") return event.ctrlKey || event.metaKey;
         if (event.type === "touchstart" || event.type === "touchmove") {
           return event.touches && event.touches.length > 1;
         }
@@ -140,6 +184,7 @@ const NetworkInteractions = (() => {
       })
       .on("zoom", (event) => {
         root.attr("transform", event.transform);
+        if (expandedId) repositionExpandedCard();
       });
 
     svg.call(zoom);
@@ -161,14 +206,13 @@ const NetworkInteractions = (() => {
       const bboxW = maxX - minX || width;
       const bboxH = maxY - minY || height;
       const fitPadding = settings.initialFitPadding ?? 0.82;
-      const [minScale, maxScale] = settings.zoomExtent || [0.35, 2.2];
+      const [minScale, maxScale] = settings.zoomExtent || [0.35, 1.8];
       let scale = Math.min(width / bboxW, height / bboxH) * fitPadding;
       scale = Math.max(minScale, Math.min(maxScale, scale));
 
-      // Note: the svg's viewBox is set to "-width/2 -height/2 width height"
-      // (see graph.js), i.e. (0,0) is already the panel's visual center —
-      // so centering the bounding box just means negating its center,
-      // with no extra width/2 / height/2 offset.
+      // Note: the svg's viewBox is "-width/2 -height/2 width height" (see
+      // graph.js) — (0,0) is already the panel's visual center — so
+      // centering the bounding box just means negating its center.
       const cx = (minX + maxX) / 2;
       const cy = (minY + maxY) / 2;
       const initialTransform = d3.zoomIdentity
@@ -178,7 +222,7 @@ const NetworkInteractions = (() => {
       svg.call(zoom.transform, initialTransform);
     }
 
-    return { collapseExpanded, zoom };
+    return { collapseExpanded };
   }
 
   return { attach };
