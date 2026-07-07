@@ -539,6 +539,8 @@ th[data-key]:hover {
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<link rel="stylesheet" href="network/styles.css">
 </head>
 <h2 class="sr-only">Portfolio dashboard with daily P&L, cumulative return chart, current holdings, and trade history</h2>
 <div id="ptr-indicator" style="position:fixed;top:0;left:50%;transform:translate(-50%,-60px);width:36px;height:36px;border-radius:50%;background:var(--color-background-secondary);border:1px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:center;z-index:200;pointer-events:none;">
@@ -619,21 +621,14 @@ th[data-key]:hover {
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:1.5rem;">
-<div>
-  <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">
-    Portfolio Thesis
+<div style="margin-top:1.5rem;">
+  <div class="network-panel">
+    <div class="network-panel-header">
+      <div class="network-panel-title">Portfolio Explorer</div>
+      <div class="network-panel-subtitle">Why you own it, not just how much</div>
+    </div>
+    <div id="portfolio-network"></div>
   </div>
-  <div id="portfolio-thesis" style="font-size:11px;line-height:1.6;color:var(--color-text-secondary);height:300px;overflow:auto;padding-right:8px;"></div>
-</div>
-  <div>
-  <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;">
-    Portfolio Concentration
-  </div>
-  <div style="position:relative;height:300px;" id="concentration-wrap">
-  <canvas id="concentrationChart"></canvas>
-</div>
-</div>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:1.5rem;">
   <div>
@@ -860,9 +855,7 @@ const SPY={
   "2026-06-29":741.00,
   "2026-06-30":746.77,
   "2026-07-01":745.76,
-  "2026-07-02":744.78,
-  "2026-07-06":751.26
-
+  "2026-07-02":744.78
 
 
 
@@ -1036,9 +1029,7 @@ const QQQ={
   "2026-06-29":724.08,
   "2026-06-30":736.40,
   "2026-07-01":725.17,
-  "2026-07-02":712.60,
-  "2026-07-06":722.82
-
+  "2026-07-02":712.60
 
 
 
@@ -1312,8 +1303,7 @@ const SK={
     "2026-07-01":197.58,
     "2026-07-02":194.83,
     "2026-07-03":194.83,
-    "2026-07-04":194.83,
-    "2026-07-06":195.55
+    "2026-07-04":194.83
   },
   CVX:{
     "2026-01-07":155.20,
@@ -2083,8 +2073,7 @@ const SK={
     "2026-07-01":241.70,
     "2026-07-02":242.67,
     "2026-07-03":242.67,
-    "2026-07-04":242.67,
-    "2026-07-06":244.16
+    "2026-07-04":242.67
   },
   MU:{
     "2026-01-07":339.55,
@@ -2210,8 +2199,7 @@ const SK={
     "2026-07-01":1032.28,
     "2026-07-02":975.56,
     "2026-07-03":975.56,
-    "2026-07-04":975.56,
-    "2026-07-06":984.75
+    "2026-07-04":975.56
   },
   SPOT:{
     "2026-01-07":569.62,
@@ -2429,8 +2417,7 @@ const SK={
     "2026-07-01":229.18,
     "2026-07-02":215.62,
     "2026-07-03":215.62,
-    "2026-07-04":215.62,
-    "2026-07-06":215.62
+    "2026-07-04":215.62
   },
   EWY:{
     "2026-01-07":107.03,
@@ -2648,8 +2635,7 @@ const SK={
     "2026-07-01":311.58,
     "2026-07-02":300.48,
     "2026-07-03":300.53,
-    "2026-07-04":300.53,
-    "2026-07-06":318.47
+    "2026-07-04":300.53
   },
   VIAV:{
     "2026-01-07":18.54,
@@ -2969,8 +2955,7 @@ const SK={
     "2026-07-01":1134.17,
     "2026-07-02":1112.63,
     "2026-07-03":1113.11,
-    "2026-07-04":1113.11,
-    "2026-07-06":1152.00
+    "2026-07-04":1113.11
   },
   CRWD:{
     "2026-01-07":478.91,
@@ -3096,8 +3081,7 @@ const SK={
     "2026-07-01":772.74,
     "2026-07-02":193.98,
     "2026-07-03":193.98,
-    "2026-07-04":193.98,
-    "2026-07-06":199.38
+    "2026-07-04":193.98
   },
   MSFT:{
     "2026-01-07":483.47,
@@ -3223,8 +3207,7 @@ const SK={
     "2026-07-01":384.28,
     "2026-07-02":390.49,
     "2026-07-03":390.49,
-    "2026-07-04":390.49,
-    "2026-07-06":386.74
+    "2026-07-04":390.49
   },
   COHR:{
     "2026-01-07":191.62,
@@ -3350,8 +3333,7 @@ const SK={
     "2026-07-01":368.44,
     "2026-07-02":333.30,
     "2026-07-03":333.36,
-    "2026-07-04":333.36,
-    "2026-07-06":335.61
+    "2026-07-04":333.36
   },
   PENG:{
     "2026-01-07":18.58,
@@ -3477,8 +3459,7 @@ const SK={
     "2026-07-01":76.01,
     "2026-07-02":61.47,
     "2026-07-03":61.47,
-    "2026-07-04":61.47,
-    "2026-07-06":67.71
+    "2026-07-04":61.47
   },
   NOW:{
     "2026-01-07":150.90,
@@ -3626,8 +3607,7 @@ const SK={
     "2026-07-01":369.34,
     "2026-07-02":360.45,
     "2026-07-03":360.45,
-    "2026-07-04":360.45,
-    "2026-07-06":373.90
+    "2026-07-04":360.45
   },
   APLD:{
   "2026-05-28":48.98,
@@ -3657,8 +3637,7 @@ const SK={
     "2026-07-01":35.52,
     "2026-07-02":33.06,
     "2026-07-03":33.06,
-    "2026-07-04":33.06,
-    "2026-07-06":33.50
+    "2026-07-04":33.06
 },
   AAOI:{
   "2026-06-01":159.06,
@@ -3685,8 +3664,7 @@ const SK={
     "2026-07-01":139.00,
     "2026-07-02":120.95,
     "2026-07-03":120.95,
-    "2026-07-04":120.95,
-    "2026-07-06":123.36
+    "2026-07-04":120.95
 },
     TSM:{
   "2026-06-01":423.74,
@@ -3713,8 +3691,7 @@ const SK={
     "2026-07-01":444.11,
     "2026-07-02":434.45,
     "2026-07-03":434.16,
-    "2026-07-04":434.16,
-    "2026-07-06":451.89
+    "2026-07-04":434.16
 },
    MRVL:{
     "2026-06-02":264.764,
@@ -3740,8 +3717,7 @@ const SK={
     "2026-07-01":272.05,
     "2026-07-02":245.29,
     "2026-07-03":245.29,
-    "2026-07-04":245.29,
-    "2026-07-06":249.27
+    "2026-07-04":245.29
 },
 };
 const SPLITS = {
@@ -4021,6 +3997,11 @@ const FINAL = Object.entries(_qtyMap2)
   .sort((a, b) => (b.qty * b.price) - (a.qty * a.price));
 
 const FINAL_TOTAL = FINAL.reduce((s, h) => s + h.qty * h.price, 0);
+
+// Expose to network/graph.js — the graph reads holdings live from here
+// rather than storing its own copy, so it can never drift out of sync.
+window.FINAL = FINAL;
+window.FINAL_TOTAL = FINAL_TOTAL;
 
 // Reconcile: replace last chart point with derived FINAL_TOTAL
 portVals[portVals.length-1]=+FINAL_TOTAL.toFixed(2);
@@ -4668,66 +4649,6 @@ const drawdownChart=new Chart(document.getElementById('drawdownChart'),{
   }
 });
 
-  const PORTFOLIO_THESIS = [
-  {
-    theme: "Energy & Power Infrastructure",
-    tickers: " GEV, VRT",
-    text: "The AI buildout has exposed a hard physical limit: you cannot run datacenters you cannot power and cool. GEV plays the grid side — power generation and electrical equipment at a moment when utility-scale electricity demand is being forecast upward faster than at any point in decades. VRT owns the precision cooling layer inside the datacenter itself, where heat density from modern GPU clusters has made legacy cooling architectures obsolete. Both companies are selling to hyperscalers who have no choice but to spend."
-  },
-    {
-    theme: "AI Datacenter Infrastructure",
-    tickers: "APLD",
-    text: "Applied Digital builds and operates next-generation data centers engineered specifically for GPU-dense AI and HPC workloads. Where GEV and VRT solve the power and cooling problem at the component level, APLD provides the physical facilities where the compute actually runs — purpose-built campuses designed around the demands of modern AI clusters rather than retrofitted enterprise IT. As hyperscaler capacity constraints push overflow workloads toward specialist operators, APLD sits directly in the path of that capital. This is the highest-risk position in the portfolio: early-stage, capital-intensive, and dependent on continued AI infrastructure spending. The asymmetry is compelling if the buildout cycle continues on the trajectory hyperscalers are currently signalling."
-  },
-  {
-    theme: "Photonics & Optical Connectivity",
-    tickers: "COHR, AAOI, PENG",
-    text: "Data moving between GPUs, between servers, and between datacenters needs to travel at speeds that copper cannot sustain at scale. Optical transceivers and photonic components are the connective tissue of AI infrastructure, and demand is being pulled by the same hyperscaler buildout driving the rest of this portfolio. COHR is the largest and most diversified play — significant vertical integration and exposure across datacenter and telecom end markets. AAOI is the more focused addition: a pure-play datacenter transceiver manufacturer sitting directly in the middle of the 400G to 800G to 1.6T upgrade cycle that AI bandwidth demands are forcing. Revenue is almost entirely datacenter-facing, the product roadmap aligns tightly with hyperscaler infrastructure timelines, and the operating leverage as volumes scale is meaningful. PENG is the smaller, earlier-stage position where the asymmetry remains interesting given where optical networking demand is heading."
-  },
-  {
-    theme: "Semiconductors & Compute",
-    tickers: " NVDA, AVGO, MU, TSM",
-    text: "Four positions covering four distinct layers of the AI compute stack. NVDA is the foundation — GPU dominance, the CUDA software moat, and datacenter revenue that continues to surprise to the upside. AVGO sits alongside it as the custom silicon play — designing purpose-built AI accelerators for hyperscalers who want compute optimised for their specific workloads, while its networking silicon ties GPU clusters together at scale. MU is the memory underneath all of it: HBM is a structural requirement for AI GPUs, MU is one of three companies globally that can supply it, and the cyclical recovery provides a floor while HBM adoption is the thesis on top. TSM is the foundry layer — the most advanced semiconductor manufacturing process on the planet, and the factory floor that every other position in this sleeve ultimately depends on. Every NVDA GPU and every AVGO accelerator runs through TSMC's fabs. That chokepoint is the position."
-  },
-  {
-    theme: "Cybersecurity",
-    tickers: "CRWD",
-    text: "AI is expanding the enterprise attack surface faster than legacy security tools can track it. More endpoints, more automated workflows, more vectors. CRWD is the consolidator taking wallet share from those legacy vendors — a platform with high switching costs that keeps widening with every product addition. Security is one of the few categories of enterprise software where the cost of being wrong is existential, which makes it the last budget to cut and the clearest beneficiary of AI-driven threat complexity."
-  },
-  {
-    theme: "AI Cloud Infrastructure",
-    tickers: "NBIS, MSFT, AMZN",
-    text: "The layer where AI workloads are actually built and run. NBIS is the specialised play — cloud infrastructure purpose-built for AI compute, targeting the segment of the market where general-purpose hyperscaler offerings are either too expensive or insufficiently optimised for GPU-dense workloads. It is the earliest-stage position in this sleeve and carries corresponding risk, but sits in a gap that the hyperscalers have not yet fully closed. MSFT brings Azure's cloud growth combined with Copilot embedding AI across every enterprise product they sell — Office becomes an AI distribution channel at a scale no competitor can match. AMZN brings AWS, the most profitable cloud platform, accelerating again as enterprise AI demand pulls workloads into the cloud. Both have the balance sheets to keep investing through any near-term uncertainty and the platform lock-in to capture the long-term value of whatever AI becomes."
-  }
-];
-
-const thesisBox = document.getElementById("portfolio-thesis");
-
-if (thesisBox) {
-  thesisBox.innerHTML = PORTFOLIO_THESIS.map(item => `
-    <div style="margin-bottom:8px;">
-      <span style="color:var(--color-text-primary);font-weight:600;">${item.theme}</span>
-      <span style="color:var(--color-text-tertiary);${TICKER_STYLE}"> — ${item.tickers}</span>
-      <div>${item.text}</div>
-    </div>
-  `).join("");
-}
-const BRAND_COLORS = {
-  MSFT: "#00A4EF",
-  NVDA: "#76B900",
-  AMZN: "#FF9900",
-  CRWD: "#E01F26",
-  MU: "#0077C8",
-  VRT: "#F36F21",
-  GEV: "#00AEEF",
-  NBIS: "#8B5CF6",
-  VIAV: "#00A3E0",
-  PENG: "#22C55E",
-  COHR: "#005DAA",
-  NOW: "#00C4B3",
-  AVGO: "#CC092F"
-};
-
 // Add AVGO to SK if not already present — initial price at buy date
 if (!SK["AVGO"]) {
   SK["AVGO"] = {
@@ -4735,182 +4656,6 @@ if (!SK["AVGO"]) {
   };
 }
 
-const concentrationData = FINAL
-  .map(h => ({
-    sym: h.sym,
-    value: h.qty * h.price,
-    pnl: h.pnl,
-    pnlPct: h.pnlPct
-  }))
-  .sort((a, b) => b.value - a.value);
-
-// ── CONCENTRATION TREEMAP ─────────────────────────────────────────────────────
-(function () {
-  const wrap = document.getElementById("concentration-wrap");
-  if (!wrap) return;
-  wrap.innerHTML = "";
-  wrap.style.position = "relative";
-  wrap.style.overflow = "hidden";
-
-  const GAP = 3;
-
-  // Colour intensity tracks the magnitude of % gain/loss — deep at large moves,
-  // pale near flat — so performance reads at a glance without the table.
-  const PNL_SATURATION_CAP = 25; // % gain/loss at which color reaches full intensity
-
-  function getPnlColor(pnlPct) {
-    const mag = Math.min(Math.abs(pnlPct), PNL_SATURATION_CAP) / PNL_SATURATION_CAP; // 0..1
-    if (pnlPct >= 0) {
-      // pale green -> deep green
-      const sat = 35 + mag * 30;   // 35% -> 65%
-      const light = 58 - mag * 33; // 58% -> 25%
-      return `hsl(152, ${sat}%, ${light}%)`;
-    } else {
-      // pale red -> deep red
-      const sat = 40 + mag * 30;   // 40% -> 70%
-      const light = 54 - mag * 30; // 54% -> 24%
-      return `hsl(355, ${sat}%, ${light}%)`;
-    }
-  }
-
-  function getSlices() {
-    return concentrationData
-      .slice()
-      .sort((a, b) => b.value - a.value)
-      .map(x => ({ sym: x.sym, val: x.value, pnl: x.pnl, pnlPct: x.pnlPct, pct: +(x.value / lastPort * 100).toFixed(1) }));
-  }
-
-  function squarify(items, x, y, w, h) {
-    const rects = [];
-    function layout(items, x, y, w, h) {
-      if (!items.length) return;
-      if (items.length === 1) { rects.push({ ...items[0], x, y, w, h }); return; }
-      const half = items.reduce((s, i) => s + i.val, 0) / 2;
-      let sum = 0, split = 0;
-      for (let i = 0; i < items.length; i++) {
-        sum += items[i].val;
-        if (sum >= half) { split = i + 1; break; }
-      }
-      split = Math.max(1, Math.min(split, items.length - 1));
-      const a = items.slice(0, split);
-      const b = items.slice(split);
-      const ratio = a.reduce((s, i) => s + i.val, 0) / items.reduce((s, i) => s + i.val, 0);
-      if (w >= h) {
-        const wa = w * ratio;
-        strip(a, x, y, wa, h);
-        layout(b, x + wa, y, w - wa, h);
-      } else {
-        const ha = h * ratio;
-        strip(a, x, y, w, ha);
-        layout(b, x, y + ha, w, h - ha);
-      }
-    }
-    function strip(items, x, y, w, h) {
-      const sum = items.reduce((s, i) => s + i.val, 0);
-      let off = 0;
-      items.forEach(item => {
-        const frac = item.val / sum;
-        if (w >= h) { rects.push({ ...item, x: x + off, y, w: w * frac, h }); off += w * frac; }
-        else        { rects.push({ ...item, x, y: y + off, w, h: h * frac }); off += h * frac; }
-      });
-    }
-    layout(items, x, y, w, h);
-    return rects;
-  }
-
-  function build() {
-    wrap.innerHTML = "";
-    const W = wrap.clientWidth;
-    const H = wrap.clientHeight;
-    if (!W || !H) return;
-
-    const slices = getSlices();
-    const rects  = squarify(slices, 0, 0, W, H);
-
-    rects.forEach((r, i) => {
-      const gx = r.x + GAP / 2;
-      const gy = r.y + GAP / 2;
-      const gw = r.w - GAP;
-      const gh = r.h - GAP;
-      if (gw < 6 || gh < 6) return;
-
-      const cell = document.createElement("div");
-      const pnlSign = r.pnl >= 0 ? "+" : "-";
-      cell.title = `${r.sym}: ${r.pct}% of book ($${Math.round(r.val).toLocaleString()}) \u00b7 ${pnlSign}$${Math.abs(Math.round(r.pnl)).toLocaleString()} (${pnlSign}${Math.abs(r.pnlPct).toFixed(1)}%)`;
-      Object.assign(cell.style, {
-        position:       "absolute",
-        left:           gx + "px",
-        top:            gy + "px",
-        width:          gw + "px",
-        height:         gh + "px",
-        background:     getPnlColor(r.pnlPct),
-        borderRadius:   "6px",
-        overflow:       "hidden",
-        display:        "flex",
-        flexDirection:  "column",
-        alignItems:     "center",
-        justifyContent: "center",
-        gap:            "3px",
-        cursor:         "default",
-        transition:     "filter .15s",
-        boxSizing:      "border-box",
-      });
-      cell.addEventListener("mouseenter", () => cell.style.filter = "brightness(1.18)");
-      cell.addEventListener("mouseleave", () => cell.style.filter = "");
-
-      const minDim   = Math.min(gw, gh);
-      const showLogo = minDim > 32;
-      const showPct  = gw > 44 && gh > 44;
-
-      if (showLogo) {
-        const logoSize = Math.round(Math.min(minDim * 0.48, 44));
-        const img = document.createElement("img");
-        img.crossOrigin = "anonymous";
-        img.src = `https://img.logo.dev/ticker/${r.sym.toLowerCase()}?token=${LOGO_DEV_TOKEN}&size=128&format=png`;
-        Object.assign(img.style, {
-          width:        logoSize + "px",
-          height:       logoSize + "px",
-          borderRadius: Math.max(4, logoSize * 0.18) + "px",
-          objectFit:    "contain",
-          display:      "block",
-          flexShrink:   "0",
-          imageRendering: "high-quality",
-        });
-        img.onerror = () => {
-          img.remove();
-          const fb = document.createElement("span");
-          Object.assign(fb.style, {
-            fontSize:   Math.min(Math.max(9, minDim * 0.13), 13) + "px",
-            fontWeight: "600",
-            color:      "rgba(255,255,255,0.85)",
-            fontFamily: "'JetBrains Mono', monospace",
-          });
-          fb.textContent = r.sym;
-          cell.insertBefore(fb, cell.firstChild);
-        };
-        cell.appendChild(img);
-      }
-
-      if (showPct) {
-        const pct = document.createElement("div");
-        Object.assign(pct.style, {
-          fontSize:   Math.min(Math.max(9, minDim * 0.1), 11) + "px",
-          color: "rgba(255,255,255,0.55)",
-          fontFamily: "'JetBrains Mono', monospace",
-          lineHeight: "1",
-          flexShrink: "0",
-        });
-        pct.textContent = r.pct.toFixed(1) + "%";
-        cell.appendChild(pct);
-      }
-
-      wrap.appendChild(cell);
-    });
-  }
-
-  build();
-  window.addEventListener("resize", build);
-})();
   
 function setView(v){
   currentView=v;
@@ -5017,6 +4762,21 @@ setRange('ALL');
     }
   }, {passive:true});
 })();
+</script>
+<script src="network/data.js"></script>
+<script src="network/utils.js"></script>
+<script src="network/animations.js"></script>
+<script src="network/renderer.js"></script>
+<script src="network/interactions.js"></script>
+<script src="network/graph.js"></script>
+<script>
+  (function () {
+    const el = document.getElementById("portfolio-network");
+    if (el && window.FINAL) {
+      NetworkGraph.mount(el);
+      window.addEventListener("resize", () => NetworkGraph.mount(el));
+    }
+  })();
 </script>
 </body>
 </html>
