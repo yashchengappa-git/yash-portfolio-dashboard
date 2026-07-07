@@ -40,6 +40,7 @@ const NetworkGraph = (() => {
         };
         return {
           id: h.sym,
+          sym: h.sym,
           type: "company",
           themeId,
           label: h.sym,
@@ -84,6 +85,9 @@ const NetworkGraph = (() => {
       color: "#D9DEE8",
       radius: settings.centralNodeRadius,
       weight: 100,
+      dateLabel: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      totalDep: window.TOTAL_DEP,
+      totalGain: window.totalGainLoss,
       x: cx, y: cy, homeX: cx, homeY: cy,
     };
 
