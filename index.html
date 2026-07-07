@@ -857,7 +857,9 @@ const SPY={
   "2026-06-30":746.77,
   "2026-07-01":745.76,
   "2026-07-02":744.78,
-  "2026-07-06":751.28
+  "2026-07-06":751.28,
+  "2026-07-07":747.62
+
 
 
 
@@ -1036,7 +1038,9 @@ const QQQ={
   "2026-06-30":736.40,
   "2026-07-01":725.17,
   "2026-07-02":712.60,
-  "2026-07-06":722.82
+  "2026-07-06":722.82,
+  "2026-07-07":709.43
+
 
 
 
@@ -1315,7 +1319,7 @@ const SK={
     "2026-07-02":194.83,
     "2026-07-03":194.83,
     "2026-07-04":194.83,
-    "2026-07-07":195.55
+    "2026-07-07":196.93
   },
   CVX:{
     "2026-01-07":155.20,
@@ -2086,7 +2090,7 @@ const SK={
     "2026-07-02":242.67,
     "2026-07-03":242.67,
     "2026-07-04":242.67,
-    "2026-07-07":244.16
+    "2026-07-07":245.98
   },
   MU:{
     "2026-01-07":339.55,
@@ -2213,7 +2217,7 @@ const SK={
     "2026-07-02":975.56,
     "2026-07-03":975.56,
     "2026-07-04":975.56,
-    "2026-07-07":984.75
+    "2026-07-07":938.38
   },
   SPOT:{
     "2026-01-07":569.62,
@@ -2651,7 +2655,7 @@ const SK={
     "2026-07-02":300.48,
     "2026-07-03":300.53,
     "2026-07-04":300.53,
-    "2026-07-07":318.47
+    "2026-07-07":305.60
   },
   VIAV:{
     "2026-01-07":18.54,
@@ -2972,7 +2976,7 @@ const SK={
     "2026-07-02":1112.63,
     "2026-07-03":1113.11,
     "2026-07-04":1113.11,
-    "2026-07-07":1152.04
+    "2026-07-07":1077.50
   },
   CRWD:{
     "2026-01-07":478.91,
@@ -3226,7 +3230,7 @@ const SK={
     "2026-07-02":390.49,
     "2026-07-03":390.49,
     "2026-07-04":390.49,
-    "2026-07-07":386.74
+    "2026-07-07":388.84
   },
   COHR:{
     "2026-01-07":191.62,
@@ -3353,7 +3357,7 @@ const SK={
     "2026-07-02":333.30,
     "2026-07-03":333.36,
     "2026-07-04":333.36,
-    "2026-07-07":335.70
+    "2026-07-07":314.08
   },
   PENG:{
     "2026-01-07":18.58,
@@ -3480,7 +3484,7 @@ const SK={
     "2026-07-02":61.47,
     "2026-07-03":61.47,
     "2026-07-04":61.47,
-    "2026-07-07":67.71
+    "2026-07-07":62.71
   },
   NOW:{
     "2026-01-07":150.90,
@@ -3629,7 +3633,7 @@ const SK={
     "2026-07-02":360.45,
     "2026-07-03":360.45,
     "2026-07-04":360.45,
-    "2026-07-07":373.90
+    "2026-07-07":370.78
   },
   APLD:{
   "2026-05-28":48.98,
@@ -3660,7 +3664,7 @@ const SK={
     "2026-07-02":33.06,
     "2026-07-03":33.06,
     "2026-07-04":33.06,
-    "2026-07-07":33.50
+    "2026-07-07":30.71
 },
   AAOI:{
   "2026-06-01":159.06,
@@ -3688,7 +3692,7 @@ const SK={
     "2026-07-02":120.95,
     "2026-07-03":120.95,
     "2026-07-04":120.95,
-    "2026-07-07":123.36
+    "2026-07-07":114.41
 },
     TSM:{
   "2026-06-01":423.74,
@@ -3716,7 +3720,7 @@ const SK={
     "2026-07-02":434.45,
     "2026-07-03":434.16,
     "2026-07-04":434.16,
-    "2026-07-07":451.79
+    "2026-07-07":432.71
 },
    MRVL:{
     "2026-06-02":264.764,
@@ -3743,8 +3747,11 @@ const SK={
     "2026-07-02":245.29,
     "2026-07-03":245.29,
     "2026-07-04":245.29,
-    "2026-07-07":249.27
-},
+    "2026-07-07":230.70
+},  SOXL:{
+    "2026-07-07":165.28
+  },
+
 };
 const SPLITS = {
   "CRWD": [{ date: "2026-07-02", ratio: 4 }]
@@ -3800,7 +3807,7 @@ const DAYS = tradingDays("2026-01-07", AUTO_END_DATE);
   // ── EARNINGS CALENDAR (refreshed via Alpha Vantage) ──────────────────────────
 const EARNINGS=[{"symbol":"PENG","date":"2026-10-05","epsEstimate":0.6953},{"symbol":"MU","date":"2026-09-21","epsEstimate":32.1957},{"symbol":"AVGO","date":"2026-09-02","epsEstimate":3.3014},{"symbol":"MRVL","date":"2026-08-26","epsEstimate":0.939},{"symbol":"CRWD","date":"2026-08-25","epsEstimate":0.2985},{"symbol":"NVDA","date":"2026-08-25","epsEstimate":2.124},{"symbol":"COHR","date":"2026-08-11","epsEstimate":1.6468}];
 // ── NEWS & SENTIMENT (refreshed via Alpha Vantage) ───────────────────────────
-const NEWS={"NVDA":{"articles":[{"headline":"Meet the Dividend King Stock That's Up 20% in 2026. Here's Why It Can Continue Outperforming the S&P 500 and Nasdaq-100 in the Second Half.","url":"https://finnhub.io/api/news?id=0f92f7843a4f6f9a66eac5ff2405bec579ff4a02967b17700cd70baa66882738","source":"Yahoo"},{"headline":"SpaceX Is in the Nasdaq-100, Now Brace for Volatility","url":"https://finnhub.io/api/news?id=1a0ec8ab2bfff4dddab873a8e10bb634b7f6fd32ddf6c45431938e7e013a62e9","source":"Yahoo"},{"headline":"AMD Is 11% Away From Joining the $1 Trillion Club. Could It Get There This Year?","url":"https://finnhub.io/api/news?id=f02f6a91308557107dfc5f95fc27c8317c9338133916fba00b2289ee8badd908","source":"Yahoo"}],"sentiment":"positive"},"AMZN":{"articles":[{"headline":"SpaceX Is in the Nasdaq-100, Now Brace for Volatility","url":"https://finnhub.io/api/news?id=1a0ec8ab2bfff4dddab873a8e10bb634b7f6fd32ddf6c45431938e7e013a62e9","source":"Yahoo"},{"headline":"Amazon.com (AMZN) Faces Fresh FTC Scrutiny As Its Undervalued Narrative Holds","url":"https://finnhub.io/api/news?id=7e5d2e8d21be23c4e428249d918c9542e62f404c2fc4036495be0cbfc272ce8f","source":"Yahoo"},{"headline":"Chu Hai Bang (Shenzhen) Technology Co., Ltd. Launches Vibeperk Global Low-Price Shopping Mall, Delivers Cheaper Authentic Merchandise Than Amazon Across Global Markets","url":"https://finnhub.io/api/news?id=4ba5388fa6eefd50f0011e2a798facede9abbb2c254c78e79baa4ae330abbc73","source":"Yahoo"}],"sentiment":"neutral"},"VRT":{"articles":[{"headline":"Why Vertiv (VRT) Stock Is Up Today","url":"https://finnhub.io/api/news?id=149552fc6c1cb85e222bf0875bf8286bea7e6f9b16bef128ce62d1a96b87762c","source":"Yahoo"},{"headline":"What Vertiv Stock Was Saying About The AI Factory Build-Out","url":"https://finnhub.io/api/news?id=e487acfeda7aeec6fac63f36131b0cda2f001be9f9d1cd33cf724b762e754b88","source":"Yahoo"},{"headline":"Will Vertiv’s New Malaysia AI Cooling Hub Reshape Vertiv Holdings Co's (VRT) Data Center Narrative?","url":"https://finnhub.io/api/news?id=80d4c9444dbe033a5ad978883259ccc57296d24e99f56afb31584989782dc50b","source":"Yahoo"}],"sentiment":"neutral"},"MU":{"articles":[{"headline":"SpaceX Is in the Nasdaq-100, Now Brace for Volatility","url":"https://finnhub.io/api/news?id=1a0ec8ab2bfff4dddab873a8e10bb634b7f6fd32ddf6c45431938e7e013a62e9","source":"Yahoo"},{"headline":"Is Ford Motor (F) Fairly Valued After Its Micron Chip Supply Deal?","url":"https://finnhub.io/api/news?id=bae4c9ed8948a35ecf97ac9322c27a4437da2bf727d16eb6418cb6d7e5176f6d","source":"Yahoo"},{"headline":"Micron Technology (MU) Lands Ford And GM Deals, Is The Upside Already Priced In?","url":"https://finnhub.io/api/news?id=e5c39e88f6fa7839a9a0657d7de39968abbf6b3388c54c5f1c86526cfc26cc5e","source":"Yahoo"}],"sentiment":"neutral"},"NBIS":{"articles":[{"headline":"Meta capex to surge in 2027, neocloud fears ’erroneous’ - SemiAnalysis","url":"https://finnhub.io/api/news?id=9af85d4265bf7d1838079cccd0a6126297ae490898405eddcfd5255aec5c94e2","source":"Yahoo"},{"headline":"Nebius: Why I'm Buying The Meta Compute Panic","url":"https://finnhub.io/api/news?id=a79cdc962c3f0adadf75ed09d2dc070cd65531123605f7652762893d1a869860","source":"SeekingAlpha"},{"headline":"Nebius Stock Jumps 124% in 6 Months: Time to Buy, Hold or Sell?","url":"https://finnhub.io/api/news?id=852dbbff8292b589e499282c6e81d1f441f8cf46e92af37e9f6488d1be705af2","source":"Yahoo"}],"sentiment":"positive"},"GEV":{"articles":[{"headline":"Jefferies Says Microsoft Stands Out in Strong Cloud Spending as Azure Gains Market Share. What This Means for MSFT Stock.","url":"https://finnhub.io/api/news?id=91e2bd12c84cc51322aa5849b2dc90005106f58e0f342f4e6b4ff3f279b5fe70","source":"Yahoo"},{"headline":"BE Stock Is Trading At A Massive Premium To Peers — Retail Bulls Still See A Nearly 4x Rally","url":"https://finnhub.io/api/news?id=4843b1c4e75158c240eeadc80dd5c21992e3f151f2a27e0ab7c7eff83cedd7e7","source":"Yahoo"},{"headline":"Jim Cramer makes bold buy call on one booming energy stock","url":"https://finnhub.io/api/news?id=95b3d9ada8f39a595bd0bbf200a065e7bd7df060f3059b64a363e842dea4f2ed","source":"Yahoo"}],"sentiment":"positive"},"MSFT":{"articles":[{"headline":"NVIDIA (NVDA) Names New Field Operations Chief As AI Growth Narrative Points To Higher Fair Value","url":"https://finnhub.io/api/news?id=60be895d3f4f9414f99493e8432c5b39198c55bf5837cb8a0ad5a7647bb5f0be","source":"Yahoo"},{"headline":"MSFT Stock Climbs Overnight: Microsoft Swings Axe On Over 3,000 Xbox Jobs As Game Pass Reportedly Falls Well Short Of Internal Goals","url":"https://finnhub.io/api/news?id=6cd8c1228cd572a5d904e7a0b147efdeaf845f46cfd3b9297e902ecf2f5be9ca","source":"Yahoo"},{"headline":"Microsoft Is An AI Diamond That's Stronger Than Semiconductors","url":"https://finnhub.io/api/news?id=0375206635c76d524ea4b48a9f6e4293cf779b2cacb269b95c4be0d71f681993","source":"SeekingAlpha"}],"sentiment":"negative"},"CRWD":{"articles":[{"headline":"Should You Buy CrowdStrike After Its Recent Stock Split? The Answer Might Surprise You.","url":"https://finnhub.io/api/news?id=989761fbdd89fd9da10549698ca65404dd012a400e91febc0f793e51c1e31426","source":"Yahoo"},{"headline":"Varonis Systems (VRNS) Shares Skyrocket, What You Need To Know","url":"https://finnhub.io/api/news?id=2503330165c213707134e63e0d3e79242fa0b4bf657a752567f019e7da92840a","source":"Yahoo"},{"headline":"CrowdStrike (CRWD) Stock Trades Up, Here Is Why","url":"https://finnhub.io/api/news?id=d55e6584d4a6e686e965dd13d9854803f386a67faa365b1e6e0e8f380cecc4d7","source":"Yahoo"}],"sentiment":"neutral"},"COHR":{"articles":[{"headline":"Unpacking Gavin Baker's \"Memory Crunch\" Thesis","url":"https://finnhub.io/api/news?id=3c1f2a82407a306fd06014b1479251c292d20807b88b681d3c2363cd6b611436","source":"Yahoo"},{"headline":"Here's Why Investors Should Hold CLH Stock in Their Portfolios Now","url":"https://finnhub.io/api/news?id=63715a6c6ebf7996dffe61890f8b61457fa8872a7b1ebcdb878348380288c753","source":"Yahoo"},{"headline":"AAOI Surges 247% YTD: Should You Buy, Sell, or Hold the Stock?","url":"https://finnhub.io/api/news?id=ba06f534acf7bdb402c23379fa93b93533dae331b23b868b584629fe8ebdb71e","source":"Yahoo"}],"sentiment":"positive"},"PENG":{"articles":[{"headline":"Which Semiconductor ETF Is Winning The AI Race In 2026?","url":"https://finnhub.io/api/news?id=575e73367e2a1b06432724ef5497f02276144fb433453faa5227275b7bab6d00","source":"Benzinga"},{"headline":"Rosenblatt Maintains Buy on Penguin Solutions, Raises Price Target to $75","url":"https://finnhub.io/api/news?id=c012081c86ec0aabb5aebadec15ff047df00e2e4114177041d98e4980f92ceaa","source":"Benzinga"},{"headline":"Benzinga's Top Initiations","url":"https://finnhub.io/api/news?id=1c4129226607939d22793b94c69d376b020f3ace3412470b6ee274d7799bf650","source":"Benzinga"}],"sentiment":"neutral"},"AVGO":{"articles":[{"headline":"SpaceX Is in the Nasdaq-100, Now Brace for Volatility","url":"https://finnhub.io/api/news?id=1a0ec8ab2bfff4dddab873a8e10bb634b7f6fd32ddf6c45431938e7e013a62e9","source":"Yahoo"},{"headline":"Broadcom (AVGO) Extends Apple Deal Following A Fresh Look At Its Fair Value","url":"https://finnhub.io/api/news?id=9e92ca9dc37c304975b79e114abf7dc3f2398d1c8a43d813612e9d8955c9cdab","source":"Yahoo"},{"headline":"S&P 500, Nasdaq, Dow Futures Mixed After Record Session: Why MU, SNDK, RIVN, SPCX Stocks Are Trending Overnight","url":"https://finnhub.io/api/news?id=061e1cbafa2939105f56ba838fc5ac8610b57cd0b001316e3d69cc8734e0fd77","source":"Yahoo"}],"sentiment":"positive"},"APLD":{"articles":[{"headline":"Applied Digital Continues Heavy Capital Spending: What's Ahead?","url":"https://finnhub.io/api/news?id=858785aee8acaa597aa224a0fe38263ea2dec5e3be698d7f64308563e723bd5b","source":"Yahoo"},{"headline":"10 Information Technology Stocks With Whale Alerts In Today’s Session","url":"https://finnhub.io/api/news?id=143c3aac9388f115d7ba3a56a168f4f33783c580df270d1ce75667b2c8a917dd","source":"Benzinga"},{"headline":"Wall Street Thinks You Should Buy The Dip On Applied Digital (APLD) Stock","url":"https://finnhub.io/api/news?id=12f0a679314e0c9365f9403f901e452d7acb0bd94a4f6dbfc9184f51410d714d","source":"Yahoo"}],"sentiment":"neutral"},"AAOI":{"articles":[{"headline":"This AI Stock Beat Nvidia by 200%—Then Zuckerberg Sparked a 17% Sell-Off","url":"https://finnhub.io/api/news?id=e3a3babad131d6b4a9772f163940789e73fca40c8781189baf0ab1fbbecfcc50","source":"Benzinga"},{"headline":"$1000 Invested In Applied Optoelectronics 5 Years Ago Would Be Worth This Much Today","url":"https://finnhub.io/api/news?id=b66aebac5373670f664fb7739008965dd92fcf4dc515be69da97baee256377a8","source":"Benzinga"},{"headline":"Dow Jones Hits Record High as Chip Bloodbath Sinks Nasdaq 100: Stock Market Today","url":"https://finnhub.io/api/news?id=f9dcb503fefd60269c149e9f76bae28991b4905519c4b88be1bdf0e96cf47400","source":"Benzinga"}],"sentiment":"positive"},"TSM":{"articles":[{"headline":"Which Semiconductor ETF Is Winning The AI Race In 2026?","url":"https://finnhub.io/api/news?id=575e73367e2a1b06432724ef5497f02276144fb433453faa5227275b7bab6d00","source":"Benzinga"},{"headline":"Mid-Day Market Update: Red Robin Surges After Strong Q1 Results; bebe stores Shares Slide","url":"https://finnhub.io/api/news?id=b8d442eb8a4618f83c785d685cc1be0584ab510b283ebd884a489fce38c51b18","source":"Benzinga"},{"headline":"10 Information Technology Stocks Whale Activity In Today’s Session","url":"https://finnhub.io/api/news?id=df6a246d8cc088d871d5ab70370c5681780b0e75074002c469c6492537b0f40d","source":"Benzinga"}],"sentiment":"positive"},"MRVL":{"articles":[{"headline":"Marvell Technology and NXP Semiconductors Shares Are Soaring, What You Need To Know","url":"https://finnhub.io/api/news?id=3b718bc6286000b5ad32836e566c4866a9fcc492e6295cecc74da4a34823abbe","source":"Yahoo"},{"headline":"Marvell Technology (MRVL) Exceeds Market Returns: Some Facts to Consider","url":"https://finnhub.io/api/news?id=fed2ec28daf0a8ecb8432389fcffe9a315542e37a937eac0743ae77345be98c8","source":"Yahoo"},{"headline":"Marvell Is Quietly Chasing Broadcom’s AI Jackpot, and Wall Street Is Finally Waking Up","url":"https://finnhub.io/api/news?id=c4c807bb9e40785a079658d67db58816260f90560467b473392a7a5de8390d86","source":"Yahoo"}],"sentiment":"positive"}};
+const NEWS={"NVDA":{"articles":[{"headline":"Semtech, Power Integrations, Amkor, Entegris, and Kulicke and Soffa Stocks Trade Down, What You Need To Know","url":"https://finnhub.io/api/news?id=0411c41b342896910d2b5473c2fda5c71024ddd2da5e7cbaddf15ba9784c3ee7","source":"Yahoo"},{"headline":"DeepSeek's chip effort inevitable amid AI race, market expert says","url":"https://finnhub.io/api/news?id=7d8b4414b12761f5570ffacd12b9b3a3b333370bc74221196e3abcbb5030f921","source":"Yahoo"},{"headline":"Jensen Huang’s Worst Nightmare is Becoming a Reality","url":"https://finnhub.io/api/news?id=0391c60fc9b10073fd4da2ca6eae15d99d78e972d173fdb39330f52dabfb6fc3","source":"Yahoo"}],"sentiment":"neutral"},"AMZN":{"articles":[{"headline":"Amazon Plans $25 Billion Bond Sale","url":"https://finnhub.io/api/news?id=a66b7993ad2f8cc050d714a681e9686b13ff651e37a0703d9ddcde04b6a521f2","source":"Yahoo"},{"headline":"Amazon's AI Spending Push Hits Bond Market","url":"https://finnhub.io/api/news?id=4631bd9de496e32325a0f8ee3343c9816601330e794e0157e830b516b1cc10eb","source":"Yahoo"},{"headline":"Amazon Is Borrowing Another $25 Billion for AI, and Promises This Is the Last Time This Year","url":"https://finnhub.io/api/news?id=6d49c1bb2411f35ae3dd46beae0e2e66a317d703ece4b1f43419bcaf0d3f3af6","source":"Yahoo"}],"sentiment":"neutral"},"VRT":{"articles":[{"headline":"Is Vertiv (VRT) a Solid Growth Stock? 3 Reasons to Think \"Yes\"","url":"https://finnhub.io/api/news?id=1dd27ce77fe6a3d995aac65da3cb0e3479d35db0f256e10eb0a56b5acdc795eb","source":"Yahoo"},{"headline":"Accenture Down 29.3% in 3 Months: How to Approach the Stock Now?","url":"https://finnhub.io/api/news?id=30648582f271de6e89bf75a9df2afd500a6028c35572f0686c74206b39327f26","source":"Yahoo"},{"headline":"These S&P500 stocks are gapping in today's session","url":"https://finnhub.io/api/news?id=3d8cd22b3f59794cc9787e3873e62d603f7c4d3bb9bf6d04fbd9c2adc04c43fc","source":"ChartMill"}],"sentiment":"neutral"},"MU":{"articles":[{"headline":"Chip Stocks Just Flashed a Warning Even Wall Street’s Bulls Can’t Ignore","url":"https://finnhub.io/api/news?id=8167ee2619a1ca9060d98bc5c7ee9a7ded588bbabf1d5d4157dab3f01d5638f5","source":"Yahoo"},{"headline":"Why Micron Technology Stock Is Falling Today","url":"https://finnhub.io/api/news?id=9fe80b6cdcceab6460d5eae5301dae1772140ad2e2aee0fe90e6db5374a783be","source":"Yahoo"},{"headline":"Micron Bet Powers Appaloosa's Big First Half","url":"https://finnhub.io/api/news?id=b4aaa6153c66d239f87130bcecdd16dc999d66087903f2c9deb76ebf8b798697","source":"Yahoo"}],"sentiment":"negative"},"NBIS":{"articles":[{"headline":"Meta Platforms vs. Nebius: Which Is the Better Neocloud Stock?","url":"https://finnhub.io/api/news?id=b4aa6fd71829db50ad7e91b0c4d9396addb3d915e517b3fbe16fa34745bdd943","source":"Yahoo"},{"headline":"New Position: TTRF Capital Initiates IREN Stake With 66,800 Shares","url":"https://finnhub.io/api/news?id=2e276b4008a619d9670e145eb8d8795311d4b717b5b7160d25e7a1922569f19a","source":"Yahoo"},{"headline":"New Position: TTRF Capital Loads Up on AI Infrastructure Company Nebius Stock","url":"https://finnhub.io/api/news?id=198f202c147a871804e9a98a1042646a3d3c48578b64687cddaac7b5579e70e7","source":"Yahoo"}],"sentiment":"neutral"},"GEV":{"articles":[{"headline":"Is GE Vernova (GEV) Undervalued Following AI Demand And Russell Top 50 Inclusion?","url":"https://finnhub.io/api/news?id=1cad7f970403645b20556f0052d794603c067b3993d6d26bdd115c02cd844105","source":"Yahoo"},{"headline":"These S&P500 stocks are moving in today's session","url":"https://finnhub.io/api/news?id=68e7bd78443e26a68e848ae13105aac5bcc1b9c3a6d4eab9c3fd817cb8ec469d","source":"ChartMill"},{"headline":"Why GE Vernova, Caterpillar Stocks Are Getting Crushed","url":"https://finnhub.io/api/news?id=3d0be2c437a6a67729cb0540885efdfb16d56eb00fd4b29187dafab80d64247d","source":"Yahoo"}],"sentiment":"neutral"},"MSFT":{"articles":[{"headline":"What's going on in today's session: dow jones movers","url":"https://finnhub.io/api/news?id=8b4af97dddd3317a50c1206ecb3fecd7ad2f983ec27a7e1c72a78c4e14a73ff1","source":"ChartMill"},{"headline":"Microsoft’s $37 Billion AI Number Is Staggering","url":"https://finnhub.io/api/news?id=3db37faf7e30f7cb92631d69b8a300ef42f1d8091e37efddd898298824641c55","source":"Yahoo"},{"headline":"MSFT Stock Jumps 2% — Microsoft Looks To Save Cost By Reportedly Swapping OpenAI, Anthropic Models For In-House AI","url":"https://finnhub.io/api/news?id=fa674cac943326a6219140ea0446fb5676531cd9506e69ba354d8f2646a08bdb","source":"Yahoo"}],"sentiment":"positive"},"CRWD":{"articles":[{"headline":"Is CrowdStrike Holdings (CRWD) Expensive As Its Stock Split Puts Valuation Back In Focus?","url":"https://finnhub.io/api/news?id=efe93cc97e24da3ff0362c89d244c98ab8b6e3ce25b55ad4b0c29f469d1ed5f9","source":"Yahoo"},{"headline":"CrowdStrike (CRWD) Sees 5x AIDR Demand As Identity Push Broadens Its Platform","url":"https://finnhub.io/api/news?id=fda261ed0cf282a0645ac1a6a7961122512aa51764bf0fb729bfc09ceb2e4848","source":"Yahoo"},{"headline":"Is CrowdStrike’s 55% Surge Just The Beginning For This AI Defense Stock?","url":"https://finnhub.io/api/news?id=9ed66668e750693877639561006d536f1d2d6759b8e9878d3d091314a67f219a","source":"Yahoo"}],"sentiment":"positive"},"COHR":{"articles":[{"headline":"Stay informed with the top movers within the S&P500 index on Tuesday.","url":"https://finnhub.io/api/news?id=b7c7d72359df18e87aeb7f9f1a9c6e770753c69cfb1ebcd61539db915ac0ba41","source":"ChartMill"},{"headline":"Here's Why You Should Retain Paychex Stock in Your Portfolio","url":"https://finnhub.io/api/news?id=58b6e827828a1e8080ddb8babbfcdf983d881a8a735ff791b038f5d58dcc79ed","source":"Yahoo"},{"headline":"Unpacking Gavin Baker's \"Memory Crunch\" Thesis","url":"https://finnhub.io/api/news?id=3c1f2a82407a306fd06014b1479251c292d20807b88b681d3c2363cd6b611436","source":"Yahoo"}],"sentiment":"neutral"},"PENG":{"articles":[{"headline":"Get insights into the top gainers and losers of Tuesday's after-hours session.","url":"https://finnhub.io/api/news?id=9409d3433b2ba18eb790e819ce8793b652e5fdb32ed0937e3d47b03f004605be","source":"ChartMill"},{"headline":"Penguin Solutions Inc (NASDAQ:PENG) Smashes Q3 Estimates, Raises Guidance Well Above Consensus","url":"https://finnhub.io/api/news?id=4b4c05ade98ab5688c12ce6dccc331a77c37f924a1d99b47d429f141973ed72a","source":"ChartMill"},{"headline":"12 Information Technology Stocks Moving In Tuesday's After-Market Session","url":"https://finnhub.io/api/news?id=a272d05e8df380ffb4c30b477fefb4bbd601db4e330dc2d50ae11e7f4987af00","source":"Benzinga"}],"sentiment":"positive"},"AVGO":{"articles":[{"headline":"Semtech, Power Integrations, Amkor, Entegris, and Kulicke and Soffa Stocks Trade Down, What You Need To Know","url":"https://finnhub.io/api/news?id=0411c41b342896910d2b5473c2fda5c71024ddd2da5e7cbaddf15ba9784c3ee7","source":"Yahoo"},{"headline":"FormFactor, Penguin Solutions, Western Digital, Applied Materials, and KLA Corporation Shares Plummet, What You Need To Know","url":"https://finnhub.io/api/news?id=82b4168b412b3ebbeb69995fb7daefd3f85e88b7b6893233c19887ac6795a0c1","source":"Yahoo"},{"headline":"DeepSeek Reportedly Develops AI Chip as Nvidia Shares Drop 2.2%","url":"https://finnhub.io/api/news?id=72662092abc5de3c92497716cfeb622e7e72b0d720559cd008d0096f30a81ad9","source":"Yahoo"}],"sentiment":"negative"},"APLD":{"articles":[{"headline":"NODE Monthly Commentary: June 2026","url":"https://finnhub.io/api/news?id=a14e671e40c478926ae01e9c4cb4d95db0c4799ef8411d1abbac2dba9d5a5591","source":"SeekingAlpha"},{"headline":"Applied Digital Continues Heavy Capital Spending: What's Ahead?","url":"https://finnhub.io/api/news?id=858785aee8acaa597aa224a0fe38263ea2dec5e3be698d7f64308563e723bd5b","source":"Yahoo"},{"headline":"10 Information Technology Stocks With Whale Alerts In Today’s Session","url":"https://finnhub.io/api/news?id=143c3aac9388f115d7ba3a56a168f4f33783c580df270d1ce75667b2c8a917dd","source":"Benzinga"}],"sentiment":"neutral"},"AAOI":{"articles":[{"headline":"This AI Stock Beat Nvidia by 200%—Then Zuckerberg Sparked a 17% Sell-Off","url":"https://finnhub.io/api/news?id=e3a3babad131d6b4a9772f163940789e73fca40c8781189baf0ab1fbbecfcc50","source":"Benzinga"},{"headline":"$1000 Invested In Applied Optoelectronics 5 Years Ago Would Be Worth This Much Today","url":"https://finnhub.io/api/news?id=b66aebac5373670f664fb7739008965dd92fcf4dc515be69da97baee256377a8","source":"Benzinga"},{"headline":"Dow Jones Hits Record High as Chip Bloodbath Sinks Nasdaq 100: Stock Market Today","url":"https://finnhub.io/api/news?id=f9dcb503fefd60269c149e9f76bae28991b4905519c4b88be1bdf0e96cf47400","source":"Benzinga"}],"sentiment":"positive"},"TSM":{"articles":[{"headline":"My (Still) 21% Yielding Portfolio Update","url":"https://finnhub.io/api/news?id=62404a4b7f00e841ccdd620ab459926b91ccbb5c7e8ace31afcae0a753c13292","source":"SeekingAlpha"},{"headline":"Top Semiconductor Companies To Watch In 2026","url":"https://finnhub.io/api/news?id=0edafbcb09db57fcc28d8c3060e0e2576c3c838baad3bff4381be4f4eac97604","source":"SeekingAlpha"},{"headline":"Taiwan Semiconductor (NYSE:TSM) Shows Textbook Potential for Strong Growth and Technical Breakout Setup","url":"https://finnhub.io/api/news?id=1c095c568c856ec1ae1e712d04eea78dfc7e0679beac27274342620ae583340a","source":"ChartMill"}],"sentiment":"neutral"},"MRVL":{"articles":[{"headline":"Stay informed with the top movers within the S&P500 index on Tuesday.","url":"https://finnhub.io/api/news?id=b7c7d72359df18e87aeb7f9f1a9c6e770753c69cfb1ebcd61539db915ac0ba41","source":"ChartMill"},{"headline":"Update: Chip Stocks Weigh on Equities Intraday; Oil Rises on Hormuz Tensions","url":"https://finnhub.io/api/news?id=43424fdf0726b3eb8a69490b7443df2a3649fe0a74bcc7779c0f5205f2498b46","source":"Yahoo"},{"headline":"Intel, Micron, SpaceX, GE Vernova, Caterpillar, and More Stocks That Explain Today’s Market","url":"https://finnhub.io/api/news?id=ef11a5a3b4817e14114eb078498a838374c625f3c645224655ea99208a1d38c4","source":"Yahoo"}],"sentiment":"neutral"},"SOXL":{"articles":[{"headline":"Samsung Selloff Sends Warning To US Investors; Amazon Enters AI Debt Binge","url":"https://finnhub.io/api/news?id=569b1253d52b138448798a16bfdc34eb7de8f4d867e592000ca718829053e09d","source":"Benzinga"},{"headline":"SOXS Could Be A Great Hedge For Semiconductor Positions, But Only With The Right Strategy","url":"https://finnhub.io/api/news?id=987a814e6c518ea7d5a231dd3eb1d035b3e49e5867ffef848e0fe0d5698690d5","source":"SeekingAlpha"},{"headline":"SK Hynix ETF Race Heats Up As Direxion Files 2X Leveraged Fund","url":"https://finnhub.io/api/news?id=f32780552b883bb8a1744320b5b9d0846c08b9bf49335b41d573a4d2fd5ca592","source":"Benzinga"}],"sentiment":"neutral"}};
 // All trades from trade report excel
 const TRADES=[
   {date:"2026-01-08",sym:"LMT",side:"buy",qty:1.000000000,price:531.2400},
