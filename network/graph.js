@@ -124,8 +124,9 @@ const NetworkGraph = (() => {
     container.selectAll("*").remove();
     if (simulation) simulation.stop();
 
-    const width = containerEl.clientWidth || 640;
-    const height = containerEl.clientHeight || 520;
+    const rect = containerEl.getBoundingClientRect();
+    const width = rect.width || containerEl.clientWidth || 640;
+    const height = rect.height || containerEl.clientHeight || 520;
 
     const svg = container.append("svg")
       .attr("class", "network-svg")
@@ -143,6 +144,8 @@ const NetworkGraph = (() => {
     });
 
     simulation = d3.forceSimulation(nodes)
+      .velocityDecay(settings.velocityDecay)
+      .alphaDecay(settings.alphaDecay)
       .force("link", d3.forceLink(links).id(d => d.id).distance(l => {
         return l.target.type === "theme" ? settings.themeDistance : settings.linkDistance;
       }).strength(0.35))
@@ -158,7 +161,7 @@ const NetworkGraph = (() => {
     NetworkInteractions.attach({
       svg, root, nodeLayer, linkLayer,
       nodeSelection, linkSelection, simulation, nodesById,
-      settings,
+      settings, nodes, width, height,
     });
 
     return { simulation, nodes, links };
@@ -170,5 +173,31 @@ const NetworkGraph = (() => {
     return mount(containerEl);
   }
 
-  return { mount, refresh };
+  // ---- Resize handling ---------------------------------------------------
+  //
+  // A full remount on every 'resize' event is disruptive on mobile: iOS
+  // Safari fires resize when the address bar collapses/expands on scroll,
+  // which would otherwise reset pan/zoom and any open card mid-interaction
+  // (this was the cause of expanded cards appearing to "jump" to the
+  // corner). We debounce, and only remount when the width actually
+  // changed meaningfully — and never while a card is open.
+  let resizeTimer = null;
+  let lastWidth = null;
+
+  function watchResize(containerEl) {
+    lastWidth = containerEl.clientWidth;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const w = containerEl.clientWidth;
+        const isExpanded = !!containerEl.querySelector(".network-node.is-expanded");
+        if (!isExpanded && Math.abs(w - lastWidth) > 40) {
+          lastWidth = w;
+          mount(containerEl);
+        }
+      }, 300);
+    });
+  }
+
+  return { mount, refresh, watchResize };
 })();
