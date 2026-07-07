@@ -79,6 +79,7 @@ async function run() {
   let html = fs.readFileSync("index.html", "utf8");
   const symbols = deriveHoldings(html);
   console.log(`Fetching news + earnings for: ${symbols.join(", ")}`);
+  console.log("symbols:", JSON.stringify(symbols));
 
   try {
     const news = await getNews(symbols);
