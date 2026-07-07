@@ -115,17 +115,28 @@
 
 /* ---- Expanded card ---------------------------------------------------- */
 
-.network-card-fo {
-  overflow: visible;
+/* Sits over the svg, same size as the panel. Doesn't intercept pointer
+   events itself — only the card inside it does — so it never blocks
+   dragging/hovering nodes underneath. */
+.network-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   pointer-events: none;
 }
 
-.network-card-wrap {
+/* Positioning wrapper — left/top/width/height are set inline by
+   renderer.js to track the expanded node. */
+.network-card-overlay {
+  position: absolute;
   pointer-events: auto;
-  width: 100%;
-  height: 100%;
 }
 
+/* Visual styling only — no positioning here, so it can be reused inside
+   the overlay wrapper without fighting over left/top/position. */
 .network-card {
   /* Solid base colour first (works even where backdrop-filter isn't
      supported), gradient + blur layered on top for the glass feel. */
@@ -139,9 +150,11 @@
   padding: 16px 18px;
   font-family: 'Plus Jakarta Sans', sans-serif;
   color: var(--color-text-primary);
+  width: 100%;
   height: 100%;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 }
 
 .nc-eyebrow {
