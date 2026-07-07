@@ -4102,6 +4102,8 @@ if (holdingsTitle) {
     `CURRENT HOLDINGS (${latestLabel.toUpperCase()})`;
 }
 const totalGainLoss = lastPort - TOTAL_DEP;
+  window.TOTAL_DEP = TOTAL_DEP;
+window.totalGainLoss = totalGainLoss;
 const totalGainLossText =
   `${totalGainLoss >= 0 ? "+" : "-"}$${Math.abs(totalGainLoss).toFixed(1)}`;
 const cards=[
