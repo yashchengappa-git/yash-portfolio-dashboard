@@ -61,6 +61,7 @@
 .network-link {
   stroke: var(--color-text-secondary);
   stroke-linecap: round;
+  stroke-width: 5px;
 }
 
 /* ---- Nodes -------------------------------------------------------------- */
