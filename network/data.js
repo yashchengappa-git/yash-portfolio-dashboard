@@ -58,46 +58,46 @@ const NETWORK = {
 
   themes: [
     {
-      id: "ai",
-      label: "AI",
-      color: "#7DA6FF",
+      id: "Energy & Power Infrastructure",
+      label: "Energy & Power Infrastructure",
+      color: "#37436E",
       description:
-        "Companies building the models, data infrastructure and platforms that make AI systems usable in production.",
+        "The AI buildout has hit a physical wall: you can't run datacenters you can't power and cool. This sleeve owns both sides — grid power and inside-the-room thermal management — selling to hyperscalers with no discretion to delay spending.",
     },
     {
-      id: "enterprise",
-      label: "Enterprise",
-      color: "#F5A35C",
+      id: "AI Datacenter Infrastructure",
+      label: "AI Datacenter Infrastructure",
+      color: "#2E5A47",
       description:
-        "Software businesses riding enterprise digitisation and the shift toward embedding AI into everyday workflows.",
+        "Overflow demand from capacity-constrained hyperscalers flows to specialist operators who can deliver purpose-built, GPU-dense facilities faster than retrofitted enterprise space.",
     },
     {
-      id: "cybersecurity",
+      id: "Cybersecurity",
       label: "Cybersecurity",
-      color: "#E8757A",
+      color: "#2A3B52",
       description:
-        "Mission-critical security platforms protecting the infrastructure everything else in this portfolio depends on.",
+        "AI is expanding the enterprise attack surface faster than legacy tools can track it. Security spend is one of the last enterprise budget lines cut, making it structurally resilient.",
     },
     {
-      id: "semiconductors",
-      label: "Semiconductors",
-      color: "#6FCF97",
+      id: "Semiconductors & Compute",
+      label: "Semiconductors & Compute",
+      color: "#1F4A4A",
       description:
         "The compute, memory and manufacturing layer underneath the AI buildout — the part nothing above can work without.",
     },
     {
-      id: "photonics",
-      label: "Photonics",
-      color: "#B79CFF",
+      id: "Photonics & Optical Connectivity",
+      label: "Photonics & Optical Connectivity",
+      color: "#3E4A2E",
       description:
-        "Optical connectivity and test equipment that move data between GPUs fast enough to keep hyperscale clusters fed.",
+        "Copper can't carry AI-scale bandwidth between GPUs, servers, and datacenters. This sleeve owns the optical transceiver upgrade cycle (400G → 800G → 1.6T) that AI networking demand is forcing.",
     },
     {
-      id: "energy",
-      label: "Energy",
-      color: "#E8C468",
+      id: "AI Cloud Infrastructure",
+      label: "AI Cloud Infrastructure",
+      color: "#3C5259",
       description:
-        "Power generation and grid infrastructure sized for a datacenter buildout that is outpacing available electricity.",
+        "The layer where AI workloads are actually built and run — one AI-native specialist and two hyperscalers with balance sheets to keep investing through any demand air-pocket.",
     },
     {
       id: "other",
@@ -110,27 +110,27 @@ const NETWORK = {
 
   // ticker -> theme id
   assignments: {
-    NVDA: "semiconductors",
-    MU: "semiconductors",
-    AVGO: "semiconductors",
-    TSM: "semiconductors",
+    NVDA: "Semiconductors & Compute",
+    MU: "Semiconductors & Compute",
+    AVGO: "Semiconductors & Compute",
+    TSM: "Semiconductors & Compute",
+    MRVL: "Semiconductors & Compute",
 
-    NBIS: "ai",
-    APLD: "ai",
+    NBIS: "AI Cloud Infrastructure",
+    APLD: "AI Datacenter Infrastructure",
 
-    COHR: "photonics",
-    AAOI: "photonics",
-    PENG: "photonics",
-    VIAV: "photonics",
+    COHR: "Photonics & Optical Connectivity",
+    AAOI: "Photonics & Optical Connectivity",
+    PENG: "Photonics & Optical Connectivity",
+    VIAV: "Photonics & Optical Connectivity",
 
-    MSFT: "enterprise",
-    AMZN: "enterprise",
-    NOW: "enterprise",
+    MSFT: "AI Cloud Infrastructure",
+    AMZN: "AI Cloud Infrastructure",
 
-    CRWD: "cybersecurity",
+    CRWD: "Cybersecurity",
 
-    GEV: "energy",
-    VRT: "energy",
+    GEV: "Energy & Power Infrastructure",
+    VRT: "Energy & Power Infrastructure",
   },
 
   companyDescriptions: {
@@ -138,28 +138,28 @@ const NETWORK = {
     NVDA: {
       title: "NVIDIA",
       overview:
-        "Leader in accelerated computing and AI GPUs. Owns the CUDA ecosystem powering modern AI training and inference.",
+        "Dominant AI GPU designer, with the CUDA software ecosystem as its core moat.",
       thesis:
-        "Highest-conviction AI infrastructure holding with a durable software moat on top of hardware leadership.",
-      risks: ["AI infrastructure spending slows", "Export restrictions", "Competitive pressure"],
+        "Foundation of the sleeve — GPU compute dominance reinforced by switching costs from CUDA. Datacenter revenue has repeatedly surprised to the upside on both training and inference demand. Highest-profile, most-watched name in the AI trade.",
+      risks: ["Valuation leaves little room for a growth disappointment", "Customer concentration among hyperscalers simultaneously building competing custom silicon", "Export control/geopolitical exposure (China)"],
     },
 
     MU: {
-      title: "Micron",
+      title: "Micron Technology",
       overview:
-        "Memory manufacturer benefiting from demand for HBM in AI servers and a broader memory-pricing recovery.",
+        "Memory manufacturer (DRAM/NAND) and one of three global suppliers of HBM.",
       thesis:
-        "HBM is a structural requirement for AI GPUs, and Micron is one of three companies globally that can supply it at scale.",
-      risks: ["Memory pricing is cyclical", "Customer concentration", "Capex intensity"],
+        "HBM is a structural requirement for AI GPUs, and MU is one of only three qualified suppliers at scale. Broader memory cyclical recovery provides an earnings floor. HBM mix-shift is the incremental growth layer on top.",
+      risks: ["Memory pricing is cyclical", "Customer concentration among GPU/XPU makers", "Capex intensity of HBM capacity buildout"],
     },
 
     AVGO: {
       title: "Broadcom",
       overview:
-        "Networking silicon, custom AI accelerators (XPUs), and a large infrastructure-software business.",
+        "Custom AI silicon (XPU) designer and networking chip maker, with a large enterprise software base (VMware).",
       thesis:
-        "Key AI networking supplier and the custom-silicon partner of choice for hyperscalers who want compute tuned to their own workloads.",
-      risks: ["Enterprise software slowdown", "Hyperscaler in-housing", "Integration execution"],
+        "Designs purpose-built AI accelerators for hyperscalers who want workload-optimized compute over merchant GPUs. Networking silicon ties GPU clusters together at scale — a second AI leg. Enterprise software provides earnings ballast.",
+      risks: ["Customer concentration in a small number of XPU programs.", "Risk of hyperscalers in-housing design or shifting to MRVL.", "Debt/integration risk from acquisition history."],
     },
 
     TSM: {
@@ -167,89 +167,80 @@ const NETWORK = {
       overview:
         "The world's most advanced semiconductor foundry, manufacturing the chips nearly every fabless AI company designs.",
       thesis:
-        "A chokepoint position — every NVDA GPU and most custom AI silicon ultimately runs through TSMC's fabs.",
-      risks: ["Geopolitical concentration in Taiwan", "Capex cycle", "Advanced-node yield issues"],
+        "Manufactures essentially every leading-edge AI chip in this portfolio — NVDA GPUs, AVGO and MRVL custom silicon. The foundry chokepoint every other compute position depends on. Sustained process-node leadership underpins pricing power.",
+      risks: ["Taiwan geopolitical concentration — largest single risk in the portfolio", "Customer concentration among a handful of fabless clients", "Overseas fab expansion carries execution/margin-dilution risk"],
     },
 
     NBIS: {
       title: "Nebius Group",
       overview:
-        "AI-focused cloud infrastructure provider, building GPU datacenters for AI training and inference workloads.",
+        "AI-native cloud infrastructure provider, purpose-built for GPU-dense workloads.",
       thesis:
-        "A pure-play way to own the 'neocloud' buildout without picking which model or application wins.",
-      risks: ["Capital-intensive scaling", "GPU supply dependence", "Competition from hyperscalers"],
+        "Targets the gap where general-purpose hyperscaler cloud is too expensive or insufficiently optimized for AI workloads. Earliest-stage, most specialized name in the sleeve. Upside depends on that capacity gap staying open.",
+      risks: ["Highest execution risk in the sleeve — smallest, least-proven model", "Capital intensity requires continued financing access", "Hyperscalers or other neoclouds could close the gap faster"],
     },
 
     APLD: {
       title: "Applied Digital",
       overview:
-        "Builds and operates datacenter capacity, increasingly leased to AI compute and HPC customers.",
+        "Builds and operates next-generation datacenters engineered specifically for GPU-dense AI/HPC workloads.",
       thesis:
-        "Levered bet on datacenter capacity being the scarce resource in the AI buildout, not the chips themselves.",
-      risks: ["Financing and dilution risk", "Customer concentration", "Execution on build timelines"],
+        "Captures hyperscaler overflow demand as capacity constraints push workloads to specialist operators. Purpose-built design gives faster time-to-power than retrofits. Highest-risk, highest-asymmetry position in the portfolio — payoff depends on the AI buildout cycle continuing.",
+      risks: ["Capital-intensive, reliant on continued external financing", "Customer/contract concentration", "Most exposed name if the AI capex cycle slows"],
     },
 
     COHR: {
       title: "Coherent Corp",
       overview:
-        "Optical components and lasers used in datacenter interconnects, industrial and telecom applications.",
+        "Vertically integrated photonics company spanning lasers, components, and finished optical transceivers.",
       thesis:
-        "Optical connectivity is the plumbing hyperscale AI clusters need to move data between GPUs fast enough.",
-      risks: ["Telecom end-market softness", "Pricing competition", "Integration of past mergers"],
+        "Largest, most diversified name in the sleeve — exposure across datacenter, telecom, and industrial/laser end markets. Vertical integration gives cost and supply advantages pure-plays lack. Lower-beta way to own the optical upgrade cycle.",
+      risks: ["Non-datacenter segments can dilute the pure AI-growth story", "Integration risk from acquisition history", "Historically more volatile margins than pure-play peers"],
     },
 
     AAOI: {
       title: "Applied Optoelectronics",
       overview:
-        "Designs and manufactures optical transceivers used in datacenter and telecom networks.",
+        "Pure-play manufacturer of optical transceivers for datacenter networking.",
       thesis:
-        "Smaller, higher-beta way to play rising datacenter bandwidth needs as clusters scale.",
-      risks: ["Customer concentration", "Pricing pressure from larger competitors", "Execution risk on new products"],
+        "Sits directly in the 400G-to-800G-to-1.6T upgrade cycle, with revenue almost entirely datacenter-facing. Product roadmap tracks hyperscaler timelines closely. Meaningful operating leverage as volumes scale against a fixed manufacturing base.",
+      risks: ["Smaller balance sheet — sensitive to a single lost design win", "Volatile execution history on yields/ramps", "Customer concentration among a few hyperscalers"],
     },
 
     PENG: {
       title: "Penguin Solutions",
       overview:
-        "Provides compute infrastructure and memory solutions for AI and high-performance computing customers.",
+        "Smaller, earlier-stage optical networking and infrastructure solutions provider.",
       thesis:
-        "Direct exposure to AI datacenter build-outs through infrastructure hardware rather than any single chip.",
-      risks: ["Customer concentration", "Lower margin hardware business", "Cyclicality"],
-    },
-
-    VIAV: {
-      title: "Viavi Solutions",
-      overview:
-        "Network test, measurement and optical instrumentation used to build and validate high-speed networks.",
-      thesis:
-        "A picks-and-shovels play on network buildouts — every optical link that gets deployed needs to be tested.",
-      risks: ["Telecom capex cycles", "Smaller-cap liquidity", "Customer spending delays"],
+        "Smallest, earliest-stage name in the sleeve — more torque to continued optical demand growth given its size. Asymmetric risk/reward relative to COHR and AAOI.",
+      risks: ["Least mature, most speculative name in the sleeve", "Lower liquidity and coverage", "More dependent on a narrow set of design wins"],
     },
 
     MSFT: {
       title: "Microsoft",
       overview:
-        "Cloud infrastructure (Azure), productivity software, and one of the largest commercial deployers of AI via Copilot.",
+        "Cloud (Azure) and enterprise software giant embedding AI (Copilot) across its full product suite.",
       thesis:
-        "Diversified way to own enterprise AI adoption without single-product risk, backed by Azure's infrastructure scale.",
-      risks: ["Azure capex weighing on margins", "Copilot monetization pace", "Antitrust scrutiny"],
+        "Azure cloud growth combined with Copilot distribution across Office gives Microsoft an AI reach no competitor matches. Balance sheet and existing enterprise relationships make this the lowest-risk name in the sleeve. Multiple AI monetization paths reduce single-point dependency.",
+      risks: ["Enormous Azure capex intensity — monetization must keep pace", "OpenAI partnership dependency carries structural ambiguity", "Regulatory/antitrust scrutiny across jurisdictions"],
     },
 
     AMZN: {
       title: "Amazon",
       overview:
-        "AWS cloud infrastructure alongside the core e-commerce and advertising businesses.",
+        "E-commerce and logistics company whose AWS cloud segment is the most profitable in the industry.",
       thesis:
-        "AWS gives direct exposure to enterprise cloud and AI infrastructure spend, subsidized by a cash-generative retail core.",
-      risks: ["Retail margin pressure", "AWS growth deceleration", "Heavy capex"],
+        "AWS is reaccelerating as enterprise AI demand pulls workloads back to cloud. Custom Trainium/Inferentia silicon gives Amazon a cost-structure lever peers without custom chips lack. Core retail business adds diversification and cash flow outside the AI cycle.",
+      risks: ["AWS capex competes directly with MSFT/GOOGL for GPU supply and buildout dollars", "Retail segment carries structurally lower margins", "Trainium adoption still needs to prove out at scale vs. NVDA incumbency"],
     },
 
-    NOW: {
-      title: "ServiceNow",
+    MRVL: {
+      title: "Marvell Technology",
       overview:
-        "Workflow automation platform used by large enterprises for IT, HR and customer service processes.",
+        "Semiconductor company transitioning from broad analog/mixed-signal into custom AI silicon (XPU) and datacenter optical connectivity.",
       thesis:
-        "Well positioned to embed AI agents directly into enterprise workflows customers already run through the platform.",
-      risks: ["Premium valuation", "Enterprise budget scrutiny", "Competition from point solutions"],
+        "Custom silicon has scaled from near-zero to a meaningful share of data center revenue in a few years, with design wins spanning AWS Trainium, Microsoft Maia, and Google TPU-attach — a broader hyperscaler spread than AVGO's book. Optical DSPs and 800G/1.6T pluggables give it a genuine second AI growth leg. Legacy storage/carrier segments add earnings stability underneath the AI ramp.",
+      risks: ["Lumpy revenue recognition tied to program ramp timing", "Direct competitive overlap with AVGO for hyperscaler silicon mandates", "Valuation has re-rated substantially, raising the bar for beats"],
     },
 
     CRWD: {
@@ -257,26 +248,26 @@ const NETWORK = {
       overview:
         "Cloud-native endpoint and cybersecurity platform protecting enterprise infrastructure.",
       thesis:
-        "Security spend is close to non-discretionary, and CrowdStrike's platform approach drives durable land-and-expand growth.",
-      risks: ["Competitive intensity in security", "Valuation sensitivity", "Any recurrence of reliability incidents"],
+        "Platform consolidator taking share from legacy point-solution vendors via high switching costs and a widening modular product suite. Being wrong on security is existential for customers, keeping this a resilient, hard-to-cut budget line. Direct beneficiary of AI-driven threat complexity.",
+      risks: ["Valuation prices in a high bar for continued net-new ARR growth", "Trust/reputational risk given the July 2024 outage precedent", "Any recurrence of reliability incidents"],
     },
 
     GEV: {
       title: "GE Vernova",
       overview:
-        "Power generation equipment (gas turbines, grid, renewables) spun off from General Electric.",
+        "Power generation and electrical equipment company (gas turbines, grid solutions, electrification), spun off from GE in 2024.",
       thesis:
-        "Datacenter power demand is growing faster than grid capacity, and GEV sells the turbines utilities need to catch up.",
-      risks: ["Long equipment lead times", "Utility capex cycles", "Execution post-spinoff"],
+        "Pure-play on the grid side of the AI power bottleneck as utility-scale electricity demand forecasts get revised sharply upward. Gas turbine backlogs now extend years out, giving unusually long revenue visibility. Grid equipment demand is reinforced by a separate, non-AI grid-modernization cycle.",
+      risks: ["Long-cycle industrial model — slow order-to-revenue conversion", "Permitting/policy risk on new gas and grid buildout", "Execution risk on turbine delivery and margin ramp"],
     },
 
     VRT: {
-      title: "Vertiv",
+      title: "Vertiv Holdings",
       overview:
-        "Power and thermal management systems (including liquid cooling) for datacenters.",
+        "Precision cooling, power management, and infrastructure equipment provider for datacenters.",
       thesis:
-        "Direct beneficiary of AI datacenters needing far more power density and cooling than traditional facilities.",
-      risks: ["Customer concentration in hyperscalers", "Valuation after a strong run", "Supply chain constraints"],
+        "Owns the thermal/power layer inside the datacenter at the exact moment GPU rack density has broken legacy air cooling. The shift to liquid cooling is a direct mix-upgrade tailwind, since liquid content value per rack exceeds what it replaces. Sits directly in hyperscaler capex path.",
+      risks: ["Customer concentration in hyperscaler capex cycles", "Margin sensitivity to input costs and mix execution", "Valuation has already re-rated on the AI narrative"],
     },
   },
 
