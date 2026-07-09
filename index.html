@@ -3909,6 +3909,7 @@ const TRADES=[
   
   {date:"2026-07-01",sym:"NBIS",side:"buy",qty:0.433052122,price:239.4400},
   {date:"2026-07-07",sym:"SOXL",side:"buy",qty:1.237294245,price:166.4600},
+  {date:"2026-07-09",sym:"SOXL",side:"sell",qty:1.237243669,price:186.7700},
 
 ];
 const fmtD=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric'});
@@ -4381,6 +4382,8 @@ renderHoldingsTable();
 })();
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
 const TRADE_LOG=[
+  {date:"2026-07-09",action:"sell",sym:"SOXL",amt:231.08},
+
   {date:"2026-07-07",action:"buy",sym:"SOXL",amt:205.96},
 
   {date:"2026-07-01",action:"buy",sym:"NBIS",amt:103.69},
