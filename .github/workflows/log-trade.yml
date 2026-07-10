@@ -1,5 +1,4 @@
 name: Log Trade
-
 on:
   workflow_dispatch:
     inputs:
@@ -11,27 +10,21 @@ on:
         required: true
       price:
         required: true
-      amt:
+      qty:
         required: true
-
 permissions:
   contents: write
-
 jobs:
   log:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - run: npm install axios
-
       - name: Log trade
-        run: node scripts/log-trade.js "${{ github.event.inputs.date }}" "${{ github.event.inputs.sym }}" "${{ github.event.inputs.side }}" "${{ github.event.inputs.amt }}" "${{ github.event.inputs.price }}"
-
+        run: node scripts/log-trade.js "${{ github.event.inputs.date }}" "${{ github.event.inputs.sym }}" "${{ github.event.inputs.side }}" "${{ github.event.inputs.qty }}" "${{ github.event.inputs.price }}"
       - name: Commit
         run: |
           git config --global user.name "github-actions"
@@ -39,12 +32,12 @@ jobs:
           git add index.html
           git commit -m "Log trade: ${{ github.event.inputs.side }} ${{ github.event.inputs.sym }}"
           git push
-
       - name: Notify Discord
         if: success()
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
+          AMT=$(python3 -c "print(f'{${{ github.event.inputs.qty }} * ${{ github.event.inputs.price }}:.2f}')")
           curl -H "Content-Type: application/json" \
-               -d "{\"content\": \"Logged: ${{ github.event.inputs.side }} ${{ github.event.inputs.sym }} - \$${{ github.event.inputs.amt }} @ \$${{ github.event.inputs.price }}\"}" \
+               -d "{\"content\": \"Logged: ${{ github.event.inputs.side }} ${{ github.event.inputs.sym }} - ${{ github.event.inputs.qty }} shares (\$$AMT) @ \$${{ github.event.inputs.price }}\"}" \
                "$DISCORD_WEBHOOK_URL"
