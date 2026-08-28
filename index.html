@@ -4609,6 +4609,7 @@ const TRADES=[
   {date:"2026-08-11",sym:"AAOI",side:"buy",qty:0.758244098,price:131.4880},
   {date:"2026-08-13",sym:"TSM",side:"sell",qty:0.258839188,price:435.2220},
   {date:"2026-08-15",sym:"AAOI",side:"buy",qty:0.754841547,price:132.0800},
+  {date:"2026-08-17",sym:"GEV",side:"sell",qty:0.185969951,price:1078.3480},
 
 ];
 const fmtD=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric'});
@@ -5081,6 +5082,8 @@ renderHoldingsTable();
 })();
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
 const TRADE_LOG=[
+  {date:"2026-08-17",action:"sell",sym:"GEV",amt:200.54},
+
   {date:"2026-08-15",action:"buy",sym:"AAOI",amt:99.70},
 
   {date:"2026-08-13",action:"sell",sym:"TSM",amt:112.65},
