@@ -4615,6 +4615,7 @@ const TRADES=[
   {date:"2026-08-17",sym:"AVGO",side:"buy",qty:0.250535245,price:397.9480},
   {date:"2026-08-21",sym:"SOXL",side:"buy",qty:1.000000000,price:118.5000},
   {date:"2026-08-21",sym:"SOXL",side:"sell",qty:1.000000000,price:120.2500},
+  {date:"2026-08-27",sym:"AAOI",side:"buy",qty:0.875790583,price:113.8400},
 
 ];
 const fmtD=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric'});
@@ -5087,6 +5088,8 @@ renderHoldingsTable();
 })();
 // ── TRADE HISTORY TABLE ───────────────────────────────────────────────────────
 const TRADE_LOG=[
+  {date:"2026-08-27",action:"buy",sym:"AAOI",amt:99.70},
+
   {date:"2026-08-21",action:"sell",sym:"SOXL",amt:120.25},
 
   {date:"2026-08-21",action:"buy",sym:"SOXL",amt:118.50},
